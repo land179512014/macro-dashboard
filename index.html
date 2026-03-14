@@ -152,7 +152,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 <h1>Macro Regime Dashboard</h1>
 <p class="subtitle">Live DXY × US10Y × HY × Momentum × Breadth → Auto-detected regime</p>
 <div class="source-bar"><span class="source-label">Data Source:</span><button class="src-btn active" id="btn-src-api" onclick="setSource('api')">🌐 Auto (Free API)</button></div>
-<div class="status-bar"><div class="status-dot" id="status-dot"></div><span class="status-text" id="status-text">Fetching live data…</span><button class="refresh-btn" onclick="loadData()">⟳ Refresh</button></div>
+<div class="status-bar"><div class="status-dot" id="status-dot"></div><span class="status-text" id="status-text">Fetching live data…</span><button class="refresh-btn" onclick="loadData(true)">⟳ Force Refresh</button></div>
 
 <div class="data-cards">
   <div class="data-card dxy-card"><h3>💵 DXY</h3><div class="metrics"><div class="metric"><div class="m-label">Current</div><div class="m-val" id="c_dxy_now">—</div></div><div class="metric"><div class="m-label">1M Chg</div><div class="m-val" id="c_dxy_d1">—</div><div class="m-sig flat-c" id="c_dxy_s1">—</div></div><div class="metric"><div class="m-label">3M Chg</div><div class="m-val" id="c_dxy_d3">—</div><div class="m-sig flat-c" id="c_dxy_s3">—</div></div></div></div>
@@ -244,8 +244,12 @@ var FALLBACK_PROXIES=[
 ];
 
 var activeTF='1m',liveData=null,refreshTimer=null;
+var CACHE_MS=4*60*60*1000; // 4 hours
+var cache={dxy:null,y10:null,hy:null,fv:null,breadth:null,ts:0};
 
-function setSource(s){document.getElementById('btn-src-api').classList.add('active');fetchFromAPI();}
+function cacheValid(){return cache.ts>0&&(Date.now()-cache.ts)<CACHE_MS;}
+
+function setSource(s){document.getElementById('btn-src-api').classList.add('active');fetchFromAPI(false);}
 function setTF(tf){activeTF=tf;document.getElementById('btn-1m').classList.toggle('active',tf==='1m');document.getElementById('btn-3m').classList.toggle('active',tf==='3m');if(liveData)render(liveData);}
 function setStatus(s,m){document.getElementById('status-dot').className='status-dot '+s;document.getElementById('status-text').textContent=m;}
 
@@ -410,39 +414,50 @@ function renderBreadth(rows){
   document.getElementById('breadth-date').textContent='Data: '+t.date+(t.spx?' · S&P: '+t.spx.toLocaleString():'');
 }
 
-// ─── MAIN FETCH — each source independent ──────────────────────
-async function fetchFromAPI(){
-  setStatus('loading','Fetching…');
+// ─── MAIN FETCH — cached 4hrs, manual force refresh ────────────
+async function fetchFromAPI(force){
+  // Use cache if valid and not forced
+  if(!force&&cacheValid()){
+    var age=Math.round((Date.now()-cache.ts)/60000);
+    setStatus('live','Cached · '+age+'m ago · next refresh in '+Math.round((CACHE_MS-(Date.now()-cache.ts))/60000)+'m');
+    if(cache.dxy&&cache.y10){liveData={dxy:cache.dxy,us10y:cache.y10,hy:cache.hy,fv:cache.fv};render(liveData);}
+    renderFinviz(cache.fv);
+    renderBreadth(cache.breadth);
+    scheduleRefresh(CACHE_MS-(Date.now()-cache.ts));
+    return;
+  }
+
+  setStatus('loading','Fetching fresh data…');
   var ok=[];
 
-  // All 5 sources run independently
   var dR=await fetchYahoo(YAHOO_DXY);if(dR)ok.push('DXY');
   var yR=await fetchYahoo(YAHOO_10Y);if(yR)ok.push('Y10');
   var hyData=await fetchHYSpread();if(hyData)ok.push('HY');
-  var fvCount=await fetchFinviz();ok.push(fvCount!==null?'FV':'');
+  var fvCount=await fetchFinviz();if(fvCount!==null)ok.push('FV');
   var breadthRows=await fetchBreadth();if(breadthRows)ok.push('Breadth');
 
-  // Render what we got
   renderFinviz(fvCount);
   renderBreadth(breadthRows);
 
-  if(!dR||!yR){setStatus('error','⚠ DXY/Y10 unavailable — '+ok.filter(Boolean).join('·'));scheduleRefresh(60000);return;}
+  if(!dR||!yR){setStatus('error','⚠ DXY/Y10 unavailable — '+ok.join('·'));scheduleRefresh(60000);return;}
 
   var dxyNow=new Date(dR[dR.length-1].ts*1000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var y10Now=new Date(yR[yR.length-1].ts*1000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var dxy1m=closestRow(dR,30),dxy3m=closestRow(dR,90),dxy6m=closestRow(dR,180);
   var y101m=closestRow(yR,30),y103m=closestRow(yR,90),y106m=closestRow(yR,180);
-  var data={
-    dxy:{current:dR[dR.length-1].close,one_month_ago:dxy1m.close,three_months_ago:dxy3m.close,six_months_ago:dxy6m.close,dates:{now:dxyNow,m1:dxy1m.dateStr,m3:dxy3m.dateStr,m6:dxy6m.dateStr}},
-    us10y:{current:yR[yR.length-1].close,one_month_ago:y101m.close,three_months_ago:y103m.close,six_months_ago:y106m.close,dates:{now:y10Now,m1:y101m.dateStr,m3:y103m.dateStr,m6:y106m.dateStr}},
-    hy:hyData,fv:fvCount
-  };
+  var dxyObj={current:dR[dR.length-1].close,one_month_ago:dxy1m.close,three_months_ago:dxy3m.close,six_months_ago:dxy6m.close,dates:{now:dxyNow,m1:dxy1m.dateStr,m3:dxy3m.dateStr,m6:dxy6m.dateStr}};
+  var y10Obj={current:yR[yR.length-1].close,one_month_ago:y101m.close,three_months_ago:y103m.close,six_months_ago:y106m.close,dates:{now:y10Now,m1:y101m.dateStr,m3:y103m.dateStr,m6:y106m.dateStr}};
+
+  // Save to cache
+  cache={dxy:dxyObj,y10:y10Obj,hy:hyData,fv:fvCount,breadth:breadthRows,ts:Date.now()};
+
+  var data={dxy:dxyObj,us10y:y10Obj,hy:hyData,fv:fvCount};
   liveData=data;render(data);
-  setStatus('live','Live · '+new Date().toLocaleTimeString()+' · '+ok.filter(Boolean).join(' · '));
-  scheduleRefresh(300000);
+  setStatus('live','Live · '+new Date().toLocaleTimeString()+' · '+ok.join(' · ')+' · next refresh in 4h');
+  scheduleRefresh(CACHE_MS);
 }
-function scheduleRefresh(ms){if(refreshTimer)clearTimeout(refreshTimer);refreshTimer=setTimeout(loadData,ms);}
-function loadData(){fetchFromAPI();}
+function scheduleRefresh(ms){if(refreshTimer)clearTimeout(refreshTimer);refreshTimer=setTimeout(function(){loadData(false);},ms);}
+function loadData(force){fetchFromAPI(!!force);}
 
 // ─── MATH ──────────────────────────────────────────────────────
 function pctChg(n,t){if(!n||!t||isNaN(n)||isNaN(t))return null;return((n-t)/t)*100;}
@@ -549,7 +564,7 @@ function render(data){
   else{tp.classList.remove('visible');}
 }
 
-fetchFromAPI();
+fetchFromAPI(true);
 </script>
 </body>
 </html>
