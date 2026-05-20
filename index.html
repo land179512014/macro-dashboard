@@ -323,17 +323,25 @@ function renderRegimeHistory(){
   var periods=[];
   var cur={cellId:daily[0].cellId,start:daily[0].date,end:daily[0].date,days:1,
            dxyStart:daily[0].dxyChg,dxyEnd:daily[0].dxyChg,y10Start:daily[0].y10Chg,y10End:daily[0].y10Chg};
+
   for(var k=1;k<daily.length;k++){
     if(daily[k].cellId===cur.cellId){
-      cur.end=daily[k].date;cur.days++;cur.dxyEnd=daily[k].dxyChg;cur.y10End=daily[k].y10Chg;
+      cur.end=daily[k].date;
+      cur.days++;
+      cur.dxyEnd=daily[k].dxyChg;
+      cur.y10End=daily[k].y10Chg;
     }else{
       periods.push(cur);
+      cur={cellId:daily[k].cellId,start:daily[k].date,end:daily[k].date,days:1,
+           dxyStart:daily[k].dxyChg,dxyEnd:daily[k].dxyChg,y10Start:daily[k].y10Chg,y10End:daily[k].y10Chg};
+    }
+  }
+  periods.push(cur);
 
   // Filter noise: absorb periods < 3 days into previous period
   var filtered=[periods[0]];
   for(var f=1;f<periods.length;f++){
     if(periods[f].days<3&&filtered.length>0){
-      // Absorb into previous period
       var prev=filtered[filtered.length-1];
       prev.end=periods[f].end;
       prev.days+=periods[f].days;
@@ -344,11 +352,6 @@ function renderRegimeHistory(){
     }
   }
   periods=filtered;
-      cur={cellId:daily[k].cellId,start:daily[k].date,end:daily[k].date,days:1,
-           dxyStart:daily[k].dxyChg,dxyEnd:daily[k].dxyChg,y10Start:daily[k].y10Chg,y10End:daily[k].y10Chg};
-    }
-  }
-  periods.push(cur);
 
   // Render chronologically (oldest first at top, newest at bottom)
   var html='';
@@ -618,7 +621,7 @@ function render(data){
   var vD=calcVelocity(d.current,d.one_month_ago,d.three_months_ago,d.six_months_ago,false);
   var vY=calcVelocity(y.current,y.one_month_ago,y.three_months_ago,y.six_months_ago,true);
   var vH=h?calcVelocity(h.current,h.one_month_ago,h.three_months_ago,h.six_months_ago,true):null;
-  var tD=vD?Math.max(vD.stdev,.15):DXY_THRESH,tY=vY?Math.max(vY.stdev,2):Y10_THRESH,tH=vH?Math.max(vH.stdev/100,.02):HY_THRESH;
+  var tD=vD?Math.max(vD.stdev,.15):DXY_THRESH,tY=vY?Math.max(vY.stdev,2):Y10_THRESH,tH=vH?Math.max(vH.stdev/100,HY_THRESH):HY_THRESH;
   function sDl(eI,sI,val,isY,isH){var el=document.getElementById(eI),sg=document.getElementById(sI);if(val===null){el.textContent='—';sg.textContent='—';return;}var dr=isH?classifyHY(val,tH):(isY?classifyY(val,tY):classifyD(val,tD));el.textContent=(val>=0?'+':'')+(isH?val.toFixed(2)+'%':isY?val.toFixed(0)+'bps':val.toFixed(2)+'%');el.className='m-val '+dirClass(dr);sg.textContent=dirLabel(dr);sg.className='m-sig '+sigClass(dr);}
   sDl('c_dxy_d1','c_dxy_s1',dd1,false,false);sDl('c_dxy_d3','c_dxy_s3',dd3,false,false);
   sDl('c_y10_d1','c_y10_s1',yd1,true,false);sDl('c_y10_d3','c_y10_s3',yd3,true,false);
