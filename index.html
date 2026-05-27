@@ -260,7 +260,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .stock-table tr:hover td{background:rgba(59,130,246,.06)}
 .stock-symbol button{appearance:none;border:0;background:transparent;color:#93c5fd;font:inherit;font-weight:800;cursor:pointer;padding:0;text-align:left}.stock-symbol button:hover{text-decoration:underline;color:#bfdbfe}
 .stock-chart-row td{padding:0!important;background:#0f172a!important}
-.chart-panel{margin:14px 18px;background:#0f172a;border:1px solid #334155;border-radius:10px;overflow:hidden;display:none}
+.chart-panel{width:min(980px,calc(100% - 28px));margin:14px auto;background:#0f172a;border:1px solid #334155;border-radius:10px;overflow:hidden;display:none}
 .chart-panel.visible{display:block}
 .chart-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid #334155}
 .chart-title{font-size:.72rem;font-weight:800;color:#f1f5f9}
@@ -891,9 +891,9 @@ async function loadStockChart(ticker,btn){
   var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:18;
   if(hostRow)hostRow.insertAdjacentHTML('afterend',stockChartMarkup(ticker,colspan));
   var chartRow=hostRow&&hostRow.nextElementSibling;
-  if(chartRow&&chartRow.scrollIntoView)setTimeout(function(){chartRow.scrollIntoView({behavior:'smooth',block:'nearest'});},0);
   var panel=document.getElementById('stock-chart-panel'),box=document.getElementById('stock-chart-box'),title=document.getElementById('stock-chart-title'),note=document.getElementById('stock-chart-note');
   if(!panel||!box)return;
+  if(panel.scrollIntoView)setTimeout(function(){panel.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});},0);
   if(!window.LightweightCharts){note.textContent='Lightweight Charts library did not load. Check your internet connection.';return;}
   try{
     var candles=await fetchYahooCandles(ticker);
