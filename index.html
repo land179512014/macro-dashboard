@@ -488,11 +488,11 @@ function setFlowFont(size){
 }
 function resizeActiveChart(){
   var box=document.getElementById('stock-chart-box');
-  if(box&&activeStockChart){activeStockChart.applyOptions({width:box.clientWidth});activeStockChart.timeScale().fitContent();}
+  if(box&&activeStockChart){activeStockChart.applyOptions({width:box.clientWidth});setChartSixMonthRange();}
 }
 function setChartSixMonthRange(){
   if(!activeStockChart||!activeChartCandles||!activeChartCandles.length)return;
-  activeStockChart.timeScale().fitContent();
+  activeStockChart.timeScale().setVisibleLogicalRange({from:0,to:activeChartCandles.length+8});
 }
 
 // ── REGIME HISTORY — reconstructed from price data ──
@@ -922,7 +922,7 @@ async function loadStockChart(ticker,btn){
     var visibleCandles=lastSixMonthCandles(candles);
     activeChartCandles=visibleCandles;
     if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}
-    activeStockChart=LightweightCharts.createChart(box,{height:320,layout:{background:{color:'#0f172a'},textColor:'#94a3b8'},grid:{vertLines:{color:'rgba(148,163,184,.08)'},horzLines:{color:'rgba(148,163,184,.08)'}},rightPriceScale:{borderColor:'#334155'},timeScale:{borderColor:'#334155'}});
+    activeStockChart=LightweightCharts.createChart(box,{height:320,layout:{background:{color:'#0f172a'},textColor:'#94a3b8'},grid:{vertLines:{color:'rgba(148,163,184,.08)'},horzLines:{color:'rgba(148,163,184,.08)'}},rightPriceScale:{borderColor:'#334155'},timeScale:{borderColor:'#334155',rightOffset:8,fixRightEdge:false}});
     activeStockSeries=ensureChartSeries(activeStockChart);activeStockSeries.setData(visibleCandles);
     [
       {len:20,color:'#facc15'},
