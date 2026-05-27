@@ -218,8 +218,9 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .flow-table{width:100%;border-collapse:collapse;font-size:.68rem;min-width:1000px}
 .flow-table th{position:sticky;top:0;background:#111827;color:#64748b;text-align:center;padding:9px 10px;font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #334155;cursor:pointer;user-select:none;white-space:nowrap}
 .flow-table th:hover{color:#93c5fd}
+.flow-table th.dragging,.stock-table th.dragging{opacity:.45}
+.flow-table th.drag-over,.stock-table th.drag-over{box-shadow:inset 2px 0 0 #3b82f6;color:#bfdbfe}
 .flow-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:#cbd5e1;white-space:nowrap;text-align:center}
-.flow-table td:first-child,.flow-table th:first-child{text-align:left}
 .flow-table tr:hover td{background:rgba(59,130,246,.06)}
 .flow-num{text-align:center;font-variant-numeric:tabular-nums}
 .flow-pos{color:#3dd9a0!important}.flow-neg{color:#f27872!important}.flow-muted{color:#64748b!important}
@@ -252,11 +253,6 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .stock-table th{background:#111827;color:#64748b;text-align:center;padding:8px 7px;font-size:.54rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #334155;white-space:normal;line-height:1.15;cursor:pointer;user-select:none}
 .stock-table th:hover{color:#93c5fd}
 .stock-table td{padding:7px 7px;border-bottom:1px solid rgba(255,255,255,.04);color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-.stock-table td:first-child,.stock-table th:first-child{text-align:left}
-.stock-table th:first-child,.stock-table td:first-child{width:62px}
-.stock-table th:nth-child(2),.stock-table td:nth-child(2){width:76px}
-.stock-table th:nth-child(3),.stock-table td:nth-child(3){width:66px}
-.stock-table th:nth-child(11),.stock-table td:nth-child(11){width:78px}
 .stock-table tr:hover td{background:rgba(59,130,246,.06)}
 .stock-symbol button{appearance:none;border:0;background:transparent;color:#93c5fd;font:inherit;font-weight:800;cursor:pointer;padding:0;text-align:left}.stock-symbol button:hover{text-decoration:underline;color:#bfdbfe}
 .stock-chart-row td{padding:0!important;background:#0f172a!important}
@@ -823,7 +819,7 @@ function renderStockTable(rows,msg){
   if(msg){el.innerHTML='<div class="flow-empty">'+esc(msg)+'</div>';return;}
   if(!rows||!rows.length){el.innerHTML='<div class="flow-empty">No stock rows parsed from Finviz. Use the Open Finviz link above.</div>';return;}
   var cols=['Ticker','Rotation','Perf W','Perf M','Perf Q','Perf YTD','Vol W','Vol M','Price','Change','Volume','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','P/FCF'];
-  var html='<table class="stock-table"><thead><tr>'+cols.map(function(c){return'<th onclick="sortStockTable(this)">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
+  var html='<table class="stock-table"><thead><tr>'+cols.map(function(c){return'<th draggable="true" onclick="sortStockTable(this)" ondragstart="columnDragStart(event,this)" ondragover="columnDragOver(event,this)" ondragleave="columnDragLeave(this)" ondrop="columnDrop(event,this)" ondragend="columnDragEnd()">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
   rows.forEach(function(r){
     html+='<tr><td class="stock-symbol" data-value="'+esc(r.ticker)+'"><button onclick="loadStockChart('+JSON.stringify(String(r.ticker||'')).replace(/"/g,'&quot;')+',this)">'+esc(r.ticker)+'</button></td>'+
       '<td class="'+flowClass(r.rotationScore)+'" data-value="'+(isNaN(r.rotationScore)?-999999:r.rotationScore)+'">'+fmtScore(r.rotationScore)+'</td>'+
@@ -846,9 +842,36 @@ function renderStockTable(rows,msg){
   });
   html+='</tbody></table>';el.innerHTML=html;
 }
+function columnDragStart(ev,th){
+  var table=th.closest('table'),idx=Array.prototype.indexOf.call(th.parentNode.children,th);
+  th.classList.add('dragging');
+  if(ev.dataTransfer){ev.dataTransfer.effectAllowed='move';ev.dataTransfer.setData('text/plain',idx);}
+  table.setAttribute('data-drag-col',idx);
+}
+function columnDragOver(ev,th){ev.preventDefault();th.classList.add('drag-over');if(ev.dataTransfer)ev.dataTransfer.dropEffect='move';}
+function columnDragLeave(th){th.classList.remove('drag-over');}
+function columnDragEnd(){document.querySelectorAll('th.dragging,th.drag-over').forEach(function(th){th.classList.remove('dragging','drag-over');});document.querySelectorAll('table[data-drag-col]').forEach(function(t){t.removeAttribute('data-drag-col');});}
+function moveTableColumn(table,from,to){
+  if(from===to||from<0||to<0)return;
+  Array.prototype.forEach.call(table.querySelectorAll('tr'),function(row){
+    var cells=row.children;if(!cells||from>=cells.length||to>=cells.length)return;
+    var cell=cells[from],target=cells[to];
+    row.insertBefore(cell,from<to?target.nextSibling:target);
+  });
+}
+function columnDrop(ev,th){
+  ev.preventDefault();
+  var table=th.closest('table'),from=parseInt(table.getAttribute('data-drag-col'),10),to=Array.prototype.indexOf.call(th.parentNode.children,th);
+  table.setAttribute('data-skip-sort','1');
+  if(table.classList.contains('flow-table'))closeSectorDrilldown();else closeStockChart();
+  moveTableColumn(table,from,to);
+  columnDragEnd();
+  setTimeout(function(){if(table)table.removeAttribute('data-skip-sort');},150);
+}
 function parseMarketCap(v){var s=String(v||'').replace(/,/g,'').trim(),n=parseFloat(s);if(isNaN(n))return 0;if(/T$/i.test(s))return n*1e12;if(/B$/i.test(s))return n*1e9;if(/M$/i.test(s))return n*1e6;if(/K$/i.test(s))return n*1e3;return n;}
 function parseVolume(v){return parseFloat(String(v||'').replace(/,/g,''))||0;}
 function sortStockTable(th){
+  if(th.closest('table').getAttribute('data-skip-sort'))return;
   closeStockChart();
   var table=th.closest('table'),tbody=table.querySelector('tbody'),idx=Array.prototype.indexOf.call(th.parentNode.children,th);
   var dir=th.getAttribute('data-sort')==='asc'?'desc':'asc';
@@ -968,11 +991,12 @@ async function openSectorDrilldown(name,btn){
 function renderFlowTable(id,rows,cols){
   var el=document.getElementById(id);if(!el)return;
   if(!rows||!rows.length){el.innerHTML='<div class="flow-empty">No matching industries right now.</div>';return;}
-  var html='<table class="flow-table"><thead><tr>'+cols.map(function(c){return'<th onclick="sortFlowTable(this)" data-col="'+esc(c)+'">'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>';
+  var html='<table class="flow-table"><thead><tr>'+cols.map(function(c){return'<th draggable="true" onclick="sortFlowTable(this)" ondragstart="columnDragStart(event,this)" ondragover="columnDragOver(event,this)" ondragleave="columnDragLeave(this)" ondrop="columnDrop(event,this)" ondragend="columnDragEnd()" data-col="'+esc(c)+'">'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>';
   rows.forEach(function(r){html+='<tr>'+cols.map(function(c){var body=flowCell(r,c);return body.indexOf('<td')===0?body:'<td data-value="'+esc(r[c]||'')+'">'+body+'</td>';}).join('')+'</tr>';});
   html+='</tbody></table>';el.innerHTML=html;
 }
 function sortFlowTable(th){
+  if(th.closest('table').getAttribute('data-skip-sort'))return;
   closeSectorDrilldown();
   var table=th.closest('table'),tbody=table.querySelector('tbody'),idx=Array.prototype.indexOf.call(th.parentNode.children,th);
   var dir=th.getAttribute('data-sort')==='asc'?'desc':'asc';
