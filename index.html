@@ -262,16 +262,8 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .stock-chart-row td{padding:0!important;background:#0f172a!important}
 .chart-panel{width:min(1180px,calc(100% - 28px));margin:14px auto;background:#0f172a;border:1px solid #334155;border-radius:10px;overflow:hidden;display:none}
 .chart-panel.visible{display:block}
-.chart-panel.chart-sm{width:min(980px,calc(100% - 28px))}
-.chart-panel.chart-md{width:min(1180px,calc(100% - 28px))}
-.chart-panel.chart-lg{width:min(1380px,calc(100% - 28px))}
-.chart-panel.chart-full{width:calc(100% - 16px)}
 .chart-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid #334155}
 .chart-head-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.chart-size-toggle{display:flex;gap:4px}
-.chart-size-btn{border:1px solid #334155;background:#111827;color:#64748b;border-radius:5px;padding:5px 7px;font-size:.56rem;font-weight:800;text-transform:uppercase;cursor:pointer}
-.chart-size-btn.active{background:#2563eb;border-color:#3b82f6;color:#fff}
-.chart-size-btn:hover{border-color:#3b82f6;color:#93c5fd}
 .chart-title{font-size:.72rem;font-weight:800;color:#f1f5f9}
 .chart-note{font-size:.6rem;color:#64748b}
 .chart-box{height:320px;min-height:260px}
@@ -476,7 +468,6 @@ var selectedIndustry=null,selectedIndustryRows=[],selectedIndustryUrl=null,curre
 var selectedIndustryAnchor=null,selectedStockAnchor=null,activeStockChart=null,activeStockSeries=null,activeSmaSeries=[],activeChartCandles=[];
 var flowModeOverride='auto';
 var flowFontSize='normal';
-var chartSize='md';
 
 function cacheValid(){return cache.ts>0&&(Date.now()-cache.ts)<CACHE_MS;}
 function setTF(tf){activeTF=tf;document.getElementById('btn-1m').classList.toggle('active',tf==='1m');document.getElementById('btn-3m').classList.toggle('active',tf==='3m');if(liveData)render(liveData);}
@@ -497,20 +488,12 @@ function setFlowFont(size){
 }
 function resizeActiveChart(){
   var box=document.getElementById('stock-chart-box');
-  if(box&&activeStockChart){activeStockChart.applyOptions({width:box.clientWidth});setChartOneMonthRange();}
+  if(box&&activeStockChart){activeStockChart.applyOptions({width:box.clientWidth});setChartSixMonthRange();}
 }
-function setChartSize(size){
-  chartSize=['sm','md','lg','full'].indexOf(size)>=0?size:'md';
-  var panel=document.getElementById('stock-chart-panel');
-  if(panel){panel.classList.remove('chart-sm','chart-md','chart-lg','chart-full');panel.classList.add('chart-'+chartSize);}
-  ['sm','md','lg','full'].forEach(function(s){var el=document.getElementById('chart-size-'+s);if(el)el.classList.toggle('active',chartSize===s);});
-  try{localStorage.setItem('chartSize',chartSize);}catch(e){}
-  setTimeout(resizeActiveChart,60);
-}
-function setChartOneMonthRange(){
+function setChartSixMonthRange(){
   if(!activeStockChart||!activeChartCandles||!activeChartCandles.length)return;
   var end=activeChartCandles[activeChartCandles.length-1].time;
-  var startIdx=Math.max(0,activeChartCandles.length-22);
+  var startIdx=Math.max(0,activeChartCandles.length-126);
   activeStockChart.timeScale().setVisibleRange({from:activeChartCandles[startIdx].time,to:end});
 }
 
@@ -910,7 +893,7 @@ function smaData(candles,len){
 }
 function closeStockChart(){document.querySelectorAll('.stock-chart-row').forEach(function(r){r.remove();});selectedStockAnchor=null;activeSmaSeries=[];activeChartCandles=[];if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}}
 function stockChartMarkup(ticker,colspan){
-  return '<tr class="stock-chart-row"><td colspan="'+colspan+'"><div class="chart-panel visible chart-'+esc(chartSize)+'" id="stock-chart-panel"><div class="chart-head"><div><div class="chart-title" id="stock-chart-title">'+esc(ticker)+' Daily Chart</div><div class="chart-note" id="stock-chart-note">Loading 1 year of daily candles...</div></div><div class="chart-head-right"><div class="chart-size-toggle"><button class="chart-size-btn" id="chart-size-sm" onclick="setChartSize(\'sm\')">Sm</button><button class="chart-size-btn" id="chart-size-md" onclick="setChartSize(\'md\')">Med</button><button class="chart-size-btn" id="chart-size-lg" onclick="setChartSize(\'lg\')">Lg</button><button class="chart-size-btn" id="chart-size-full" onclick="setChartSize(\'full\')">Full</button></div><button class="sector-dd-close" onclick="closeStockChart()">Close Chart</button></div></div><div class="chart-box" id="stock-chart-box"></div></div></td></tr>';
+  return '<tr class="stock-chart-row"><td colspan="'+colspan+'"><div class="chart-panel visible" id="stock-chart-panel"><div class="chart-head"><div><div class="chart-title" id="stock-chart-title">'+esc(ticker)+' Daily Chart</div><div class="chart-note" id="stock-chart-note">Loading 1 year of daily candles...</div></div><div class="chart-head-right"><button class="sector-dd-close" onclick="closeStockChart()">Close Chart</button></div></div><div class="chart-box" id="stock-chart-box"></div></div></td></tr>';
 }
 async function loadStockChart(ticker,btn){
   if(selectedStockAnchor===btn){closeStockChart();return;}
@@ -921,7 +904,6 @@ async function loadStockChart(ticker,btn){
   var chartRow=hostRow&&hostRow.nextElementSibling;
   var panel=document.getElementById('stock-chart-panel'),box=document.getElementById('stock-chart-box'),title=document.getElementById('stock-chart-title'),note=document.getElementById('stock-chart-note');
   if(!panel||!box)return;
-  setChartSize(chartSize);
   if(panel.scrollIntoView)setTimeout(function(){panel.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});},0);
   if(!window.LightweightCharts){note.textContent='Lightweight Charts library did not load. Check your internet connection.';return;}
   try{
@@ -939,9 +921,9 @@ async function loadStockChart(ticker,btn){
       var data=smaData(candles,cfg.len);
       if(data.length){var line=ensureLineSeries(activeStockChart,cfg.color,2);line.setData(data);activeSmaSeries.push(line);}
     });
-    setChartOneMonthRange();
+    setChartSixMonthRange();
     setTimeout(resizeActiveChart,50);
-    note.textContent='Yahoo daily candles via proxy. SMA 20 yellow, SMA 50 red, SMA 200 light blue.';
+    note.textContent='Yahoo daily candles via proxy. Latest 6 months shown. SMA 20 yellow, SMA 50 red, SMA 200 light blue.';
   }catch(e){note.textContent='Chart load failed for '+ticker+'.';}
 }
 async function openSectorDrilldown(name,btn){
@@ -1243,7 +1225,6 @@ function render(data){
   else{tp.classList.remove('visible');}
 }
 
-try{chartSize=localStorage.getItem('chartSize')||'md';}catch(e){chartSize='md';}
 try{setFlowFont(localStorage.getItem('flowFontSize')||'normal');}catch(e){setFlowFont('normal');}
 fetchFromAPI(true);
 </script>
