@@ -464,7 +464,7 @@ var lastBreadthPhase=null,lastSpecCount=null;
 var rawDxyRows=null,rawY10Rows=null,historyTF='1m';
 var currentRegimeId=null,currentRiskOn=false;
 var selectedIndustry=null,selectedIndustryRows=[],selectedIndustryUrl=null,currentFlowRowsByName={};
-var selectedIndustryAnchor=null,selectedStockAnchor=null,activeStockChart=null,activeStockSeries=null;
+var selectedIndustryAnchor=null,selectedStockAnchor=null,activeStockChart=null,activeStockSeries=null,activeSmaSeries=[];
 var flowModeOverride='auto';
 var flowFontSize='normal';
 
@@ -482,6 +482,7 @@ function setFlowFont(size){
   ['normal','large','xl'].forEach(function(s){var el=document.getElementById('flow-font-'+s);if(el)el.classList.toggle('active',flowFontSize===s);});
   var page=document.querySelector('.flow-page');
   if(page){page.classList.remove('flow-font-large','flow-font-xl');if(flowFontSize!=='normal')page.classList.add('flow-font-'+flowFontSize);}
+  if(activeStockChart){setTimeout(function(){var box=document.getElementById('stock-chart-box');if(box&&activeStockChart){activeStockChart.applyOptions({width:box.clientWidth});activeStockChart.timeScale().fitContent();}},50);}
   try{localStorage.setItem('flowFontSize',flowFontSize);}catch(e){}
 }
 
@@ -854,7 +855,7 @@ function sortStockTable(th){
   rows.forEach(function(r){tbody.appendChild(r);});
 }
 async function fetchYahooCandles(ticker){
-  var url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&range=6mo';
+  var url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&range=1y';
   var txt=await proxyFetch(url,12000);if(!txt)return[];
   var raw=JSON.parse(txt),json=raw.contents?JSON.parse(raw.contents):raw;
   var res=json&&json.chart&&json.chart.result&&json.chart.result[0];if(!res||!res.timestamp)return[];
@@ -865,9 +866,23 @@ function ensureChartSeries(chart){
   if(chart.addSeries&&window.LightweightCharts&&LightweightCharts.CandlestickSeries)return chart.addSeries(LightweightCharts.CandlestickSeries,{upColor:'#22c55e',downColor:'#ef4444',borderVisible:false,wickUpColor:'#22c55e',wickDownColor:'#ef4444'});
   return chart.addCandlestickSeries({upColor:'#22c55e',downColor:'#ef4444',borderVisible:false,wickUpColor:'#22c55e',wickDownColor:'#ef4444'});
 }
-function closeStockChart(){document.querySelectorAll('.stock-chart-row').forEach(function(r){r.remove();});selectedStockAnchor=null;if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}}
+function ensureLineSeries(chart,color,width){
+  var opts={color:color,lineWidth:width||2,priceLineVisible:false,lastValueVisible:false};
+  if(chart.addSeries&&window.LightweightCharts&&LightweightCharts.LineSeries)return chart.addSeries(LightweightCharts.LineSeries,opts);
+  return chart.addLineSeries(opts);
+}
+function smaData(candles,len){
+  var out=[],sum=0;
+  candles.forEach(function(c,i){
+    sum+=c.close;
+    if(i>=len)sum-=candles[i-len].close;
+    if(i>=len-1)out.push({time:c.time,value:sum/len});
+  });
+  return out;
+}
+function closeStockChart(){document.querySelectorAll('.stock-chart-row').forEach(function(r){r.remove();});selectedStockAnchor=null;activeSmaSeries=[];if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}}
 function stockChartMarkup(ticker,colspan){
-  return '<tr class="stock-chart-row"><td colspan="'+colspan+'"><div class="chart-panel visible" id="stock-chart-panel"><div class="chart-head"><div><div class="chart-title" id="stock-chart-title">'+esc(ticker)+' Daily Chart</div><div class="chart-note" id="stock-chart-note">Loading 6 months of daily candles...</div></div><button class="sector-dd-close" onclick="closeStockChart()">Close Chart</button></div><div class="chart-box" id="stock-chart-box"></div></div></td></tr>';
+  return '<tr class="stock-chart-row"><td colspan="'+colspan+'"><div class="chart-panel visible" id="stock-chart-panel"><div class="chart-head"><div><div class="chart-title" id="stock-chart-title">'+esc(ticker)+' Daily Chart</div><div class="chart-note" id="stock-chart-note">Loading 1 year of daily candles...</div></div><button class="sector-dd-close" onclick="closeStockChart()">Close Chart</button></div><div class="chart-box" id="stock-chart-box"></div></div></td></tr>';
 }
 async function loadStockChart(ticker,btn){
   if(selectedStockAnchor===btn){closeStockChart();return;}
@@ -875,6 +890,8 @@ async function loadStockChart(ticker,btn){
   var hostRow=btn&&btn.closest?btn.closest('tr'):null,table=btn&&btn.closest?btn.closest('table'):null;
   var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:18;
   if(hostRow)hostRow.insertAdjacentHTML('afterend',stockChartMarkup(ticker,colspan));
+  var chartRow=hostRow&&hostRow.nextElementSibling;
+  if(chartRow&&chartRow.scrollIntoView)setTimeout(function(){chartRow.scrollIntoView({behavior:'smooth',block:'nearest'});},0);
   var panel=document.getElementById('stock-chart-panel'),box=document.getElementById('stock-chart-box'),title=document.getElementById('stock-chart-title'),note=document.getElementById('stock-chart-note');
   if(!panel||!box)return;
   if(!window.LightweightCharts){note.textContent='Lightweight Charts library did not load. Check your internet connection.';return;}
@@ -884,8 +901,17 @@ async function loadStockChart(ticker,btn){
     if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}
     activeStockChart=LightweightCharts.createChart(box,{height:320,layout:{background:{color:'#0f172a'},textColor:'#94a3b8'},grid:{vertLines:{color:'rgba(148,163,184,.08)'},horzLines:{color:'rgba(148,163,184,.08)'}},rightPriceScale:{borderColor:'#334155'},timeScale:{borderColor:'#334155'}});
     activeStockSeries=ensureChartSeries(activeStockChart);activeStockSeries.setData(candles);
+    [
+      {len:20,color:'#facc15'},
+      {len:50,color:'#ef4444'},
+      {len:200,color:'#38bdf8'}
+    ].forEach(function(cfg){
+      var data=smaData(candles,cfg.len);
+      if(data.length){var line=ensureLineSeries(activeStockChart,cfg.color,2);line.setData(data);activeSmaSeries.push(line);}
+    });
     activeStockChart.timeScale().fitContent();
-    note.textContent='Yahoo daily candles via proxy. Click another ticker to replace this chart.';
+    setTimeout(function(){if(activeStockChart&&box){activeStockChart.applyOptions({width:box.clientWidth});activeStockChart.timeScale().fitContent();}},50);
+    note.textContent='Yahoo daily candles via proxy. SMA 20 yellow, SMA 50 red, SMA 200 light blue.';
   }catch(e){note.textContent='Chart load failed for '+ticker+'.';}
 }
 async function openSectorDrilldown(name,btn){
