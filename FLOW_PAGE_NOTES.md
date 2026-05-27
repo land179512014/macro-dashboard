@@ -23,10 +23,11 @@
   - `M = Volatility Month`
 - Formula:
   - `((D*0.7)+((D-(E/3))*0.3))*0.4 + (((D*0.4)+(E*0.6))*(M/L))*0.6`
+- Finviz percentage strings are converted to decimals before scoring, so `12.3%` is treated as `0.123`.
 - Leave score blank if any required input is missing or if `Volatility W` / `Volatility M` is zero.
 
 ## UI Controls
 - Flow page should include a table font-size toggle: Normal, Large, XL.
 
 ## Pending Work
-- Confirm whether the score should use raw percentage points from Finviz or decimal percentage values if the output needs to match a Google Sheet exactly.
+- Compare the decimal-scaled score against the Google Sheet output once sample rows are available.

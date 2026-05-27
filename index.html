@@ -784,7 +784,7 @@ function parseFinvizStocks(html,view){
   return out;
 }
 function rotationScore(row){
-  var d=parseNum(row&&row.perfMonth),e=parseNum(row&&row.perfQuart),l=parseNum(row&&row.volW),m=parseNum(row&&row.volM);
+  var d=parseNum(row&&row.perfMonth)/100,e=parseNum(row&&row.perfQuart)/100,l=parseNum(row&&row.volW)/100,m=parseNum(row&&row.volM)/100;
   if([d,e,l,m].some(function(v){return isNaN(v);})||l===0||m===0)return NaN;
   return (((d*0.7)+((d-(e/3))*0.3))*0.4)+((((d*0.4)+(e*0.6))*(m/l))*0.6);
 }
