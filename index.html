@@ -492,9 +492,8 @@ function resizeActiveChart(){
 }
 function setChartSixMonthRange(){
   if(!activeStockChart||!activeChartCandles||!activeChartCandles.length)return;
-  var end=activeChartCandles[activeChartCandles.length-1].time;
   var startIdx=Math.max(0,activeChartCandles.length-126);
-  activeStockChart.timeScale().setVisibleRange({from:activeChartCandles[startIdx].time,to:end});
+  activeStockChart.timeScale().setVisibleLogicalRange({from:startIdx,to:activeChartCandles.length+2});
 }
 
 // ── REGIME HISTORY — reconstructed from price data ──
@@ -866,7 +865,7 @@ function sortStockTable(th){
   rows.forEach(function(r){tbody.appendChild(r);});
 }
 async function fetchYahooCandles(ticker){
-  var url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&range=1y';
+  var url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&range=1y&_='+Date.now();
   var txt=await proxyFetch(url,12000);if(!txt)return[];
   var raw=JSON.parse(txt),json=raw.contents?JSON.parse(raw.contents):raw;
   var res=json&&json.chart&&json.chart.result&&json.chart.result[0];if(!res||!res.timestamp)return[];
@@ -923,7 +922,7 @@ async function loadStockChart(ticker,btn){
     });
     setChartSixMonthRange();
     setTimeout(resizeActiveChart,50);
-    note.textContent='Yahoo daily candles via proxy. Latest 6 months shown. SMA 20 yellow, SMA 50 red, SMA 200 light blue.';
+    note.textContent='Yahoo daily candles via proxy. Latest candle: '+candles[candles.length-1].time+'. Latest 6 months shown. SMA 20 yellow, SMA 50 red, SMA 200 light blue.';
   }catch(e){note.textContent='Chart load failed for '+ticker+'.';}
 }
 async function openSectorDrilldown(name,btn){
