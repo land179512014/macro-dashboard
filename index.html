@@ -187,6 +187,18 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .flow-toggle-btn{padding:4px 8px;border-radius:5px;border:1px solid #334155;background:#111827;color:#64748b;font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;cursor:pointer}
 .flow-toggle-btn.active{background:#2563eb;border-color:#3b82f6;color:#fff}
 .flow-toggle-btn:hover{border-color:#3b82f6;color:#93c5fd}
+.flow-font-control{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)}
+.flow-font-control .flow-mode-label{margin-bottom:6px}
+.flow-page.flow-font-large .flow-table,.flow-page.flow-font-large .stock-table{font-size:.78rem}
+.flow-page.flow-font-large .flow-table th,.flow-page.flow-font-large .stock-table th{font-size:.65rem}
+.flow-page.flow-font-large .flow-note,.flow-page.flow-font-large .rotation-placeholder-body{font-size:.74rem}
+.flow-page.flow-font-large .flow-section-title{font-size:.86rem}
+.flow-page.flow-font-large .flow-section-meta,.flow-page.flow-font-large .sector-dd-sub{font-size:.7rem}
+.flow-page.flow-font-xl .flow-table,.flow-page.flow-font-xl .stock-table{font-size:.88rem}
+.flow-page.flow-font-xl .flow-table th,.flow-page.flow-font-xl .stock-table th{font-size:.72rem}
+.flow-page.flow-font-xl .flow-note,.flow-page.flow-font-xl .rotation-placeholder-body{font-size:.82rem}
+.flow-page.flow-font-xl .flow-section-title{font-size:.96rem}
+.flow-page.flow-font-xl .flow-section-meta,.flow-page.flow-font-xl .sector-dd-sub{font-size:.78rem}
 .flow-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
 @media(max-width:760px){.flow-stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.flow-stats{grid-template-columns:1fr}}
@@ -235,7 +247,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .rotation-placeholder-title{font-size:.72rem;font-weight:800;color:#f1f5f9;margin-bottom:4px}
 .rotation-placeholder-body{font-size:.66rem;color:#94a3b8;line-height:1.55}
 .stock-table-wrap{overflow:auto;border-top:1px solid #334155}
-.stock-table{width:100%;border-collapse:collapse;font-size:.68rem;min-width:1280px}
+.stock-table{width:100%;border-collapse:collapse;font-size:.68rem;min-width:1540px}
 .stock-table th{background:#111827;color:#64748b;text-align:left;padding:9px 10px;font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #334155;white-space:nowrap;cursor:pointer;user-select:none}
 .stock-table th:hover{color:#93c5fd}
 .stock-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:#cbd5e1;white-space:nowrap}
@@ -377,6 +389,14 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
             <button class="flow-toggle-btn" id="flow-mode-offense" onclick="setFlowMode('offense')">Offense</button>
             <button class="flow-toggle-btn" id="flow-mode-defense" onclick="setFlowMode('defense')">Defense</button>
           </div>
+          <div class="flow-font-control">
+            <div class="flow-mode-label">Table Font</div>
+            <div class="flow-toggle">
+              <button class="flow-toggle-btn active" id="flow-font-normal" onclick="setFlowFont('normal')">Normal</button>
+              <button class="flow-toggle-btn" id="flow-font-large" onclick="setFlowFont('large')">Large</button>
+              <button class="flow-toggle-btn" id="flow-font-xl" onclick="setFlowFont('xl')">XL</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="flow-stats">
@@ -440,6 +460,7 @@ var currentRegimeId=null,currentRiskOn=false;
 var selectedIndustry=null,selectedIndustryRows=[],selectedIndustryUrl=null,currentFlowRowsByName={};
 var selectedIndustryAnchor=null,selectedStockAnchor=null,activeStockChart=null,activeStockSeries=null;
 var flowModeOverride='auto';
+var flowFontSize='normal';
 
 function cacheValid(){return cache.ts>0&&(Date.now()-cache.ts)<CACHE_MS;}
 function setTF(tf){activeTF=tf;document.getElementById('btn-1m').classList.toggle('active',tf==='1m');document.getElementById('btn-3m').classList.toggle('active',tf==='3m');if(liveData)render(liveData);}
@@ -450,6 +471,13 @@ function showPage(page){document.getElementById('page-macro').classList.toggle('
 function activeFlowColumn(){return flowModeOverride==='offense'?'Offense Flow Monthly':flowModeOverride==='defense'?'Defense Flow Monthly':currentRiskOn?'Offense Flow Monthly':'Defense Flow Monthly';}
 function flowModeLabel(){if(flowModeOverride==='offense')return'Manual: Offense Flow';if(flowModeOverride==='defense')return'Manual: Defense Flow';return currentRiskOn?'Auto: Offense Flow':'Auto: Defense Flow';}
 function setFlowMode(mode){flowModeOverride=mode;['auto','offense','defense'].forEach(function(m){var el=document.getElementById('flow-mode-'+m);if(el)el.classList.toggle('active',mode===m);});closeSectorDrilldown();renderSectorFlowsFromCache();}
+function setFlowFont(size){
+  flowFontSize=['normal','large','xl'].indexOf(size)>=0?size:'normal';
+  ['normal','large','xl'].forEach(function(s){var el=document.getElementById('flow-font-'+s);if(el)el.classList.toggle('active',flowFontSize===s);});
+  var page=document.querySelector('.flow-page');
+  if(page){page.classList.remove('flow-font-large','flow-font-xl');if(flowFontSize!=='normal')page.classList.add('flow-font-'+flowFontSize);}
+  try{localStorage.setItem('flowFontSize',flowFontSize);}catch(e){}
+}
 
 // ── REGIME HISTORY — reconstructed from price data ──
 // Consolidates into periods: "Feb 19 – Mar 1: Dollar Squeeze (11 days)"
@@ -722,7 +750,9 @@ function finvizIndustrySlug(name){
   if(FINVIZ_INDUSTRY_OVERRIDES[name])return FINVIZ_INDUSTRY_OVERRIDES[name];
   return 'ind_'+String(name||'').toLowerCase().replace(/&/g,'').replace(/[^a-z0-9]/g,'');
 }
-function finvizIndustryUrl(name,view){return 'https://finviz.com/screener?v='+(view||141)+'&f='+finvizIndustrySlug(name);}
+function finvizIndustryUrl(name,view){
+  return 'https://finviz.com/screener?v='+(view||141)+'&f=cap_smallover,'+finvizIndustrySlug(name)+',sh_avgvol_o100&o=-perf52w';
+}
 function flowCell(row,col){
   if(col==='Name')return '<button class="flow-name-btn" onclick="openSectorDrilldown('+JSON.stringify(String(row.Name||'')).replace(/"/g,'&quot;')+',this)">'+esc(row.Name||'--')+'</button>';
   if(col==='Sector Strength')return pill(cleanStrength(row[col]),cleanStrength(row[col]));
@@ -743,22 +773,32 @@ function parseFinvizStocks(html,view){
     var links=Array.prototype.slice.call(tr.querySelectorAll('a')).map(function(a){return{txt:a.textContent.trim(),href:a.href||a.getAttribute('href')||''};});
     var ticker=cells[1],quote=links.find(function(a){return a.txt===ticker;});
     if(view===121)out.push({ticker:ticker,marketCap:cells[2],pe:cells[3],fwdPe:cells[4],peg:cells[5],ps:cells[6],pb:cells[7],pfcf:cells[9],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
-    else out.push({ticker:ticker,perfWeek:cells[2],perfMonth:cells[3],perfQuart:cells[4],perfHalf:cells[5],perfYtd:cells[6],perfYear:cells[7],volatility:cells[11],avgVolume:cells[13],relVolume:cells[14],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
+    else out.push({ticker:ticker,perfWeek:cells[2],perfMonth:cells[3],perfQuart:cells[4],perfHalf:cells[5],perfYtd:cells[6],perfYear:cells[7],volW:cells[11],volM:cells[12],avgVolume:cells[13],relVolume:cells[14],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
   });
   return out;
 }
+function rotationScore(row){
+  var d=parseNum(row&&row.perfMonth),e=parseNum(row&&row.perfQuart),l=parseNum(row&&row.volW),m=parseNum(row&&row.volM);
+  if([d,e,l,m].some(function(v){return isNaN(v);})||l===0||m===0)return NaN;
+  return (((d*0.7)+((d-(e/3))*0.3))*0.4)+((((d*0.4)+(e*0.6))*(m/l))*0.6);
+}
+function fmtScore(v){return isNaN(v)?'--':v.toFixed(2);}
 function mergeFinvizRows(perfRows,valRows){
   var byTicker={};
   (perfRows||[]).forEach(function(r){byTicker[r.ticker]=Object.assign({},r);});
   (valRows||[]).forEach(function(r){byTicker[r.ticker]=Object.assign(byTicker[r.ticker]||{ticker:r.ticker},r);});
-  return Object.keys(byTicker).sort().map(function(t){return byTicker[t];});
+  return Object.keys(byTicker).map(function(t){var r=byTicker[t];r.rotationScore=rotationScore(r);return r;}).sort(function(a,b){
+    var av=isNaN(a.rotationScore)?-Infinity:a.rotationScore,bv=isNaN(b.rotationScore)?-Infinity:b.rotationScore;
+    if(bv!==av)return bv-av;
+    return String(a.ticker||'').localeCompare(String(b.ticker||''));
+  });
 }
 function sectorDrilldownMarkup(row,name,perfUrl,valUrl,colspan){
   var activeFlow=activeFlowColumn();
   return '<tr class="sector-drilldown-row"><td colspan="'+colspan+'"><div class="sector-drilldown" id="sector-drilldown">'+
     '<div class="sector-dd-head"><div><div class="sector-dd-kicker">Selected Industry</div><div class="sector-dd-title" id="sector-dd-title">'+esc(name)+'</div><div class="sector-dd-sub" id="sector-dd-sub">Fetching Finviz performance and valuation data for this industry.</div></div><div class="sector-dd-actions"><a class="sector-dd-link" id="sector-dd-finviz" href="'+esc(perfUrl)+'" target="_blank" rel="noopener">Performance</a><a class="sector-dd-link" href="'+esc(valUrl)+'" target="_blank" rel="noopener">Valuation</a><button class="sector-dd-close" onclick="closeSectorDrilldown()">Close</button></div></div>'+
     '<div class="sector-dd-meta"><div class="sector-dd-metric"><div class="sector-dd-label">Active Signal</div><div class="sector-dd-val" id="sector-dd-active">'+esc(activeFlow)+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Sector Strength</div><div class="sector-dd-val" id="sector-dd-strength">'+pill(cleanStrength(row['Sector Strength']),cleanStrength(row['Sector Strength']))+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Buy Gauge</div><div class="sector-dd-val" id="sector-dd-gauge">'+pill(cleanGauge(row['Buy Gauge']),cleanGauge(row['Buy Gauge']))+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Offense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Offense Flow Monthly'])+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Defense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Defense Flow Monthly'])+'</div></div></div>'+
-    '<div class="rotation-placeholder"><div class="rotation-placeholder-title">Rotation Inside This Sector</div><div class="rotation-placeholder-body">Calculation pending. Once you give me the ranking formula, this area will score and rank the stocks inside the selected industry.</div></div>'+
+    '<div class="rotation-placeholder"><div class="rotation-placeholder-title">Rotation Inside This Sector</div><div class="rotation-placeholder-body">Volatility-adjusted rotation score: 40% monthly thrust plus 60% month/quarter momentum scaled by monthly versus weekly volatility. Table defaults to highest score first.</div></div>'+
     '<div class="stock-table-wrap" id="sector-stock-table"><div class="flow-empty">Loading Finviz stock list...</div></div>'+
     '</div></td></tr>';
 }
@@ -766,14 +806,17 @@ function renderStockTable(rows,msg){
   var el=document.getElementById('sector-stock-table');if(!el)return;
   if(msg){el.innerHTML='<div class="flow-empty">'+esc(msg)+'</div>';return;}
   if(!rows||!rows.length){el.innerHTML='<div class="flow-empty">No stock rows parsed from Finviz. Use the Open Finviz link above.</div>';return;}
-  var cols=['Ticker','Perf W','Perf M','Perf Q','Perf YTD','Price','Change','Volume','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','P/FCF'];
+  var cols=['Ticker','Rotation','Perf W','Perf M','Perf Q','Perf YTD','Vol W','Vol M','Price','Change','Volume','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','P/FCF'];
   var html='<table class="stock-table"><thead><tr>'+cols.map(function(c){return'<th onclick="sortStockTable(this)">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
   rows.forEach(function(r){
     html+='<tr><td class="stock-symbol" data-value="'+esc(r.ticker)+'"><button onclick="loadStockChart('+JSON.stringify(String(r.ticker||'')).replace(/"/g,'&quot;')+',this)">'+esc(r.ticker)+'</button></td>'+
+      '<td class="'+flowClass(r.rotationScore)+'" data-value="'+(isNaN(r.rotationScore)?-999999:r.rotationScore)+'">'+fmtScore(r.rotationScore)+'</td>'+
       '<td class="'+flowClass(r.perfWeek)+'" data-value="'+(parseNum(r.perfWeek)||0)+'">'+esc(r.perfWeek||'--')+'</td>'+
       '<td class="'+flowClass(r.perfMonth)+'" data-value="'+(parseNum(r.perfMonth)||0)+'">'+esc(r.perfMonth||'--')+'</td>'+
       '<td class="'+flowClass(r.perfQuart)+'" data-value="'+(parseNum(r.perfQuart)||0)+'">'+esc(r.perfQuart||'--')+'</td>'+
       '<td class="'+flowClass(r.perfYtd)+'" data-value="'+(parseNum(r.perfYtd)||0)+'">'+esc(r.perfYtd||'--')+'</td>'+
+      '<td data-value="'+(parseNum(r.volW)||0)+'">'+esc(r.volW||'--')+'</td>'+
+      '<td data-value="'+(parseNum(r.volM)||0)+'">'+esc(r.volM||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.price)||0)+'">'+esc(r.price||'--')+'</td>'+
       '<td class="'+flowClass(r.change)+'" data-value="'+(parseNum(r.change)||0)+'">'+esc(r.change||'--')+'</td>'+
       '<td data-value="'+parseVolume(r.volume)+'">'+esc(r.volume||'--')+'</td>'+
@@ -790,11 +833,12 @@ function renderStockTable(rows,msg){
 function parseMarketCap(v){var s=String(v||'').replace(/,/g,'').trim(),n=parseFloat(s);if(isNaN(n))return 0;if(/T$/i.test(s))return n*1e12;if(/B$/i.test(s))return n*1e9;if(/M$/i.test(s))return n*1e6;if(/K$/i.test(s))return n*1e3;return n;}
 function parseVolume(v){return parseFloat(String(v||'').replace(/,/g,''))||0;}
 function sortStockTable(th){
+  closeStockChart();
   var table=th.closest('table'),tbody=table.querySelector('tbody'),idx=Array.prototype.indexOf.call(th.parentNode.children,th);
   var dir=th.getAttribute('data-sort')==='asc'?'desc':'asc';
   Array.prototype.forEach.call(th.parentNode.children,function(h){h.removeAttribute('data-sort');});
   th.setAttribute('data-sort',dir);
-  var rows=Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+  var rows=Array.prototype.slice.call(tbody.querySelectorAll('tr:not(.stock-chart-row)'));
   rows.sort(function(a,b){
     var av=a.children[idx].getAttribute('data-value')||a.children[idx].textContent,bv=b.children[idx].getAttribute('data-value')||b.children[idx].textContent;
     var an=parseFloat(av),bn=parseFloat(bv),cmp;
@@ -823,7 +867,7 @@ async function loadStockChart(ticker,btn){
   if(selectedStockAnchor===btn){closeStockChart();return;}
   closeStockChart();selectedStockAnchor=btn;
   var hostRow=btn&&btn.closest?btn.closest('tr'):null,table=btn&&btn.closest?btn.closest('table'):null;
-  var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:15;
+  var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:18;
   if(hostRow)hostRow.insertAdjacentHTML('afterend',stockChartMarkup(ticker,colspan));
   var panel=document.getElementById('stock-chart-panel'),box=document.getElementById('stock-chart-box'),title=document.getElementById('stock-chart-title'),note=document.getElementById('stock-chart-note');
   if(!panel||!box)return;
@@ -855,7 +899,7 @@ async function openSectorDrilldown(name,btn){
     var valRows=parseFinvizStocks(valTxt,121);
     selectedIndustryRows=mergeFinvizRows(perfRows,valRows);
     if(selectedIndustryRows.length){
-      document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' stocks from Finviz performance + valuation views. Rotation scoring is pending.';
+      document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' small/active stocks from Finviz performance + valuation views. Sorted by volatility-adjusted rotation score.';
       renderStockTable(selectedIndustryRows);
     }else{
       document.getElementById('sector-dd-sub').textContent='Finviz page opened, but no stock rows were parsed. Attempted URL is linked above.';
@@ -874,11 +918,12 @@ function renderFlowTable(id,rows,cols){
   html+='</tbody></table>';el.innerHTML=html;
 }
 function sortFlowTable(th){
+  closeSectorDrilldown();
   var table=th.closest('table'),tbody=table.querySelector('tbody'),idx=Array.prototype.indexOf.call(th.parentNode.children,th);
   var dir=th.getAttribute('data-sort')==='asc'?'desc':'asc';
   Array.prototype.forEach.call(th.parentNode.children,function(h){h.removeAttribute('data-sort');});
   th.setAttribute('data-sort',dir);
-  var rows=Array.prototype.slice.call(tbody.querySelectorAll('tr'));
+  var rows=Array.prototype.slice.call(tbody.querySelectorAll('tr:not(.sector-drilldown-row)'));
   rows.sort(function(a,b){
     var av=a.children[idx].getAttribute('data-value')||a.children[idx].textContent,bv=b.children[idx].getAttribute('data-value')||b.children[idx].textContent;
     var an=parseFloat(av),bn=parseFloat(bv),cmp;
@@ -1136,6 +1181,7 @@ function render(data){
   else{tp.classList.remove('visible');}
 }
 
+try{setFlowFont(localStorage.getItem('flowFontSize')||'normal');}catch(e){setFlowFont('normal');}
 fetchFromAPI(true);
 </script>
 </body>
