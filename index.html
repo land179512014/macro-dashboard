@@ -492,8 +492,9 @@ function resizeActiveChart(){
 }
 function setChartSixMonthRange(){
   if(!activeStockChart||!activeChartCandles||!activeChartCandles.length)return;
-  var startIdx=Math.max(0,activeChartCandles.length-126);
-  activeStockChart.timeScale().setVisibleLogicalRange({from:startIdx,to:activeChartCandles.length+2});
+  var endIdx=activeChartCandles.length-1,startIdx=Math.max(0,endIdx-125);
+  activeStockChart.timeScale().setVisibleRange({from:activeChartCandles[startIdx].time,to:activeChartCandles[endIdx].time});
+  activeStockChart.timeScale().scrollToRealTime();
 }
 
 // ── REGIME HISTORY — reconstructed from price data ──
@@ -866,11 +867,15 @@ function sortStockTable(th){
 }
 async function fetchYahooCandles(ticker){
   var url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&range=1y&_='+Date.now();
-  var txt=await proxyFetch(url,12000);if(!txt)return[];
+  var txt=null;
+  try{var direct=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(12000)});if(direct.ok)txt=await direct.text();}catch(e){}
+  if(!txt)txt=await proxyFetch(url,12000);
+  if(!txt)return[];
   var raw=JSON.parse(txt),json=raw.contents?JSON.parse(raw.contents):raw;
   var res=json&&json.chart&&json.chart.result&&json.chart.result[0];if(!res||!res.timestamp)return[];
   var q=res.indicators&&res.indicators.quote&&res.indicators.quote[0];if(!q)return[];
-  return res.timestamp.map(function(t,i){return{time:new Date(t*1000).toISOString().slice(0,10),open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i]};}).filter(function(r){return [r.open,r.high,r.low,r.close].every(function(v){return v!=null&&!isNaN(v);});});
+  var seen={};
+  return res.timestamp.map(function(t,i){return{time:new Date(t*1000).toISOString().slice(0,10),open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i]};}).filter(function(r){return [r.open,r.high,r.low,r.close].every(function(v){return v!=null&&!isNaN(v);});}).sort(function(a,b){return a.time.localeCompare(b.time);}).filter(function(r){if(seen[r.time])return false;seen[r.time]=true;return true;});
 }
 function ensureChartSeries(chart){
   if(chart.addSeries&&window.LightweightCharts&&LightweightCharts.CandlestickSeries)return chart.addSeries(LightweightCharts.CandlestickSeries,{upColor:'#22c55e',downColor:'#ef4444',borderVisible:false,wickUpColor:'#22c55e',wickDownColor:'#ef4444'});
