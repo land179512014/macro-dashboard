@@ -765,6 +765,9 @@ function finvizIndustrySlug(name){
 function finvizIndustryUrl(name,view){
   return 'https://finviz.com/screener?v='+(view||141)+'&f=cap_smallover,'+finvizIndustrySlug(name)+',sh_avgvol_o100&o=-perf52w';
 }
+function finvizPageUrl(url,start){
+  return url+(url.indexOf('?')>=0?'&':'?')+'r='+start;
+}
 function flowCell(row,col){
   if(col==='Name')return '<button class="flow-name-btn" onclick="openSectorDrilldown('+JSON.stringify(String(row.Name||'')).replace(/"/g,'&quot;')+',this)">'+esc(row.Name||'--')+'</button>';
   if(col==='Sector Strength')return pill(cleanStrength(row[col]),cleanStrength(row[col]));
@@ -788,6 +791,20 @@ function parseFinvizStocks(html,view){
     else out.push({ticker:ticker,perfWeek:cells[2],perfMonth:cells[3],perfQuart:cells[4],perfHalf:cells[5],perfYtd:cells[6],perfYear:cells[7],volW:cells[11],volM:cells[12],avgVolume:cells[13],relVolume:cells[14],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
   });
   return out;
+}
+async function fetchFinvizStockPages(url,view){
+  var all=[],seen={},pageSize=20;
+  for(var start=1;start<=401;start+=pageSize){
+    var pageUrl=start===1?url:finvizPageUrl(url,start);
+    var txt=await proxyFetch(pageUrl,15000);
+    var rows=parseFinvizStocks(txt,view);
+    var added=0;
+    rows.forEach(function(r){
+      if(!seen[r.ticker]){seen[r.ticker]=1;all.push(r);added++;}
+    });
+    if(rows.length<pageSize||added===0)break;
+  }
+  return all;
 }
 function rotationScore(row){
   var d=parseNum(row&&row.perfMonth)/100,e=parseNum(row&&row.perfQuart)/100,l=parseNum(row&&row.volW)/100,m=parseNum(row&&row.volM)/100;
@@ -971,10 +988,8 @@ async function openSectorDrilldown(name,btn){
   var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:9;
   if(hostRow){hostRow.insertAdjacentHTML('afterend',sectorDrilldownMarkup(row,name,selectedIndustryUrl,valuationUrl,colspan));}
   try{
-    var perfTxt=await proxyFetch(selectedIndustryUrl,15000);
-    var valTxt=await proxyFetch(valuationUrl,15000);
-    var perfRows=parseFinvizStocks(perfTxt,141);
-    var valRows=parseFinvizStocks(valTxt,121);
+    var perfRows=await fetchFinvizStockPages(selectedIndustryUrl,141);
+    var valRows=await fetchFinvizStockPages(valuationUrl,121);
     selectedIndustryRows=mergeFinvizRows(perfRows,valRows);
     if(selectedIndustryRows.length){
       document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' small/active stocks from Finviz performance + valuation views. Sorted by volatility-adjusted rotation score.';
