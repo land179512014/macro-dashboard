@@ -1014,7 +1014,7 @@ async function openSectorDrilldown(name,btn){
   var row=currentFlowRowsByName[name]||{Name:name};
   selectedIndustry=row;selectedIndustryRows=[];selectedIndustryUrl=finvizIndustryUrl(name,141);
   var valuationUrl=finvizIndustryUrl(name,121);
-  var technicalUrl=finvizIndustryUrl(name,171);
+  var technicalUrl=addUrlParam(finvizIndustryUrl(name,171),'ft','3');
   closeSectorDrilldown();
   selectedIndustryAnchor=btn;
   var hostRow=btn&&btn.closest?btn.closest('tr'):null,table=btn&&btn.closest?btn.closest('table'):null;
