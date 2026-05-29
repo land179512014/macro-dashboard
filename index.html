@@ -788,7 +788,7 @@ function parseFinvizStocks(html,view){
     if(!/^\d+$/.test(cells[0]))return;
     var links=Array.prototype.slice.call(tr.querySelectorAll('a')).map(function(a){return{txt:a.textContent.trim(),href:a.href||a.getAttribute('href')||''};});
     var ticker=cells[1],quote=links.find(function(a){return a.txt===ticker;});
-    if(view===121)out.push({ticker:ticker,marketCap:cells[2],pe:cells[3],fwdPe:cells[4],peg:cells[5],ps:cells[6],pb:cells[7],pfcf:cells[9],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
+    if(view===121)out.push({ticker:ticker,marketCap:cells[2],pe:cells[3],fwdPe:cells[4],peg:cells[5],ps:cells[6],pb:cells[7],pc:cells[8],pfcf:cells[9],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
     else if(view===171)out.push({ticker:ticker,sma20:cells[4],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
     else out.push({ticker:ticker,perfWeek:cells[2],perfMonth:cells[3],perfQuart:cells[4],perfHalf:cells[5],perfYtd:cells[6],perfYear:cells[7],volW:cells[11],volM:cells[12],avgVolume:cells[13],relVolume:cells[14],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
   });
@@ -859,7 +859,7 @@ function renderStockTable(rows,msg){
   var el=document.getElementById('sector-stock-table');if(!el)return;
   if(msg){el.innerHTML='<div class="flow-empty">'+esc(msg)+'</div>';return;}
   if(!rows||!rows.length){el.innerHTML='<div class="flow-empty">No stock rows parsed from Finviz. Use the Open Finviz link above.</div>';return;}
-  var cols=['Ticker','Buy Gauge','Rotation','Perf Year','Perf YTD','Vol M','Change','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','SMA20'];
+  var cols=['Ticker','Buy Gauge','Rotation','Perf Year','Perf YTD','Vol M','Change','Market Cap','Fwd P/E','PEG','P/S','P/C','P/B','SMA20'];
   var html='<table class="stock-table"><thead><tr>'+cols.map(function(c){return'<th draggable="true" onclick="sortStockTable(this)" ondragstart="columnDragStart(event,this)" ondragover="columnDragOver(event,this)" ondragleave="columnDragLeave(this)" ondrop="columnDrop(event,this)" ondragend="columnDragEnd()">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
   rows.forEach(function(r){
     html+='<tr><td class="stock-symbol" data-value="'+esc(r.ticker)+'"><button onclick="loadStockChart('+JSON.stringify(String(r.ticker||'')).replace(/"/g,'&quot;')+',this)">'+esc(r.ticker)+'</button></td>'+
@@ -870,10 +870,10 @@ function renderStockTable(rows,msg){
       '<td data-value="'+(parseNum(r.volM)||0)+'">'+esc(r.volM||'--')+'</td>'+
       '<td class="'+flowClass(r.change)+'" data-value="'+(parseNum(r.change)||0)+'">'+esc(r.change||'--')+'</td>'+
       '<td data-value="'+parseMarketCap(r.marketCap)+'">'+esc(r.marketCap||'--')+'</td>'+
-      '<td data-value="'+(parseNum(r.pe)||0)+'">'+esc(r.pe||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.fwdPe)||0)+'">'+esc(r.fwdPe||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.peg)||0)+'">'+esc(r.peg||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.ps)||0)+'">'+esc(r.ps||'--')+'</td>'+
+      '<td data-value="'+(parseNum(r.pc)||0)+'">'+esc(r.pc||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.pb)||0)+'">'+esc(r.pb||'--')+'</td>'+
       '<td class="'+flowClass(r.sma20)+'" data-value="'+(parseNum(r.sma20)||0)+'">'+esc(r.sma20||'--')+'</td></tr>';
   });
