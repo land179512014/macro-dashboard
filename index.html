@@ -767,6 +767,9 @@ function finvizIndustrySlug(name){
 function finvizIndustryUrl(name,view){
   return 'https://finviz.com/screener?v='+(view||141)+'&f=cap_smallover,'+finvizIndustrySlug(name)+',sh_avgvol_o100&o=-perf52w';
 }
+function addUrlParam(url,key,val){
+  return url+(url.indexOf('?')>=0?'&':'?')+encodeURIComponent(key)+'='+encodeURIComponent(val);
+}
 function finvizPageUrl(url,start){
   return url+(url.indexOf('?')>=0?'&':'?')+'r='+start;
 }
@@ -796,16 +799,24 @@ function parseFinvizStocks(html,view){
   return out;
 }
 async function fetchFinvizStockPages(url,view){
-  var all=[],seen={},pageSize=20;
+  var all=[],seen={},pageSize=20,emptyPages=0;
   for(var start=1;start<=401;start+=pageSize){
     var pageUrl=start===1?url:finvizPageUrl(url,start);
-    var txt=await proxyFetch(pageUrl,15000);
-    var rows=parseFinvizStocks(txt,view);
+    var rows=[];
+    for(var attempt=0;attempt<2;attempt++){
+      var fetchUrl=attempt===0?pageUrl:addUrlParam(pageUrl,'_',Date.now());
+      var txt=await proxyFetch(fetchUrl,18000);
+      rows=parseFinvizStocks(txt,view);
+      if(rows.length)break;
+    }
     var added=0;
     rows.forEach(function(r){
       if(!seen[r.ticker]){seen[r.ticker]=1;all.push(r);added++;}
     });
-    if(rows.length<pageSize||added===0)break;
+    if(rows.length===0){emptyPages++;if(start===1||emptyPages>=2)break;else continue;}
+    emptyPages=0;
+    if(added===0)break;
+    if(rows.length<pageSize)break;
   }
   return all;
 }
