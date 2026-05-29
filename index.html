@@ -938,9 +938,30 @@ function renderStockTable(rows,msg){
       '<td data-value="'+(parseNum(r.ps)||0)+'">'+esc(r.ps||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.pc)||0)+'">'+esc(r.pc||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.pb)||0)+'">'+esc(r.pb||'--')+'</td>'+
-      '<td class="'+flowClass(r.sma20)+'" data-value="'+(parseNum(r.sma20)||0)+'">'+esc(r.sma20||'--')+'</td></tr>';
+      '<td class="'+flowClass(r.sma20)+'" data-field="sma20" data-ticker="'+esc(r.ticker)+'" data-value="'+(parseNum(r.sma20)||0)+'">'+esc(r.sma20||'--')+'</td></tr>';
   });
   html+='</tbody></table>';el.innerHTML=html;
+  hydrateMissingSma20(rows);
+}
+function computeSma20FromCandles(candles){
+  if(!candles||candles.length<20)return null;
+  var tail=candles.slice(-20),sum=tail.reduce(function(s,c){return s+c.close;},0),sma=sum/20,last=candles[candles.length-1].close;
+  if(!sma||isNaN(sma)||last==null||isNaN(last))return null;
+  return ((last/sma)-1)*100;
+}
+async function hydrateMissingSma20(rows){
+  var missing=(rows||[]).filter(function(r){return r&&r.ticker&&isNaN(parseNum(r.sma20));});
+  for(var i=0;i<missing.length;i++){
+    var r=missing[i],safeTicker=(window.CSS&&CSS.escape)?CSS.escape(r.ticker):String(r.ticker).replace(/"/g,'\\"'),cell=document.querySelector('td[data-field="sma20"][data-ticker="'+safeTicker+'"]');
+    if(!cell)continue;
+    cell.textContent='...';
+    try{
+      var candles=await fetchYahooCandles(r.ticker),v=computeSma20FromCandles(candles);
+      if(v===null){cell.textContent='--';continue;}
+      r.sma20=(v>=0?'+':'')+v.toFixed(2)+'%';
+      cell.textContent=r.sma20;cell.setAttribute('data-value',v.toFixed(4));cell.className=flowClass(v);
+    }catch(e){cell.textContent='--';}
+  }
 }
 function columnDragStart(ev,th){
   var table=th.closest('table'),idx=Array.prototype.indexOf.call(th.parentNode.children,th);
