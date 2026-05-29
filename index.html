@@ -789,6 +789,7 @@ function parseFinvizStocks(html,view){
     var links=Array.prototype.slice.call(tr.querySelectorAll('a')).map(function(a){return{txt:a.textContent.trim(),href:a.href||a.getAttribute('href')||''};});
     var ticker=cells[1],quote=links.find(function(a){return a.txt===ticker;});
     if(view===121)out.push({ticker:ticker,marketCap:cells[2],pe:cells[3],fwdPe:cells[4],peg:cells[5],ps:cells[6],pb:cells[7],pfcf:cells[9],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
+    else if(view===171)out.push({ticker:ticker,sma20:cells[4],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
     else out.push({ticker:ticker,perfWeek:cells[2],perfMonth:cells[3],perfQuart:cells[4],perfHalf:cells[5],perfYtd:cells[6],perfYear:cells[7],volW:cells[11],volM:cells[12],avgVolume:cells[13],relVolume:cells[14],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
   });
   return out;
@@ -834,20 +835,21 @@ function stockGaugeRank(label){
   var order=['🔥 Overheated / Expanding Vol','🔥 Overheated','🏆 Holy Grail','🟢 Constructive','🚀 Reversal (Dip Buy)','👀 Early Reversal','⚡ Trend Shift (Recovery)','👀 Early Recovery','🐣 Bottom Breakout','👀 Early Bottom','⚖️ Neutral','🪤 Bull Trap','⛔ Avoid'];
   var idx=order.indexOf(label);return idx<0?999:idx;
 }
-function mergeFinvizRows(perfRows,valRows){
+function mergeFinvizRows(perfRows,valRows,techRows){
   var byTicker={};
   (perfRows||[]).forEach(function(r){byTicker[r.ticker]=Object.assign({},r);});
   (valRows||[]).forEach(function(r){byTicker[r.ticker]=Object.assign(byTicker[r.ticker]||{ticker:r.ticker},r);});
+  (techRows||[]).forEach(function(r){byTicker[r.ticker]=Object.assign(byTicker[r.ticker]||{ticker:r.ticker},r);});
   return Object.keys(byTicker).map(function(t){var r=byTicker[t];r.rotationScore=rotationScore(r);r.stockGauge=stockBuyGauge(r);return r;}).sort(function(a,b){
     var av=isNaN(a.rotationScore)?-Infinity:a.rotationScore,bv=isNaN(b.rotationScore)?-Infinity:b.rotationScore;
     if(bv!==av)return bv-av;
     return String(a.ticker||'').localeCompare(String(b.ticker||''));
   });
 }
-function sectorDrilldownMarkup(row,name,perfUrl,valUrl,colspan){
+function sectorDrilldownMarkup(row,name,perfUrl,valUrl,techUrl,colspan){
   var activeFlow=activeFlowColumn();
   return '<tr class="sector-drilldown-row"><td colspan="'+colspan+'"><div class="sector-drilldown" id="sector-drilldown">'+
-    '<div class="sector-dd-head"><div><div class="sector-dd-kicker">Selected Industry</div><div class="sector-dd-title" id="sector-dd-title">'+esc(name)+'</div><div class="sector-dd-sub" id="sector-dd-sub">Fetching Finviz performance and valuation data for this industry.</div></div><div class="sector-dd-actions"><a class="sector-dd-link" id="sector-dd-finviz" href="'+esc(perfUrl)+'" target="_blank" rel="noopener">Performance</a><a class="sector-dd-link" href="'+esc(valUrl)+'" target="_blank" rel="noopener">Valuation</a><button class="sector-dd-close" onclick="closeSectorDrilldown()">Close</button></div></div>'+
+    '<div class="sector-dd-head"><div><div class="sector-dd-kicker">Selected Industry</div><div class="sector-dd-title" id="sector-dd-title">'+esc(name)+'</div><div class="sector-dd-sub" id="sector-dd-sub">Fetching Finviz performance, valuation, and technical data for this industry.</div></div><div class="sector-dd-actions"><a class="sector-dd-link" id="sector-dd-finviz" href="'+esc(perfUrl)+'" target="_blank" rel="noopener">Performance</a><a class="sector-dd-link" href="'+esc(valUrl)+'" target="_blank" rel="noopener">Valuation</a><a class="sector-dd-link" href="'+esc(techUrl)+'" target="_blank" rel="noopener">Technical</a><button class="sector-dd-close" onclick="closeSectorDrilldown()">Close</button></div></div>'+
     '<div class="sector-dd-meta"><div class="sector-dd-metric"><div class="sector-dd-label">Active Signal</div><div class="sector-dd-val" id="sector-dd-active">'+esc(activeFlow)+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Sector Strength</div><div class="sector-dd-val" id="sector-dd-strength">'+pill(cleanStrength(row['Sector Strength']),cleanStrength(row['Sector Strength']))+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Buy Gauge</div><div class="sector-dd-val" id="sector-dd-gauge">'+pill(cleanGauge(row['Buy Gauge']),cleanGauge(row['Buy Gauge']))+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Offense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Offense Flow Monthly'])+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Defense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Defense Flow Monthly'])+'</div></div></div>'+
     '<div class="rotation-placeholder"><div class="rotation-placeholder-title">Rotation Inside This Sector</div><div class="rotation-placeholder-body">Volatility-adjusted rotation score: 40% monthly thrust plus 60% month/quarter momentum scaled by monthly versus weekly volatility. Table defaults to highest score first.</div></div>'+
     '<div class="stock-table-wrap" id="sector-stock-table"><div class="flow-empty">Loading Finviz stock list...</div></div>'+
@@ -857,7 +859,7 @@ function renderStockTable(rows,msg){
   var el=document.getElementById('sector-stock-table');if(!el)return;
   if(msg){el.innerHTML='<div class="flow-empty">'+esc(msg)+'</div>';return;}
   if(!rows||!rows.length){el.innerHTML='<div class="flow-empty">No stock rows parsed from Finviz. Use the Open Finviz link above.</div>';return;}
-  var cols=['Ticker','Buy Gauge','Rotation','Perf Year','Perf YTD','Vol M','Change','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','P/FCF'];
+  var cols=['Ticker','Buy Gauge','Rotation','Perf Year','Perf YTD','Vol M','Change','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','SMA20'];
   var html='<table class="stock-table"><thead><tr>'+cols.map(function(c){return'<th draggable="true" onclick="sortStockTable(this)" ondragstart="columnDragStart(event,this)" ondragover="columnDragOver(event,this)" ondragleave="columnDragLeave(this)" ondrop="columnDrop(event,this)" ondragend="columnDragEnd()">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
   rows.forEach(function(r){
     html+='<tr><td class="stock-symbol" data-value="'+esc(r.ticker)+'"><button onclick="loadStockChart('+JSON.stringify(String(r.ticker||'')).replace(/"/g,'&quot;')+',this)">'+esc(r.ticker)+'</button></td>'+
@@ -873,7 +875,7 @@ function renderStockTable(rows,msg){
       '<td data-value="'+(parseNum(r.peg)||0)+'">'+esc(r.peg||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.ps)||0)+'">'+esc(r.ps||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.pb)||0)+'">'+esc(r.pb||'--')+'</td>'+
-      '<td data-value="'+(parseNum(r.pfcf)||0)+'">'+esc(r.pfcf||'--')+'</td></tr>';
+      '<td class="'+flowClass(r.sma20)+'" data-value="'+(parseNum(r.sma20)||0)+'">'+esc(r.sma20||'--')+'</td></tr>';
   });
   html+='</tbody></table>';el.innerHTML=html;
 }
@@ -1000,17 +1002,19 @@ async function openSectorDrilldown(name,btn){
   var row=currentFlowRowsByName[name]||{Name:name};
   selectedIndustry=row;selectedIndustryRows=[];selectedIndustryUrl=finvizIndustryUrl(name,141);
   var valuationUrl=finvizIndustryUrl(name,121);
+  var technicalUrl=finvizIndustryUrl(name,171);
   closeSectorDrilldown();
   selectedIndustryAnchor=btn;
   var hostRow=btn&&btn.closest?btn.closest('tr'):null,table=btn&&btn.closest?btn.closest('table'):null;
   var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:9;
-  if(hostRow){hostRow.insertAdjacentHTML('afterend',sectorDrilldownMarkup(row,name,selectedIndustryUrl,valuationUrl,colspan));}
+  if(hostRow){hostRow.insertAdjacentHTML('afterend',sectorDrilldownMarkup(row,name,selectedIndustryUrl,valuationUrl,technicalUrl,colspan));}
   try{
     var perfRows=await fetchFinvizStockPages(selectedIndustryUrl,141);
     var valRows=await fetchFinvizStockPages(valuationUrl,121);
-    selectedIndustryRows=mergeFinvizRows(perfRows,valRows);
+    var techRows=await fetchFinvizStockPages(technicalUrl,171);
+    selectedIndustryRows=mergeFinvizRows(perfRows,valRows,techRows);
     if(selectedIndustryRows.length){
-      document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' small/active stocks from Finviz performance + valuation views. Sorted by volatility-adjusted rotation score.';
+      document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' small/active stocks from Finviz performance + valuation + technical views. Sorted by volatility-adjusted rotation score.';
       renderStockTable(selectedIndustryRows);
     }else{
       document.getElementById('sector-dd-sub').textContent='Finviz page opened, but no stock rows were parsed. Attempted URL is linked above.';
