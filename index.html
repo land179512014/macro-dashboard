@@ -254,6 +254,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .stock-table th:hover{color:#93c5fd}
 .stock-table td{padding:7px 7px;border-bottom:1px solid rgba(255,255,255,.04);color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .stock-table tr:hover td{background:rgba(59,130,246,.06)}
+.stock-gauge{font-weight:800}
 .stock-symbol button{appearance:none;border:0;background:transparent;color:#93c5fd;font:inherit;font-weight:800;cursor:pointer;padding:0;text-align:left}.stock-symbol button:hover{text-decoration:underline;color:#bfdbfe}
 .stock-chart-row td{padding:0!important;background:#0f172a!important}
 .chart-panel{width:min(1180px,calc(100% - 28px));margin:14px auto;background:#0f172a;border:1px solid #334155;border-radius:10px;overflow:hidden;display:none}
@@ -812,11 +813,32 @@ function rotationScore(row){
   return (((d*0.7)+((d-(e/3))*0.3))*0.4)+((((d*0.4)+(e*0.6))*(m/l))*0.6);
 }
 function fmtScore(v){return isNaN(v)?'--':v.toFixed(2);}
+function stockBuyGauge(row){
+  var h=parseNum(row&&row.perfYear)/100,e=parseNum(row&&row.perfQuart)/100,u=row&&row.rotationScore,l=parseNum(row&&row.volW)/100,m=parseNum(row&&row.volM)/100;
+  if(isNaN(u))return'';
+  if(h>0&&e>0&&u>0.4&&l>=m)return'🔥 Overheated / Expanding Vol';
+  if(h>0&&e>0&&u>0.4)return'🔥 Overheated';
+  if(h>0&&e>0&&u>0.15)return'🏆 Holy Grail';
+  if(h>0&&e>0&&u>0)return'🟢 Constructive';
+  if(h>0&&e<0&&u>0.15)return'🚀 Reversal (Dip Buy)';
+  if(h>0&&e<0&&u>0)return'👀 Early Reversal';
+  if(h<0&&e>0&&u>0.15)return'⚡ Trend Shift (Recovery)';
+  if(h<0&&e>0&&u>0)return'👀 Early Recovery';
+  if(h<0&&e<0&&u>0.15)return'🐣 Bottom Breakout';
+  if(h<0&&e<0&&u>0)return'👀 Early Bottom';
+  if(h>0&&e>0&&u<0)return'🪤 Bull Trap';
+  if(h<0&&e<0&&u<0)return'⛔ Avoid';
+  return'⚖️ Neutral';
+}
+function stockGaugeRank(label){
+  var order=['🔥 Overheated / Expanding Vol','🔥 Overheated','🏆 Holy Grail','🟢 Constructive','🚀 Reversal (Dip Buy)','👀 Early Reversal','⚡ Trend Shift (Recovery)','👀 Early Recovery','🐣 Bottom Breakout','👀 Early Bottom','⚖️ Neutral','🪤 Bull Trap','⛔ Avoid'];
+  var idx=order.indexOf(label);return idx<0?999:idx;
+}
 function mergeFinvizRows(perfRows,valRows){
   var byTicker={};
   (perfRows||[]).forEach(function(r){byTicker[r.ticker]=Object.assign({},r);});
   (valRows||[]).forEach(function(r){byTicker[r.ticker]=Object.assign(byTicker[r.ticker]||{ticker:r.ticker},r);});
-  return Object.keys(byTicker).map(function(t){var r=byTicker[t];r.rotationScore=rotationScore(r);return r;}).sort(function(a,b){
+  return Object.keys(byTicker).map(function(t){var r=byTicker[t];r.rotationScore=rotationScore(r);r.stockGauge=stockBuyGauge(r);return r;}).sort(function(a,b){
     var av=isNaN(a.rotationScore)?-Infinity:a.rotationScore,bv=isNaN(b.rotationScore)?-Infinity:b.rotationScore;
     if(bv!==av)return bv-av;
     return String(a.ticker||'').localeCompare(String(b.ticker||''));
@@ -835,20 +857,16 @@ function renderStockTable(rows,msg){
   var el=document.getElementById('sector-stock-table');if(!el)return;
   if(msg){el.innerHTML='<div class="flow-empty">'+esc(msg)+'</div>';return;}
   if(!rows||!rows.length){el.innerHTML='<div class="flow-empty">No stock rows parsed from Finviz. Use the Open Finviz link above.</div>';return;}
-  var cols=['Ticker','Rotation','Perf W','Perf M','Perf Q','Perf YTD','Vol W','Vol M','Price','Change','Volume','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','P/FCF'];
+  var cols=['Ticker','Buy Gauge','Rotation','Perf Year','Perf YTD','Vol M','Change','Market Cap','P/E','Fwd P/E','PEG','P/S','P/B','P/FCF'];
   var html='<table class="stock-table"><thead><tr>'+cols.map(function(c){return'<th draggable="true" onclick="sortStockTable(this)" ondragstart="columnDragStart(event,this)" ondragover="columnDragOver(event,this)" ondragleave="columnDragLeave(this)" ondrop="columnDrop(event,this)" ondragend="columnDragEnd()">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
   rows.forEach(function(r){
     html+='<tr><td class="stock-symbol" data-value="'+esc(r.ticker)+'"><button onclick="loadStockChart('+JSON.stringify(String(r.ticker||'')).replace(/"/g,'&quot;')+',this)">'+esc(r.ticker)+'</button></td>'+
+      '<td class="stock-gauge" data-value="'+stockGaugeRank(r.stockGauge)+'">'+esc(r.stockGauge||'--')+'</td>'+
       '<td class="'+flowClass(r.rotationScore)+'" data-value="'+(isNaN(r.rotationScore)?-999999:r.rotationScore)+'">'+fmtScore(r.rotationScore)+'</td>'+
-      '<td class="'+flowClass(r.perfWeek)+'" data-value="'+(parseNum(r.perfWeek)||0)+'">'+esc(r.perfWeek||'--')+'</td>'+
-      '<td class="'+flowClass(r.perfMonth)+'" data-value="'+(parseNum(r.perfMonth)||0)+'">'+esc(r.perfMonth||'--')+'</td>'+
-      '<td class="'+flowClass(r.perfQuart)+'" data-value="'+(parseNum(r.perfQuart)||0)+'">'+esc(r.perfQuart||'--')+'</td>'+
+      '<td class="'+flowClass(r.perfYear)+'" data-value="'+(parseNum(r.perfYear)||0)+'">'+esc(r.perfYear||'--')+'</td>'+
       '<td class="'+flowClass(r.perfYtd)+'" data-value="'+(parseNum(r.perfYtd)||0)+'">'+esc(r.perfYtd||'--')+'</td>'+
-      '<td data-value="'+(parseNum(r.volW)||0)+'">'+esc(r.volW||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.volM)||0)+'">'+esc(r.volM||'--')+'</td>'+
-      '<td data-value="'+(parseNum(r.price)||0)+'">'+esc(r.price||'--')+'</td>'+
       '<td class="'+flowClass(r.change)+'" data-value="'+(parseNum(r.change)||0)+'">'+esc(r.change||'--')+'</td>'+
-      '<td data-value="'+parseVolume(r.volume)+'">'+esc(r.volume||'--')+'</td>'+
       '<td data-value="'+parseMarketCap(r.marketCap)+'">'+esc(r.marketCap||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.pe)||0)+'">'+esc(r.pe||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.fwdPe)||0)+'">'+esc(r.fwdPe||'--')+'</td>'+
