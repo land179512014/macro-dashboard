@@ -256,6 +256,8 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .stock-table tbody tr:hover td{background:rgba(59,130,246,.18);box-shadow:inset 0 1px 0 rgba(147,197,253,.18),inset 0 -1px 0 rgba(147,197,253,.18);color:#f8fafc}
 .stock-table tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 #3b82f6,inset 0 1px 0 rgba(147,197,253,.18),inset 0 -1px 0 rgba(147,197,253,.18)}
 .stock-gauge{font-weight:800}
+.stock-hi-peg{background:#dcfce7!important;color:#14532d!important;font-weight:900;box-shadow:inset 0 0 0 1px #22c55e}
+.stock-hi-sma{background:#fef3c7!important;color:#92400e!important;font-weight:900;box-shadow:inset 0 0 0 1px #f59e0b}
 .stock-symbol button{appearance:none;border:0;background:transparent;color:#93c5fd;font:inherit;font-weight:800;cursor:pointer;padding:0;text-align:left}.stock-symbol button:hover{text-decoration:underline;color:#bfdbfe}
 .stock-chart-row>td{padding:0!important;background:#0f172a!important}
 .chart-panel{width:min(1180px,calc(100% - 28px));margin:14px auto;background:#0f172a;border:1px solid #334155;border-radius:10px;overflow:hidden;display:none}
@@ -505,6 +507,7 @@ var FLOW_HISTORY='https://docs.google.com/spreadsheets/d/1u-4AVn514KIjRVmObQQ9Bt
 var YAHOO_DXY='https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1y';
 var YAHOO_10Y='https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1y';
 var CF_PROXY='https://macro-dashboard.george982014.workers.dev/?url=';
+var FINVIZ_INDUSTRY_API='https://macro-dashboard.george982014.workers.dev/finviz-industry?name=';
 var FALLBACK_PROXIES=[function(u){return'https://api.allorigins.win/raw?url='+encodeURIComponent(u);},function(u){return'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u);}];
 var activeTF='1m',liveData=null,refreshTimer=null;
 var CACHE_MS=4*60*60*1000;
@@ -514,6 +517,7 @@ var lastBreadthPhase=null,lastSpecCount=null;
 var rawDxyRows=null,rawY10Rows=null,historyTF='1m';
 var currentRegimeId=null,currentRiskOn=false;
 var selectedIndustry=null,selectedIndustryRows=[],selectedIndustryUrl=null,currentFlowRowsByName={};
+var selectedIndustryPage=1,selectedIndustryHasMore=false;
 var selectedIndustryAnchor=null,selectedStockAnchor=null,activeStockChart=null,activeStockSeries=null,activeSmaSeries=[],activeChartCandles=[];
 var flowModeOverride='auto';
 var flowFontSize='normal';
@@ -871,6 +875,30 @@ async function fetchFinvizStockPages(url,view){
   }
   return all;
 }
+async function fetchFinvizIndustryFromWorker(name,page){
+  try{
+    var r=await fetch(FINVIZ_INDUSTRY_API+encodeURIComponent(name)+'&page='+(page||1),{signal:AbortSignal.timeout(24000)});
+    if(!r.ok)return null;
+    var data=await r.json();
+    if(!data||!data.ok||!data.rows||!data.rows.length)return null;
+    return data;
+  }catch(e){return null;}
+}
+function normalizeWorkerRows(rows){
+  return (rows||[]).map(function(r){
+    var out=Object.assign({},r);
+    out.stockGauge=out.stockGauge||out.buyGauge||stockBuyGauge(out);
+    out.rotationScore=typeof out.rotationScore==='number'?out.rotationScore:rotationScore(out);
+    return out;
+  });
+}
+function sortStockRows(rows){
+  return (rows||[]).sort(function(a,b){
+    var av=isNaN(a.rotationScore)?-Infinity:a.rotationScore,bv=isNaN(b.rotationScore)?-Infinity:b.rotationScore;
+    if(bv!==av)return bv-av;
+    return String(a.ticker||'').localeCompare(String(b.ticker||''));
+  });
+}
 function rotationScore(row){
   var d=parseNum(row&&row.perfMonth)/100,e=parseNum(row&&row.perfQuart)/100,l=parseNum(row&&row.volW)/100,m=parseNum(row&&row.volM)/100;
   if([d,e,l,m].some(function(v){return isNaN(v);})||l===0||m===0)return NaN;
@@ -918,6 +946,14 @@ function sectorDrilldownMarkup(row,name,perfUrl,valUrl,techUrl,colspan){
     '<div class="stock-table-wrap" id="sector-stock-table"><div class="flow-empty">Loading Finviz stock list...</div></div>'+
     '</div></td></tr>';
 }
+function pegHighlightClass(v){
+  var n=parseNum(v);
+  return !isNaN(n)&&n>0&&n<1?'stock-hi-peg':'';
+}
+function sma20HighlightClass(v){
+  var n=parseNum(v);
+  return !isNaN(n)&&n>=-3&&n<=5?'stock-hi-sma':'';
+}
 function renderStockTable(rows,msg){
   var el=document.getElementById('sector-stock-table');if(!el)return;
   if(msg){el.innerHTML='<div class="flow-empty">'+esc(msg)+'</div>';return;}
@@ -934,14 +970,67 @@ function renderStockTable(rows,msg){
       '<td class="'+flowClass(r.change)+'" data-value="'+(parseNum(r.change)||0)+'">'+esc(r.change||'--')+'</td>'+
       '<td data-value="'+parseMarketCap(r.marketCap)+'">'+esc(r.marketCap||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.fwdPe)||0)+'">'+esc(r.fwdPe||'--')+'</td>'+
-      '<td data-value="'+(parseNum(r.peg)||0)+'">'+esc(r.peg||'--')+'</td>'+
+      '<td class="'+pegHighlightClass(r.peg)+'" data-value="'+(parseNum(r.peg)||0)+'">'+esc(r.peg||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.ps)||0)+'">'+esc(r.ps||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.pc)||0)+'">'+esc(r.pc||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.pb)||0)+'">'+esc(r.pb||'--')+'</td>'+
-      '<td class="'+flowClass(r.sma20)+'" data-field="sma20" data-ticker="'+esc(r.ticker)+'" data-value="'+(parseNum(r.sma20)||0)+'">'+esc(r.sma20||'--')+'</td></tr>';
+      '<td class="'+flowClass(r.sma20)+' '+sma20HighlightClass(r.sma20)+'" data-field="sma20" data-ticker="'+esc(r.ticker)+'" data-value="'+(parseNum(r.sma20)||0)+'">'+esc(r.sma20||'--')+'</td></tr>';
   });
-  html+='</tbody></table>';el.innerHTML=html;
+  html+='</tbody></table>';
+  if(selectedIndustryHasMore){
+    html+='<div class="flow-empty" style="padding:10px 0 4px"><button class="sector-dd-close" onclick="loadMoreWorkerStocks()">Load More Stocks</button></div>';
+  }
+  el.innerHTML=html;
   hydrateMissingSma20(rows);
+}
+async function loadMoreWorkerStocks(){
+  if(!selectedIndustry||!selectedIndustry.Name)return;
+  var el=document.getElementById('sector-stock-table');
+  if(el){
+    var btn=el.querySelector('button[onclick="loadMoreWorkerStocks()"]');
+    if(btn)btn.textContent='Loading...';
+  }
+  var nextPage=selectedIndustryPage+1,data=await fetchFinvizIndustryFromWorker(selectedIndustry.Name,nextPage);
+  if(!data||!data.rows||!data.rows.length){
+    selectedIndustryHasMore=false;
+    renderStockTable(selectedIndustryRows);
+    return;
+  }
+  var seen={};
+  selectedIndustryRows.forEach(function(r){seen[r.ticker]=1;});
+  normalizeWorkerRows(data.rows).forEach(function(r){if(r.ticker&&!seen[r.ticker]){seen[r.ticker]=1;selectedIndustryRows.push(r);}});
+  selectedIndustryPage=nextPage;
+  selectedIndustryHasMore=data.hasMore!==false&&data.rows.length>=19;
+  selectedIndustryRows=sortStockRows(selectedIndustryRows);
+  document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' stocks from Cloudflare pages 1-'+selectedIndustryPage+'. Click Load More for the next page.';
+  renderStockTable(selectedIndustryRows);
+}
+function renderLegacyFinvizFallback(msg){
+  var el=document.getElementById('sector-stock-table');if(!el)return;
+  el.innerHTML='<div class="flow-empty">'+esc(msg||'Cloudflare did not return stock rows for this industry.')+
+    '<div style="margin-top:10px"><button class="sector-dd-close" onclick="loadLegacyFinvizForSelectedIndustry()">Try Legacy Finviz Fetch</button></div>'+
+    '<div style="margin-top:8px;color:#5b6b7c;font-size:.82em">This manual fallback is slower because it fetches performance, valuation, and technical pages separately.</div></div>';
+}
+async function loadLegacyFinvizForSelectedIndustry(){
+  if(!selectedIndustry||!selectedIndustry.Name)return;
+  var name=selectedIndustry.Name,el=document.getElementById('sector-stock-table');
+  if(el)el.innerHTML='<div class="flow-empty">Loading legacy Finviz pages for '+esc(name)+'...</div>';
+  selectedIndustryUrl=finvizIndustryUrl(name,141);
+  var valuationUrl=finvizIndustryUrl(name,121),technicalUrl=addUrlParam(finvizIndustryUrl(name,171),'ft','3');
+  try{
+    var perfRows=await fetchFinvizStockPages(selectedIndustryUrl,141);
+    var valRows=await fetchFinvizStockPages(valuationUrl,121);
+    var techRows=await fetchFinvizStockPages(technicalUrl,171);
+    selectedIndustryRows=mergeFinvizRows(perfRows,valRows,techRows);
+    if(selectedIndustryRows.length){
+      document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' stocks from the legacy Finviz fallback. Sorted by volatility-adjusted rotation score.';
+      renderStockTable(selectedIndustryRows);
+    }else{
+      renderStockTable(null,'Legacy Finviz fallback could not parse stock rows for this industry.');
+    }
+  }catch(e){
+    renderStockTable(null,'Legacy Finviz fallback failed. Use the direct Finviz links above.');
+  }
 }
 function computeSma20FromCandles(candles){
   if(!candles||candles.length<20)return null;
@@ -959,7 +1048,7 @@ async function hydrateMissingSma20(rows){
       var candles=await fetchYahooCandles(r.ticker),v=computeSma20FromCandles(candles);
       if(v===null){cell.textContent='--';continue;}
       r.sma20=(v>=0?'+':'')+v.toFixed(2)+'%';
-      cell.textContent=r.sma20;cell.setAttribute('data-value',v.toFixed(4));cell.className=flowClass(v);
+      cell.textContent=r.sma20;cell.setAttribute('data-value',v.toFixed(4));cell.className=flowClass(v)+' '+sma20HighlightClass(v);
     }catch(e){cell.textContent='--';}
   }
 }
@@ -1093,20 +1182,20 @@ async function openSectorDrilldown(name,btn){
   var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:9;
   if(hostRow){hostRow.insertAdjacentHTML('afterend',sectorDrilldownMarkup(row,name,selectedIndustryUrl,valuationUrl,technicalUrl,colspan));}
   try{
-    var perfRows=await fetchFinvizStockPages(selectedIndustryUrl,141);
-    var valRows=await fetchFinvizStockPages(valuationUrl,121);
-    var techRows=await fetchFinvizStockPages(technicalUrl,171);
-    selectedIndustryRows=mergeFinvizRows(perfRows,valRows,techRows);
-    if(selectedIndustryRows.length){
-      document.getElementById('sector-dd-sub').textContent='Loaded '+selectedIndustryRows.length+' small/active stocks from Finviz performance + valuation + technical views. Sorted by volatility-adjusted rotation score.';
+    selectedIndustryPage=1;selectedIndustryHasMore=false;
+    var workerData=await fetchFinvizIndustryFromWorker(name,1);
+    if(workerData&&workerData.rows&&workerData.rows.length){
+      selectedIndustryRows=sortStockRows(normalizeWorkerRows(workerData.rows));
+      selectedIndustryHasMore=workerData.hasMore!==false&&workerData.rows.length>=19;
+      document.getElementById('sector-dd-sub').textContent='Loaded page 1 from the Cloudflare Finviz cache. Click Load More for the next 20 stocks.';
       renderStockTable(selectedIndustryRows);
-    }else{
-      document.getElementById('sector-dd-sub').textContent='Finviz page opened, but no stock rows were parsed. Attempted URL is linked above.';
-      renderStockTable(null,'Could not parse stocks from Finviz. Use Open Finviz, or we can add a slug override for this industry.');
+      return;
     }
+    document.getElementById('sector-dd-sub').textContent='Cloudflare did not return stock rows. The direct Finviz links are above.';
+    renderLegacyFinvizFallback('Cloudflare did not return stock rows for this industry.');
   }catch(e){
-    document.getElementById('sector-dd-sub').textContent='Finviz fetch failed. Attempted URL is linked above.';
-    renderStockTable(null,'Finviz fetch failed. Use Open Finviz, or refresh and try again.');
+    document.getElementById('sector-dd-sub').textContent='Cloudflare fetch failed. The direct Finviz links are above.';
+    renderLegacyFinvizFallback('Cloudflare fetch failed for this industry.');
   }
 }
 function renderFlowTable(id,rows,cols){
@@ -1163,8 +1252,8 @@ function renderSectorFlowsFromCache(){
   document.getElementById('flow-meta-improving').textContent='Sector Strength = Improving and '+activeFlow+' > 0.05.';
   document.getElementById('flow-meta-extreme').textContent=activeFlow+' < '+ranked.extremeThresh.toFixed(2)+'.';
   document.getElementById('flow-meta-full').textContent=ranked.full.length+' industries sorted by '+activeFlow+'.';
-  var cols=['Name','Offense Flow Monthly','Defense Flow Monthly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Week','Perf Month'];
-  var fullCols=['Name','Offense Flow Monthly','Defense Flow Monthly','Rotation Flow Weekly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Week','Perf Month','Perf Quart','Perf YTD'];
+  var cols=['Name','Offense Flow Monthly','Defense Flow Monthly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year'];
+  var fullCols=['Name','Offense Flow Monthly','Defense Flow Monthly','Rotation Flow Weekly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year','Perf YTD'];
   renderFlowTable('flow-table-strong',ranked.strong,cols);
   renderFlowTable('flow-table-improving',ranked.improving,cols);
   renderFlowTable('flow-table-trap',ranked.trap,cols);
