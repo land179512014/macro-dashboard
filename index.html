@@ -287,6 +287,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .stock-gauge{font-weight:800}
 .stock-hi-peg{background:#dcfce7!important;color:#14532d!important;font-weight:900;box-shadow:inset 0 0 0 1px #22c55e}
 .stock-hi-sma{background:#fef3c7!important;color:#92400e!important;font-weight:900;box-shadow:inset 0 0 0 1px #f59e0b}
+.stock-hi-vol{background:#cffafe!important;color:#164e63!important;font-weight:900;box-shadow:inset 0 0 0 1px #06b6d4}
 .stock-finviz-link{display:inline-flex;align-items:center;justify-content:center;color:#64748b;text-decoration:none;font-size:.68rem;font-weight:900;margin-left:6px;border:1px solid #cbd5e1;border-radius:4px;padding:1px 4px;line-height:1.1;background:#f8fafc}.stock-finviz-link:hover{color:#2563eb;border-color:#2563eb;background:#eff6ff}
 .stock-symbol button{appearance:none;border:0;background:transparent;color:#93c5fd;font:inherit;font-weight:800;cursor:pointer;padding:0;text-align:left}.stock-symbol button:hover{text-decoration:underline;color:#bfdbfe}
 .stock-chart-row>td{padding:0!important;background:#0f172a!important}
@@ -1408,6 +1409,10 @@ function sma20HighlightClass(v){
   var n=parseNum(v);
   return !isNaN(n)&&n>=-3&&n<=5?'stock-hi-sma':'';
 }
+function volMHighlightClass(volM,sma20){
+  var v=parseNum(volM),s=parseNum(sma20);
+  return !isNaN(v)&&!isNaN(s)&&v>s?'stock-hi-vol':'';
+}
 function finvizQuoteUrl(row){
   var ticker=String(row&&row.ticker||'').trim().toUpperCase();
   var raw=String(row&&row.quoteUrl||'').trim();
@@ -1433,7 +1438,7 @@ function renderStockTable(rows,msg){
       '<td class="'+flowClass(r.rotationScore)+'" data-value="'+(isNaN(r.rotationScore)?-999999:r.rotationScore)+'">'+fmtScore(r.rotationScore)+'</td>'+
       '<td class="'+flowClass(r.perfYear)+'" data-value="'+(parseNum(r.perfYear)||0)+'">'+esc(r.perfYear||'--')+'</td>'+
       '<td class="'+flowClass(r.perfYtd)+'" data-value="'+(parseNum(r.perfYtd)||0)+'">'+esc(r.perfYtd||'--')+'</td>'+
-      '<td data-value="'+(parseNum(r.volM)||0)+'">'+esc(r.volM||'--')+'</td>'+
+      '<td class="'+volMHighlightClass(r.volM,r.sma20)+'" data-field="volM" data-ticker="'+esc(r.ticker)+'" data-value="'+(parseNum(r.volM)||0)+'">'+esc(r.volM||'--')+'</td>'+
       '<td data-value="'+parseMarketCap(r.marketCap)+'">'+esc(r.marketCap||'--')+'</td>'+
       '<td data-value="'+(parseNum(r.fwdPe)||0)+'">'+esc(r.fwdPe||'--')+'</td>'+
       '<td class="'+pegHighlightClass(r.peg)+'" data-value="'+(parseNum(r.peg)||0)+'">'+esc(r.peg||'--')+'</td>'+
@@ -1582,7 +1587,7 @@ function computeSma20FromCandles(candles){
 async function hydrateMissingSma20(rows){
   var missing=(rows||[]).filter(function(r){return r&&r.ticker&&isNaN(parseNum(r.sma20));});
   for(var i=0;i<missing.length;i++){
-    var r=missing[i],safeTicker=(window.CSS&&CSS.escape)?CSS.escape(r.ticker):String(r.ticker).replace(/"/g,'\\"'),cell=document.querySelector('td[data-field="sma20"][data-ticker="'+safeTicker+'"]');
+    var r=missing[i],safeTicker=(window.CSS&&CSS.escape)?CSS.escape(r.ticker):String(r.ticker).replace(/"/g,'\\"'),cell=document.querySelector('td[data-field="sma20"][data-ticker="'+safeTicker+'"]'),volCell=document.querySelector('td[data-field="volM"][data-ticker="'+safeTicker+'"]');
     if(!cell)continue;
     cell.textContent='...';
     try{
@@ -1590,6 +1595,7 @@ async function hydrateMissingSma20(rows){
       if(v===null){cell.textContent='--';continue;}
       r.sma20=(v>=0?'+':'')+v.toFixed(2)+'%';
       cell.textContent=r.sma20;cell.setAttribute('data-value',v.toFixed(4));cell.className=flowClass(v)+' '+sma20HighlightClass(v);
+      if(volCell)volCell.classList.toggle('stock-hi-vol',volMHighlightClass(r.volM,r.sma20)==='stock-hi-vol');
     }catch(e){cell.textContent='--';}
   }
 }
