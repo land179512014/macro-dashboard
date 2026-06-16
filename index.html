@@ -287,7 +287,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .stock-gauge{font-weight:800}
 .stock-hi-peg{background:#dcfce7!important;color:#14532d!important;font-weight:900;box-shadow:inset 0 0 0 1px #22c55e}
 .stock-hi-sma{background:#fef3c7!important;color:#92400e!important;font-weight:900;box-shadow:inset 0 0 0 1px #f59e0b}
-.stock-finviz-link{color:#64748b;text-decoration:none;font-size:.72rem;font-weight:900;margin-left:5px}.stock-finviz-link:hover{color:#2563eb}
+.stock-finviz-link{display:inline-flex;align-items:center;justify-content:center;color:#64748b;text-decoration:none;font-size:.68rem;font-weight:900;margin-left:6px;border:1px solid #cbd5e1;border-radius:4px;padding:1px 4px;line-height:1.1;background:#f8fafc}.stock-finviz-link:hover{color:#2563eb;border-color:#2563eb;background:#eff6ff}
 .stock-symbol button{appearance:none;border:0;background:transparent;color:#93c5fd;font:inherit;font-weight:800;cursor:pointer;padding:0;text-align:left}.stock-symbol button:hover{text-decoration:underline;color:#bfdbfe}
 .stock-chart-row>td{padding:0!important;background:#0f172a!important}
 .chart-panel{width:min(1180px,calc(100% - 28px));margin:14px auto;background:#0f172a;border:1px solid #334155;border-radius:10px;overflow:hidden;display:none}
@@ -1408,6 +1408,15 @@ function sma20HighlightClass(v){
   var n=parseNum(v);
   return !isNaN(n)&&n>=-3&&n<=5?'stock-hi-sma':'';
 }
+function finvizQuoteUrl(row){
+  var ticker=String(row&&row.ticker||'').trim().toUpperCase();
+  var raw=String(row&&row.quoteUrl||'').trim();
+  if(raw&&/^https?:\/\//i.test(raw))return raw;
+  if(raw&&raw.charAt(0)==='/')return 'https://finviz.com'+raw;
+  if(raw&&/^stock\?/i.test(raw))return 'https://finviz.com/'+raw;
+  if(raw&&/^quote\.ashx\?/i.test(raw))return 'https://finviz.com/'+raw;
+  return 'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker);
+}
 function renderStockTable(rows,msg){
   var el=document.getElementById(activeStockTableId||'sector-stock-table');if(!el)return;
   if(msg){el.innerHTML='<div class="flow-empty">'+esc(msg)+'</div>';return;}
@@ -1417,7 +1426,8 @@ function renderStockTable(rows,msg){
   var html='<table class="stock-table"><thead><tr>'+cols.map(function(c){return'<th draggable="true" onclick="sortStockTable(this)" ondragstart="columnDragStart(event,this)" ondragover="columnDragOver(event,this)" ondragleave="columnDragLeave(this)" ondrop="columnDrop(event,this)" ondragend="columnDragEnd()">'+c+'</th>';}).join('')+'</tr></thead><tbody>';
   rows.forEach(function(r){
     var isSearchHit=sectorSearchTicker&&String(r.ticker||'').toUpperCase()===sectorSearchTicker;
-    html+='<tr data-ticker="'+esc(String(r.ticker||'').toUpperCase())+'" class="'+(isSearchHit?'stock-search-hit':'')+'"><td class="stock-symbol" data-value="'+esc(r.ticker)+'"><button onclick="loadStockChart('+JSON.stringify(String(r.ticker||'')).replace(/"/g,'&quot;')+',this)">'+esc(r.ticker)+'</button><a class="stock-finviz-link" href="'+esc(r.quoteUrl||('https://finviz.com/quote.ashx?t='+encodeURIComponent(r.ticker||'')))+'" target="_blank" rel="noopener" title="Open '+esc(r.ticker)+' on Finviz">↗</a></td>'+
+    var quoteUrl=finvizQuoteUrl(r);
+    html+='<tr data-ticker="'+esc(String(r.ticker||'').toUpperCase())+'" class="'+(isSearchHit?'stock-search-hit':'')+'"><td class="stock-symbol" data-value="'+esc(r.ticker)+'"><button title="Open chart inside dashboard" onclick="loadStockChart('+JSON.stringify(String(r.ticker||'')).replace(/"/g,'&quot;')+',this)">'+esc(r.ticker)+'</button><a class="stock-finviz-link" href="'+esc(quoteUrl)+'" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Open '+esc(r.ticker)+' on Finviz">Finviz</a></td>'+
       '<td data-value="'+esc(r.industry||'')+'">'+esc(r.industry||'--')+'</td>'+
       '<td class="stock-gauge" data-value="'+stockGaugeRank(r.stockGauge)+'">'+esc(r.stockGauge||'--')+'</td>'+
       '<td class="'+flowClass(r.rotationScore)+'" data-value="'+(isNaN(r.rotationScore)?-999999:r.rotationScore)+'">'+fmtScore(r.rotationScore)+'</td>'+
