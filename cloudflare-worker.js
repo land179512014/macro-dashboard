@@ -1,7 +1,7 @@
 export default {
   async fetch(request, env, ctx) {
     try {
-      return await routeRequest(request, ctx);
+      return await routeRequest(request, env, ctx);
     } catch (e) {
       return jsonResponse({
         ok: false,
@@ -12,9 +12,11 @@ export default {
   }
 };
 
-async function routeRequest(request, ctx) {
+async function routeRequest(request, env, ctx) {
     const url = new URL(request.url);
     if (request.method === "OPTIONS") return corsResponse("", 204);
+    if (url.pathname === "/macro-treasury") return handleMacroTreasury(request, env);
+    if (url.pathname === "/macro-hy-spread") return handleMacroHySpread(request);
     if (url.pathname === "/finviz-industry") return handleFinvizIndustry(request, ctx);
     if (url.pathname === "/finviz-custom") return handleFinvizCustom(request, ctx);
     if (url.pathname === "/finviz-ticker") return handleFinvizTicker(request);
@@ -38,6 +40,99 @@ async function routeRequest(request, ctx) {
 }
 
 const PARSER_VERSION = "styled-row-v4-ticker-search";
+
+async function handleMacroHySpread(request) {
+  const url = new URL(request.url);
+  const days = Math.max(60, Math.min(400, parseInt(url.searchParams.get("days") || "210", 10) || 210));
+  const end = new Date();
+  const start = new Date(end.getTime() - days * 864e5);
+  const target = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2&cosd=${start.toISOString().slice(0, 10)}&coed=${end.toISOString().slice(0, 10)}&_=${Date.now()}`;
+  const resp = await fetch(target, {
+    headers: {
+      "Accept": "text/csv,*/*;q=0.8",
+      "User-Agent": "Mozilla/5.0 Chrome/125 Safari/537.36"
+    },
+    cf: { cacheTtl: 0, cacheEverything: false }
+  });
+  const text = await resp.text();
+  if (!resp.ok || !/^observation_date,BAMLH0A0HYM2/i.test(text.trim())) {
+    return jsonResponse({ ok: false, source: "FRED BAMLH0A0HYM2", status: resp.status, error: "FRED HY CSV request failed" }, 502, { "Cache-Control": "no-store" });
+  }
+  const rows = text.trim().split(/\r?\n/).slice(1).map(line => {
+    const parts = line.split(",");
+    const value = Number(parts[1]);
+    return { date: parts[0], ts: Math.floor(new Date(parts[0] + "T00:00:00Z").getTime() / 1000), close: value };
+  }).filter(row => row.date && Number.isFinite(row.close) && row.close > 0);
+  if (rows.length < 20) {
+    return jsonResponse({ ok: false, source: "FRED BAMLH0A0HYM2", count: rows.length, error: "Not enough HY spread rows" }, 502, { "Cache-Control": "no-store" });
+  }
+  const latest = rows[rows.length - 1];
+  function near(days, fallbackOffset) {
+    const targetTs = latest.ts - days * 86400;
+    let best = rows[0], bestDist = Infinity;
+    for (const row of rows) {
+      const dist = Math.abs(row.ts - targetTs);
+      if (dist < bestDist) {
+        best = row;
+        bestDist = dist;
+      }
+    }
+    return best || rows[Math.max(0, rows.length - fallbackOffset)];
+  }
+  const m1 = near(30, 22), m3 = near(90, 64), m6 = near(180, 130);
+  return jsonResponse({
+    ok: true,
+    source: "FRED BAMLH0A0HYM2",
+    fetchedAt: new Date().toISOString(),
+    count: rows.length,
+    current: latest.close,
+    now_str: latest.date,
+    one_month_ago: m1.close,
+    m1_str: m1.date,
+    three_months_ago: m3.close,
+    m3_str: m3.date,
+    six_months_ago: m6.close,
+    m6_str: m6.date,
+    rows
+  }, 200, { "Cache-Control": "no-store" });
+}
+
+async function handleMacroTreasury(request, env) {
+  const apiKey = env && (env.MASSIVE_API_KEY || env.POLYGON_API_KEY);
+  if (!apiKey) return jsonResponse({ ok: false, error: "Missing Worker secret MASSIVE_API_KEY" }, 500, { "Cache-Control": "no-store" });
+  const url = new URL(request.url);
+  const days = Math.max(30, Math.min(900, parseInt(url.searchParams.get("days") || "730", 10) || 730));
+  const maturity = String(url.searchParams.get("maturity") || "10y").toLowerCase();
+  const yieldField = maturity === "2y" || maturity === "02y" ? "yield_2_year" : "yield_10_year";
+  const sourceName = yieldField === "yield_2_year" ? "Massive US02Y Treasury Yields" : "Massive US10Y Treasury Yields";
+  const end = new Date();
+  const start = new Date(end.getTime() - days * 864e5);
+  const qs = new URLSearchParams({
+    "date.gte": start.toISOString().slice(0, 10),
+    "date.lte": end.toISOString().slice(0, 10),
+    "sort": "date.asc",
+    "limit": "50000",
+    "apiKey": apiKey
+  });
+  const target = "https://api.massive.com/fed/v1/treasury-yields?" + qs.toString();
+  const resp = await fetch(target, { headers: { "Accept": "application/json" }, cf: { cacheTtl: 900, cacheEverything: true } });
+  const data = await resp.json().catch(() => null);
+  if (!resp.ok || !data || !Array.isArray(data.results)) {
+    return jsonResponse({ ok: false, source: "massive-treasury", status: resp.status, error: data && (data.error || data.message) || "Massive Treasury request failed" }, 502, { "Cache-Control": "no-store" });
+  }
+  const rows = data.results
+    .map(r => ({ date: r.date, ts: Math.floor(new Date(r.date + "T00:00:00Z").getTime() / 1000), close: Number(r[yieldField]) }))
+    .filter(r => r.date && Number.isFinite(r.close))
+    .sort((a, b) => a.ts - b.ts);
+  return jsonResponse({
+    ok: rows.length > 0,
+    source: sourceName,
+    fetchedAt: new Date().toISOString(),
+    maturity,
+    count: rows.length,
+    rows
+  }, rows.length ? 200 : 502, { "Cache-Control": "public, max-age=900" });
+}
 
 async function handleFinvizIndustry(request, ctx) {
   const url = new URL(request.url);
@@ -105,13 +200,13 @@ async function handleFinvizList(request, ctx, cfg) {
     const perfUrl = finvizUrl(141, cfg.filters, cfg.order);
     const valUrl = finvizUrl(121, cfg.filters, cfg.order);
     const techUrl = finvizUrl(171, cfg.filters, cfg.order, "ft=3");
-    const overviewPack = await fetchOneFinvizPage(overviewUrl, 111, start);
+    const overviewPack = await fetchOneFinvizPage(overviewUrl, 111, start, refresh);
     await sleep(350);
-    const perfPack = await fetchOneFinvizPage(perfUrl, 141, start);
+    const perfPack = await fetchOneFinvizPage(perfUrl, 141, start, refresh);
     await sleep(350);
-    const valPack = await fetchOneFinvizPage(valUrl, 121, start);
+    const valPack = await fetchOneFinvizPage(valUrl, 121, start, refresh);
     await sleep(350);
-    const techPack = await fetchOneFinvizPage(techUrl, 171, start);
+    const techPack = await fetchOneFinvizPage(techUrl, 171, start, refresh);
     const rows = mergeRows(overviewPack.rows, perfPack.rows, valPack.rows, techPack.rows);
 
     const payload = {
@@ -176,18 +271,22 @@ function finvizUrl(view, filters, order, extra) {
   return out;
 }
 
-async function fetchOneFinvizPage(baseUrl, view, start) {
-  const pageUrl = start === 1 ? baseUrl : addParam(baseUrl, "r", String(start));
-  const html = await fetchTextWithRetry(pageUrl);
+async function fetchOneFinvizPage(baseUrl, view, start, refresh) {
+  let pageUrl = start === 1 ? baseUrl : addParam(baseUrl, "r", String(start));
+  if (refresh) pageUrl = addParam(pageUrl, "_", `${Date.now()}${view}`);
+  const html = await fetchTextWithRetry(pageUrl, refresh);
   const parsed = parseFinvizRows(html, view);
   return { rows: dedupeRows(parsed.rows), mode: parsed.mode, url: pageUrl };
 }
 
-async function fetchTextWithRetry(url) {
+async function fetchTextWithRetry(url, refresh) {
   let lastErr;
   for (let i = 0; i < 4; i++) {
     try {
-      const resp = await fetch(url, { headers: browserHeaders(url) });
+      const resp = await fetch(url, {
+        headers: browserHeaders(url),
+        cf: refresh ? { cacheTtl: 0, cacheEverything: false } : undefined
+      });
       if (resp.status === 429) {
         lastErr = new Error("Finviz HTTP 429");
         await sleep(2500 * (i + 1));

@@ -1,0 +1,12 @@
+window.HY_SPREAD_CACHE = {
+  "current": 2.71,
+  "now_str": "Jul 15, 2026",
+  "one_month_ago": 2.63,
+  "m1_str": "Jun 17, 2026",
+  "three_months_ago": 2.85,
+  "m3_str": "Apr 21, 2026",
+  "six_months_ago": 2.73,
+  "m6_str": "Jan 20, 2026",
+  "source": "FRED BAMLH0A0HYM2",
+  "cached_at": "2026-07-16T15:37:38.422992+00:00"
+};
