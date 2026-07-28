@@ -180,6 +180,35 @@ def fetch_hy_spread():
     cosd = (now_dt - timedelta(days=210)).strftime("%Y-%m-%d")
     coed = now_dt.strftime("%Y-%m-%d")
     url = f"{FRED_HY}&cosd={cosd}&coed={coed}"
+    fred_api_key = os.environ.get("FRED_API_KEY")
+    rows = []
+    if fred_api_key:
+        try:
+            response = requests.get(
+                "https://api.stlouisfed.org/fred/series/observations",
+                params={
+                    "series_id": "BAMLH0A0HYM2",
+                    "api_key": fred_api_key,
+                    "file_type": "json",
+                    "observation_start": cosd,
+                    "observation_end": coed,
+                    "sort_order": "asc",
+                    "limit": 1000,
+                },
+                headers={"Accept": "application/json"},
+                timeout=12,
+            )
+            payload = response.json() if response.ok else {}
+            for observation in payload.get("observations", []):
+                try:
+                    rows.append({
+                        "date": datetime.strptime(observation["date"], "%Y-%m-%d"),
+                        "close": float(observation["value"]),
+                    })
+                except (KeyError, TypeError, ValueError):
+                    continue
+        except requests.RequestException:
+            pass
     # Try direct FRED first. If public proxies hang, falling back to them first makes
     # the static HY cache look frozen even when FRED itself is current.
     proxy_urls = [
@@ -189,32 +218,34 @@ def fetch_hy_spread():
         f"https://api.codetabs.com/v1/proxy?quest={requests.utils.quote(url, safe='')}",
     ]
     text = None
-    for proxy_url in proxy_urls:
-        try:
-            is_direct_fred = proxy_url.startswith("https://fred.stlouisfed.org/")
-            headers = {"Accept": "text/csv,*/*;q=0.8"} if is_direct_fred else HEADERS
-            r = requests.get(proxy_url, headers=headers, timeout=12 if is_direct_fred else 8)
-            if r.ok and len(r.text) > 200 and "DATE" in r.text[:50].upper():
-                text = r.text; break
-        except Exception:
-            continue
-    if not text:
+    if len(rows) < 10:
+        for proxy_url in proxy_urls:
+            try:
+                is_direct_fred = proxy_url.startswith("https://fred.stlouisfed.org/")
+                headers = {"Accept": "text/csv,*/*;q=0.8"} if is_direct_fred else HEADERS
+                r = requests.get(proxy_url, headers=headers, timeout=12 if is_direct_fred else 8)
+                if r.ok and len(r.text) > 200 and "DATE" in r.text[:50].upper():
+                    text = r.text; break
+            except Exception:
+                continue
+    if not text and len(rows) < 10:
         cached = load_hy_cache()
         if cached:
             print(f"  [CACHE] HY Spread using cached FRED data from {cached.get('now_str', cached.get('cached_at', 'unknown'))}")
             return cached
         raise ConnectionError("FRED HY Spread unavailable (all proxies failed)")
-    lines = text.strip().split("\n")
-    rows = []
-    for line in lines[1:]:
-        parts = line.strip().split(",")
-        if len(parts) < 2: continue
-        try:
-            date = datetime.strptime(parts[0].strip(), "%Y-%m-%d")
-            val = float(parts[1].strip())
-            rows.append({"date": date, "close": val})
-        except ValueError:
-            continue
+    if text:
+        lines = text.strip().split("\n")
+        rows = []
+        for line in lines[1:]:
+            parts = line.strip().split(",")
+            if len(parts) < 2: continue
+            try:
+                date = datetime.strptime(parts[0].strip(), "%Y-%m-%d")
+                val = float(parts[1].strip())
+                rows.append({"date": date, "close": val})
+            except ValueError:
+                continue
     if len(rows) < 10: return None
     rows.sort(key=lambda x: x["date"])
     current = rows[-1]["close"]

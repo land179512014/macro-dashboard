@@ -16,7 +16,7 @@ async function routeRequest(request, env, ctx) {
     const url = new URL(request.url);
     if (request.method === "OPTIONS") return corsResponse("", 204);
     if (url.pathname === "/macro-treasury") return handleMacroTreasury(request, env);
-    if (url.pathname === "/macro-hy-spread") return handleMacroHySpread(request);
+    if (url.pathname === "/macro-hy-spread") return handleMacroHySpread(request, env);
     if (url.pathname === "/finviz-industry") return handleFinvizIndustry(request, ctx);
     if (url.pathname === "/finviz-custom") return handleFinvizCustom(request, ctx);
     if (url.pathname === "/finviz-ticker") return handleFinvizTicker(request);
@@ -41,30 +41,65 @@ async function routeRequest(request, env, ctx) {
 
 const PARSER_VERSION = "styled-row-v4-ticker-search";
 
-async function handleMacroHySpread(request) {
+async function handleMacroHySpread(request, env) {
   const url = new URL(request.url);
   const days = Math.max(60, Math.min(400, parseInt(url.searchParams.get("days") || "210", 10) || 210));
   const end = new Date();
   const start = new Date(end.getTime() - days * 864e5);
-  const target = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2&cosd=${start.toISOString().slice(0, 10)}&coed=${end.toISOString().slice(0, 10)}&_=${Date.now()}`;
-  const resp = await fetch(target, {
-    headers: {
-      "Accept": "text/csv,*/*;q=0.8",
-      "User-Agent": "Mozilla/5.0 Chrome/125 Safari/537.36"
-    },
-    cf: { cacheTtl: 0, cacheEverything: false }
-  });
-  const text = await resp.text();
-  if (!resp.ok || !/^observation_date,BAMLH0A0HYM2/i.test(text.trim())) {
-    return jsonResponse({ ok: false, source: "FRED BAMLH0A0HYM2", status: resp.status, error: "FRED HY CSV request failed" }, 502, { "Cache-Control": "no-store" });
+  const startDate = start.toISOString().slice(0, 10);
+  const endDate = end.toISOString().slice(0, 10);
+  const fredApiKey = env && env.FRED_API_KEY;
+  let rows = [];
+  let source = "FRED CSV BAMLH0A0HYM2";
+
+  if (fredApiKey) {
+    const params = new URLSearchParams({
+      series_id: "BAMLH0A0HYM2",
+      api_key: fredApiKey,
+      file_type: "json",
+      observation_start: startDate,
+      observation_end: endDate,
+      sort_order: "asc",
+      limit: "1000"
+    });
+    try {
+      const apiResp = await fetch(`https://api.stlouisfed.org/fred/series/observations?${params}`, {
+        headers: { "Accept": "application/json" },
+        cf: { cacheTtl: 0, cacheEverything: false }
+      });
+      const data = await apiResp.json().catch(() => null);
+      if (apiResp.ok && data && Array.isArray(data.observations)) {
+        rows = data.observations.map(row => {
+          const value = Number(row.value);
+          return { date: row.date, ts: Math.floor(new Date(row.date + "T00:00:00Z").getTime() / 1000), close: value };
+        }).filter(row => row.date && Number.isFinite(row.close) && row.close > 0);
+        source = "FRED API BAMLH0A0HYM2";
+      }
+    } catch (_) {
+      // Continue with the public CSV endpoint if the authenticated API is unavailable.
+    }
   }
-  const rows = text.trim().split(/\r?\n/).slice(1).map(line => {
-    const parts = line.split(",");
-    const value = Number(parts[1]);
-    return { date: parts[0], ts: Math.floor(new Date(parts[0] + "T00:00:00Z").getTime() / 1000), close: value };
-  }).filter(row => row.date && Number.isFinite(row.close) && row.close > 0);
+
   if (rows.length < 20) {
-    return jsonResponse({ ok: false, source: "FRED BAMLH0A0HYM2", count: rows.length, error: "Not enough HY spread rows" }, 502, { "Cache-Control": "no-store" });
+    const target = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2&cosd=${startDate}&coed=${endDate}&_=${Date.now()}`;
+    const resp = await fetch(target, {
+      headers: {
+        "Accept": "text/csv,*/*;q=0.8",
+        "User-Agent": "Mozilla/5.0 Chrome/125 Safari/537.36"
+      },
+      cf: { cacheTtl: 0, cacheEverything: false }
+    });
+    const text = await resp.text();
+    if (resp.ok && /^observation_date,BAMLH0A0HYM2/i.test(text.trim())) {
+      rows = text.trim().split(/\r?\n/).slice(1).map(line => {
+        const parts = line.split(",");
+        const value = Number(parts[1]);
+        return { date: parts[0], ts: Math.floor(new Date(parts[0] + "T00:00:00Z").getTime() / 1000), close: value };
+      }).filter(row => row.date && Number.isFinite(row.close) && row.close > 0);
+    }
+  }
+  if (rows.length < 20) {
+    return jsonResponse({ ok: false, source, count: rows.length, error: "FRED HY spread request returned too few rows" }, 502, { "Cache-Control": "no-store" });
   }
   const latest = rows[rows.length - 1];
   function near(days, fallbackOffset) {
@@ -82,7 +117,7 @@ async function handleMacroHySpread(request) {
   const m1 = near(30, 22), m3 = near(90, 64), m6 = near(180, 130);
   return jsonResponse({
     ok: true,
-    source: "FRED BAMLH0A0HYM2",
+    source,
     fetchedAt: new Date().toISOString(),
     count: rows.length,
     current: latest.close,
