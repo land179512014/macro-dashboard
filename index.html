@@ -1257,7 +1257,10 @@ function parseCSV(text){
 function parseNum(v){if(v===null||v===undefined)return NaN;var s=String(v).replace(/[%,$"]/g,'').replace(/\s/g,'').trim();if(s===''||s==='-'||s==='—')return NaN;var n=parseFloat(s);return isNaN(n)?NaN:n;}
 function normalizeFlowRows(rows){
   return (rows||[]).map(function(r){
-    var o={};Object.keys(r).forEach(function(k){var v=r[k];if(/perf|change|flow/i.test(k))o[k]=parseNum(v);else o[k]=String(v||'').trim();});
+    var o={};Object.keys(r).forEach(function(k){
+      var key=String(k||'').replace(/\s+/g,' ').trim(),v=r[k];
+      if(/perf|change|flow/i.test(key))o[key]=parseNum(v);else o[key]=String(v||'').trim();
+    });
     if(o['Offense Flow Monthly']===undefined){var offense=o['Offense Flow'];if(offense===undefined)offense=o['Rotation Flow Monthly'];if(offense===undefined)offense=o['Rotation Flow'];if(offense!==undefined)o['Offense Flow Monthly']=offense;}
     if(o['Defense Flow Monthly']===undefined&&o['Quality Flow Monthly']!==undefined)o['Defense Flow Monthly']=o['Quality Flow Monthly'];
     return o;
@@ -1897,8 +1900,7 @@ function rankSectors(curr,hist,activeFlow){
   var extremeThresh=adaptive?50:/Defense/i.test(activeFlow)?-0.20:-0.25;
   var extreme=df.filter(function(r){
     if(!adaptive)return r._active<extremeThresh;
-    var score=defenseLeadershipForIndustry(r.Name),change=score&&score.weekChange;
-    return offenseValue(r)<=flowExtremeThresh&&r._active<extremeThresh&&typeof change==='number'&&isFinite(change)&&change<0;
+    return offenseValue(r)<=flowExtremeThresh&&r._active<extremeThresh;
   }).sort(function(a,b){return a._active-b._active;}).slice(0,10);
   var full=df.slice().sort(function(a,b){var av=isNaN(a._active)?-Infinity:a._active,bv=isNaN(b._active)?-Infinity:b._active;return bv-av;});
   return{strong:strong,improving:improving,trap:trap,extreme:extreme,full:full,extremeThresh:extremeThresh,flowExtremeThresh:flowExtremeThresh,wowCol:/Defense/i.test(activeFlow)?'Defense WoW':'Offense WoW'};
@@ -2623,7 +2625,7 @@ function renderSectorFlowsFromCache(){
   var adaptiveActive=activeFlow==='Adaptive Flow';
   document.getElementById('flow-meta-strong').textContent=adaptiveActive?'Adaptive Flow > 50 (positive flow) plus Holy Grail / Reversal gauge.':activeFlow+' > 0.05 plus Buy / Holy Grail / Reversal gauge.';
   document.getElementById('flow-meta-improving').textContent=adaptiveActive?'Sector Strength = Improving and Adaptive Flow > 50 (positive flow).':'Sector Strength = Improving and '+activeFlow+' > 0.05.';
-  document.getElementById('flow-meta-extreme').textContent=adaptiveActive?'Bottom 10% Offense Flow ('+(isNaN(ranked.flowExtremeThresh)?'--':ranked.flowExtremeThresh.toFixed(3))+'), Adaptive Flow < '+ranked.extremeThresh.toFixed(0)+', and worsening week over week.':activeFlow+' < '+ranked.extremeThresh.toFixed(2)+'.';
+  document.getElementById('flow-meta-extreme').textContent=adaptiveActive?'Bottom 10% Offense Flow ('+(isNaN(ranked.flowExtremeThresh)?'--':ranked.flowExtremeThresh.toFixed(3))+') and Adaptive Flow < '+ranked.extremeThresh.toFixed(0)+'.':activeFlow+' < '+ranked.extremeThresh.toFixed(2)+'.';
   document.getElementById('flow-meta-full').textContent=ranked.full.length+' industries sorted by '+activeFlow+'.';
   var adaptiveCols=defenseLeadershipEnabled?['Adaptive Flow']:[];
   var cols=['Name','Offense Flow Monthly','Defense Flow Monthly'].concat(adaptiveCols,['Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year']);

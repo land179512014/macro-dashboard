@@ -173,7 +173,7 @@ async function handleFinvizIndustry(request, ctx) {
   const url = new URL(request.url);
   const name = url.searchParams.get("name") || "";
   if (!name.trim()) return jsonResponse({ ok: false, error: "Missing industry name" }, 400);
-  const filters = ["cap_smallover", industrySlug(name), "sh_avgvol_o100"].join(",");
+  const filters = ["cap_midover", industrySlug(name), "sh_avgvol_o100"].join(",");
   return handleFinvizList(request, ctx, { label: name, filters, order: "-perf52w", source: "finviz-industry" });
 }
 
