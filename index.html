@@ -309,14 +309,6 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .sector-dd-link:hover,.sector-dd-close:hover{border-color:#3b82f6;color:#bfdbfe}
 .sector-dd-meta{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px 18px;border-bottom:1px solid #334155;background:#0f172a}
 @media(max-width:820px){.sector-dd-meta{grid-template-columns:repeat(2,1fr)}}
-.sector-dd-overview{display:grid;grid-template-columns:minmax(0,1fr) 285px;border-bottom:1px solid #334155;background:#0f172a}
-.sector-dd-overview .sector-dd-meta{border-bottom:0}
-@media(max-width:1040px){.sector-dd-overview{grid-template-columns:1fr}.sector-dd-overview .sector-dd-meta{border-bottom:1px solid #334155}}
-.defense-summary{padding:13px 15px;background:#172f29;border-left:1px solid #365d50;color:#e8f5ee}
-.defense-summary-label{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#a4c5b7}
-.defense-summary-score{display:flex;align-items:baseline;gap:8px;margin:3px 0 8px}.defense-summary-score strong{font-size:1.45rem;color:#fff}.defense-summary-score span{font-size:.58rem;color:#b7d7c9;font-weight:700}
-.defense-summary-row{display:grid;grid-template-columns:1fr 88px 24px;gap:7px;align-items:center;margin-top:6px;font-size:.57rem;color:#c8ded4}.defense-summary-bar{height:5px;background:#315347;border-radius:4px;overflow:hidden}.defense-summary-bar i{display:block;height:100%;background:#63c9a6;border-radius:4px}.defense-summary-row b{font-size:.6rem;color:#fff;text-align:right}
-.defense-summary-note{margin-top:9px;padding-top:8px;border-top:1px solid #365d50;font-size:.55rem;line-height:1.4;color:#a4c5b7}
 .sector-dd-metric{background:#111827;border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:8px 10px}
 .sector-dd-label{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#475569}
 .sector-dd-val{font-size:.76rem;font-weight:800;color:#e2e8f0;margin-top:3px}
@@ -613,7 +605,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
           <div class="flow-toggle">
             <button class="flow-toggle-btn active" id="flow-mode-auto" onclick="setFlowMode('auto')">Auto</button>
             <button class="flow-toggle-btn" id="flow-mode-offense" onclick="setFlowMode('offense')">Offense</button>
-            <button class="flow-toggle-btn" id="flow-mode-defense" onclick="setFlowMode('defense')">Adaptive</button>
+            <button class="flow-toggle-btn" id="flow-mode-defense" onclick="setFlowMode('defense')">Defense</button>
           </div>
           <div class="flow-font-control">
             <div class="flow-mode-label">Table Font</div>
@@ -622,10 +614,6 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
               <button class="flow-toggle-btn" id="flow-font-large" onclick="setFlowFont('large')">Large</button>
               <button class="flow-toggle-btn" id="flow-font-xl" onclick="setFlowFont('xl')">XL</button>
             </div>
-          </div>
-          <div class="flow-font-control">
-            <div class="flow-mode-label">Adaptive Flow</div>
-            <div class="flow-toggle"><button class="flow-toggle-btn" id="flow-defense-trial" onclick="toggleDefenseLeadershipTrial()">Show Trial</button></div>
           </div>
         </div>
       </div>
@@ -769,7 +757,6 @@ var sectorAggregateCharts={index:null,breadth:null,indexMain:null,breadthMain:nu
 var sectorAggregateScriptPromises={};
 var sectorAggregateData=null;
 var sectorAggregateName='';
-var defenseLeadershipEnabled=false,defenseLeadershipScores={},defenseLeadershipLoading=null,defenseLeadershipAsOf='';
 
 function cacheValid(){return cache.ts>0&&(Date.now()-cache.ts)<CACHE_MS;}
 function setTF(tf){activeTF=tf;document.getElementById('btn-1m').classList.toggle('active',tf==='1m');document.getElementById('btn-3m').classList.toggle('active',tf==='3m');if(liveData)render(liveData);}
@@ -777,9 +764,8 @@ function setHistTF(tf){historyTF=tf;document.getElementById('hist-1m-btn').class
 function toggleHistory(){var w=document.getElementById('regime-timeline-wrap');var ic=document.getElementById('hist-toggle-icon');if(w.style.display==='none'){w.style.display='block';ic.textContent='▼';}else{w.style.display='none';ic.textContent='▶';}}
 function setStatus(s,m){document.getElementById('status-dot').className='status-dot '+s;document.getElementById('status-text').textContent=m;}
 function showPage(page){document.getElementById('page-macro').classList.toggle('active',page==='macro');document.getElementById('page-flows').classList.toggle('active',page==='flows');document.getElementById('page-custom').classList.toggle('active',page==='custom');document.getElementById('tab-macro').classList.toggle('active',page==='macro');document.getElementById('tab-flows').classList.toggle('active',page==='flows');document.getElementById('tab-custom').classList.toggle('active',page==='custom');if(page==='flows')renderSectorFlowsFromCache();if(page==='custom')updateCustomPreview();}
-function adaptiveFlowReady(){return defenseLeadershipEnabled&&Object.keys(defenseLeadershipScores||{}).length>0;}
-function activeFlowColumn(){return flowModeOverride==='offense'?'Offense Flow Monthly':flowModeOverride==='defense'?(adaptiveFlowReady()?'Adaptive Flow':'Offense Flow Monthly'):currentRiskOn?'Offense Flow Monthly':(adaptiveFlowReady()?'Adaptive Flow':'Offense Flow Monthly');}
-function flowModeLabel(){if(flowModeOverride==='offense')return'Manual: Offense Flow';if(flowModeOverride==='defense')return adaptiveFlowReady()?'Manual: Adaptive Flow':'Manual: Loading Adaptive Flow';return currentRiskOn?'Auto: Offense Flow':(adaptiveFlowReady()?'Auto: Adaptive Flow':'Auto: Loading Adaptive Flow');}
+function activeFlowColumn(){return flowModeOverride==='offense'?'Offense Flow Monthly':flowModeOverride==='defense'?'Defense Flow Monthly':currentRiskOn?'Offense Flow Monthly':'Defense Flow Monthly';}
+function flowModeLabel(){if(flowModeOverride==='offense')return'Manual: Offense Flow';if(flowModeOverride==='defense')return'Manual: Defense Flow';return currentRiskOn?'Auto: Offense Flow':'Auto: Defense Flow';}
 function setFlowMode(mode){flowModeOverride=mode;['auto','offense','defense'].forEach(function(m){var el=document.getElementById('flow-mode-'+m);if(el)el.classList.toggle('active',mode===m);});closeSectorDrilldown();renderSectorFlowsFromCache();}
 function setFlowFont(size){
   flowFontSize=['normal','large','xl'].indexOf(size)>=0?size:'normal';
@@ -1097,7 +1083,7 @@ function renderBreadth(rows){
   var rn='<strong>Ratios:</strong> 5D: '+t.r5.toFixed(2)+', 10D: '+t.r10.toFixed(2)+'. ';
   if(t.r10>=2)rn+='<span class="bc-badge bc-bull">10D ≥ 2.0</span> Bullish thrust.';else if(t.r10<=0.5)rn+='<span class="bc-badge bc-bear">10D ≤ 0.5</span> Bearish thrust.';else if(t.r10>=1.5)rn+='Buyers in control.';else if(t.r10<=0.75)rn+='Sellers gaining.';else rn+='Neutral.';
   c.push('<div class="bc-section">'+rn+'</div>');
-  if(rows.length>=20){var peaks=[];for(var pi=2;pi<rows.length-2;pi++){var w=rows.slice(pi-1,pi+2);var avg=w.reduce(function(s,r){return s+r.q25u;},0)/3;var pA=((rows[pi-3]?rows[pi-3].q25u:rows[pi-2].q25u)+rows[pi-2].q25u+rows[pi-1].q25u)/3;var nA=(rows[pi+1].q25u+rows[pi+2].q25u+(rows[pi+3]?rows[pi+3].q25u:rows[pi+2].q25u))/3;if(avg>pA&&avg>=nA&&avg>500)peaks.push({idx:pi,q25u:Math.round(avg),spx:rows[pi].spx,date:rows[pi].date});}if(peaks.length>=2){var p1=peaks[peaks.length-2],p2=peaks[peaks.length-1];if(p2.spx>=p1.spx*0.99&&p2.q25u<p1.q25u*0.90){var priceSummary=p2.spx>p1.spx?'S&P up, but breadth peaks declining.':p2.spx<p1.spx?'S&P near its prior high but below it; breadth peaks declining.':'S&P unchanged while breadth peaks decline.';var dn='<div class="bc-section"><span class="bc-badge bc-caution">⚠️ DIVERGENCE</span> <strong>'+priceSummary+'</strong> Peak 1 ('+p1.date+'): '+p1.q25u+' @ '+p1.spx.toLocaleString()+'. Peak 2 ('+p2.date+'): '+p2.q25u+' @ '+p2.spx.toLocaleString()+'.';if(peaks.length>=3){var p0=peaks[peaks.length-3];if(p1.q25u<p0.q25u*0.90&&p2.q25u<p1.q25u*0.90)dn+=' <span class="bc-badge bc-bear">3 declining peaks</span>';}dn+='</div>';c.push(dn);}}}
+  if(rows.length>=20){var peaks=[];for(var pi=2;pi<rows.length-2;pi++){var w=rows.slice(pi-1,pi+2);var avg=w.reduce(function(s,r){return s+r.q25u;},0)/3;var pA=((rows[pi-3]?rows[pi-3].q25u:rows[pi-2].q25u)+rows[pi-2].q25u+rows[pi-1].q25u)/3;var nA=(rows[pi+1].q25u+rows[pi+2].q25u+(rows[pi+3]?rows[pi+3].q25u:rows[pi+2].q25u))/3;if(avg>pA&&avg>=nA&&avg>500)peaks.push({idx:pi,q25u:Math.round(avg),spx:rows[pi].spx,date:rows[pi].date});}if(peaks.length>=2){var p1=peaks[peaks.length-2],p2=peaks[peaks.length-1],currentSpx=t.spx;var peakReference=Math.max(p1.spx||-Infinity,p2.spx||-Infinity);if(isFinite(currentSpx)&&isFinite(peakReference)&&currentSpx>=peakReference*0.99&&p2.q25u<p1.q25u*0.90){var priceSummary=currentSpx>peakReference?'S&P is above the prior price peaks, but breadth peaks are declining.':currentSpx>p2.spx?'S&P recovered above Peak 2 but breadth peaks are declining.':currentSpx<p2.spx?'S&P is below its latest price peak and breadth peaks are declining.':'S&P is near its prior high while breadth peaks decline.';var dn='<div class="bc-section"><span class="bc-badge bc-caution">⚠️ DIVERGENCE</span> <strong>'+priceSummary+'</strong> Current S&P: '+currentSpx.toLocaleString()+'. Peak 1 ('+p1.date+'): '+p1.q25u+' @ '+p1.spx.toLocaleString()+'. Peak 2 ('+p2.date+'): '+p2.q25u+' @ '+p2.spx.toLocaleString()+'.';if(peaks.length>=3){var p0=peaks[peaks.length-3];if(p1.q25u<p0.q25u*0.90&&p2.q25u<p1.q25u*0.90)dn+=' <span class="bc-badge bc-bear">3 declining peaks</span>';}dn+='</div>';c.push(dn);}}}
   var mn='<strong>34/13 Net:</strong> '+(net3413>0?'+':'')+net3413+'. ';if(net3413>300)mn+='Strong positive.';else if(net3413>0)mn+='Mildly positive.';else if(net3413>-300)mn+='Mildly negative.';else mn+='<span class="bc-badge bc-bear">Strongly negative.</span>';
   c.push('<div class="bc-section">'+mn+'</div>');
   var tn='<strong>T2108:</strong> '+t.t2108.toFixed(1)+'%. ';if(t.t2108<=20)tn+='<span class="bc-badge bc-extreme">BELOW 20 — Bottoming</span>';else if(t.t2108>=85)tn+='<span class="bc-badge bc-caution">ABOVE 85 — Overbought</span>';else if(t.t2108>=70)tn+='Healthy bull.';else tn+='Mid-range.';
@@ -1666,78 +1652,6 @@ function loadSectorAggregateScript(entry,force){
   });
   return sectorAggregateScriptPromises[key];
 }
-function defenseIsoDate(value){
-  var raw=String(value||'').trim(),m=raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(m)return m[3]+'-'+('0'+m[1]).slice(-2)+'-'+('0'+m[2]).slice(-2);
-  return /^\d{4}-\d{2}-\d{2}$/.test(raw)?raw:'';
-}
-function defensePercentile(rows,field,invert){
-  var values=rows.map(function(r){return r[field];}).filter(function(v){return typeof v==='number'&&isFinite(v);}).sort(function(a,b){return a-b;}),n=values.length;
-  rows.forEach(function(r){var v=r[field];if(typeof v!=='number'||!isFinite(v)){r[field+'Score']=NaN;return;}var below=0,equal=0;values.forEach(function(x){if(x<v)below++;else if(x===v)equal++;});var score=n?100*(below+equal*.5)/n:NaN;r[field+'Score']=invert?100-score:score;});
-}
-function defenseRowFromAggregate(entry,data,spxByDate,throughDate){
-  var byDate={};(data.index||[]).forEach(function(p){if(p&&p.time&&p.value&&spxByDate[p.time])byDate[p.time]=Number(p.value);});
-  var dates=Object.keys(byDate).filter(function(d){return !throughDate||d<=throughDate;}).sort();if(dates.length<64)return null;dates=dates.slice(-64);
-  var daily=[];for(var i=1;i<dates.length;i++){var prev=dates[i-1],cur=dates[i],industryReturn=byDate[cur]/byDate[prev]-1,marketReturn=spxByDate[cur]/spxByDate[prev]-1;if(isFinite(industryReturn)&&isFinite(marketReturn))daily.push({industry:industryReturn,market:marketReturn});}
-  if(daily.length<55)return null;
-  var downside=daily.filter(function(r){return r.market<0;}).map(function(r){return r.industry-r.market;});if(downside.length<8)return null;
-  var r21=(byDate[dates[dates.length-1]]/byDate[dates[dates.length-22]]-1)-(spxByDate[dates[dates.length-1]]/spxByDate[dates[dates.length-22]]-1);
-  var r63=(byDate[dates[dates.length-1]]/byDate[dates[0]]-1)-(spxByDate[dates[dates.length-1]]/spxByDate[dates[0]]-1);
-  var peak=byDate[dates[0]],maxDrawdown=0;dates.forEach(function(d){peak=Math.max(peak,byDate[d]);maxDrawdown=Math.min(maxDrawdown,byDate[d]/peak-1);});
-  var mean=daily.reduce(function(s,r){return s+r.industry;},0)/daily.length,variance=daily.reduce(function(s,r){return s+Math.pow(r.industry-mean,2);},0)/daily.length;
-  var latestPoint=(data.index||[]).filter(function(p){return p&&p.time===dates[dates.length-1];})[0]||{};
-  return{name:entry.industry,key:entry.key,asOf:dates[dates.length-1],members:latestPoint.members||0,capture:downside.reduce(function(s,v){return s+v;},0)/downside.length,relative:.6*r21+.4*r63,drawdown:maxDrawdown,volatility:Math.sqrt(variance)};
-}
-function adaptiveOffenseMap(rows,field){
-  var out={};(rows||[]).forEach(function(r){var v=parseNum(r[field]);if(r.Name&&!isNaN(v))out[industryKey(r.Name)]=v;});return out;
-}
-function priorAdaptiveOffenseMap(offset){
-  var hist=cache.flowHist||[],dates=hist.map(function(r){return r['Archive Date'];}).filter(Boolean).sort(function(a,b){return flowDateValue(a)-flowDateValue(b);}),uniq=[];
-  dates.forEach(function(d){if(uniq[uniq.length-1]!==d)uniq.push(d);});
-  var currentDate=(cache.flowCurr||[])._sourceDate||((cache.flowCurr||[]).find(function(r){return r['Archive Date'];})||{})['Archive Date']||uniq[uniq.length-1];
-  var base=uniq[uniq.length-1]===currentDate?uniq.length-2:uniq.length-1,priorDate=uniq[base-(offset||0)];
-  return adaptiveOffenseMap(hist.filter(function(r){return r['Archive Date']===priorDate;}),'Offense Flow Monthly');
-}
-function scoreAdaptiveRows(rows,offenseMap){
-  rows.forEach(function(r){r.offenseFlow=offenseMap[industryKey(r.name)];});
-  rows=rows.filter(function(r){return !isNaN(r.offenseFlow);});
-  if(rows.length<20)return{};
-  defensePercentile(rows,'capture',false);defensePercentile(rows,'relative',false);defensePercentile(rows,'drawdown',false);defensePercentile(rows,'volatility',true);defensePercentile(rows,'offenseFlow',false);
-  var scores={};rows.forEach(function(r){r.stability=.6*r.drawdownScore+.4*r.volatilityScore;r.score=.35*r.captureScore+.25*r.relativeScore+.15*r.stability+.25*r.offenseFlowScore;scores[r.name]=r;});return scores;
-}
-async function ensureDefenseLeadershipScores(){
-  if(defenseLeadershipLoading)return defenseLeadershipLoading;
-  defenseLeadershipLoading=(async function(){
-    var spxByDate={};(lastBreadthRows||[]).forEach(function(r){var d=defenseIsoDate(r.date),v=parseNum(r.spx);if(d&&!isNaN(v))spxByDate[d]=v;});
-    var spxDates=Object.keys(spxByDate).sort();if(spxDates.length<76)throw new Error('S&P breadth history needs at least 76 trading days.');
-    var latestDate=spxDates[spxDates.length-1],priorDate=spxDates[spxDates.length-6],priorPriorDate=spxDates[spxDates.length-11],entries=Object.keys(window.SECTOR_AGGREGATE_MANIFEST||{}).map(function(k){return window.SECTOR_AGGREGATE_MANIFEST[k];}).filter(Boolean),cursor=0,raw=[],priorRaw=[],priorPriorRaw=[];
-    async function worker(){while(cursor<entries.length){var entry=entries[cursor++];await loadSectorAggregateScript(entry,false);var data=window.SECTOR_AGGREGATES&&window.SECTOR_AGGREGATES[entry.key],row=data&&defenseRowFromAggregate(entry,data,spxByDate,latestDate),priorRow=data&&defenseRowFromAggregate(entry,data,spxByDate,priorDate),priorPriorRow=data&&defenseRowFromAggregate(entry,data,spxByDate,priorPriorDate);if(row)raw.push(row);if(priorRow)priorRaw.push(priorRow);if(priorPriorRow)priorPriorRaw.push(priorPriorRow);}}
-    var workers=[];for(var i=0;i<6;i++)workers.push(worker());await Promise.all(workers);
-    defenseLeadershipScores=scoreAdaptiveRows(raw,adaptiveOffenseMap(cache.flowCurr,'Offense Flow Monthly'));
-    var priorScores=scoreAdaptiveRows(priorRaw,priorAdaptiveOffenseMap(0)),priorPriorScores=scoreAdaptiveRows(priorPriorRaw,priorAdaptiveOffenseMap(1));
-    if(Object.keys(defenseLeadershipScores).length<20)throw new Error('Not enough industries have both aggregate and Offense Flow data for Adaptive Flow.');
-    Object.keys(defenseLeadershipScores).forEach(function(name){var r=defenseLeadershipScores[name],prior=priorScores[name],priorPrior=priorPriorScores[name];r.priorScore=prior?prior.score:NaN;r.weekChange=prior? r.score-prior.score:NaN;r.priorWeekChange=prior&&priorPrior?prior.score-priorPrior.score:NaN;});
-    defenseLeadershipAsOf=raw.map(function(r){return r.asOf;}).sort().pop()||'';
-    return defenseLeadershipScores;
-  })().catch(function(e){defenseLeadershipLoading=null;throw e;});
-  return defenseLeadershipLoading;
-}
-async function toggleDefenseLeadershipTrial(){
-  var btn=document.getElementById('flow-defense-trial');
-  if(defenseLeadershipEnabled){defenseLeadershipScores={};defenseLeadershipLoading=null;}
-  if(btn){btn.textContent='Loading...';btn.classList.add('active');}
-  try{await ensureDefenseLeadershipScores();defenseLeadershipEnabled=true;if(btn)btn.textContent='Refresh';renderSectorFlowsFromCache();}
-  catch(e){if(btn){btn.textContent='Retry Trial';btn.classList.remove('active');}alert('Adaptive Flow trial could not load: '+(e&&e.message?e.message:e));}
-}
-function activateAdaptiveFlowForAuto(){
-  if(currentRiskOn||adaptiveFlowReady()||defenseLeadershipLoading)return;
-  var btn=document.getElementById('flow-defense-trial');if(btn){btn.textContent='Loading...';btn.classList.add('active');}
-  ensureDefenseLeadershipScores().then(function(){defenseLeadershipEnabled=true;if(btn)btn.textContent='Refresh';renderSectorFlowsFromCache();}).catch(function(e){if(btn){btn.textContent='Retry Trial';btn.classList.remove('active');}console.error('Adaptive Flow auto-load failed:',e);});
-}
-function defenseLeadershipForIndustry(name){
-  if(defenseLeadershipScores[name])return defenseLeadershipScores[name];
-  var key=industryKey(name),match=null;Object.keys(defenseLeadershipScores).some(function(n){if(industryKey(n)===key){match=defenseLeadershipScores[n];return true;}return false;});return match;
-}
 async function renderSectorAggregate(name,force){
   var status=document.getElementById('sector-agg-status'),content=document.getElementById('sector-agg-content');
   var indexBox=document.getElementById('sector-agg-index-chart'),breadthBox=document.getElementById('sector-agg-breadth-chart');
@@ -1833,77 +1747,55 @@ async function fetchFlowData(){
     return{curr:curr,hist:hist,source:src};
   }catch(e){console.error('Flow fetch error:',e);return null;}
 }
-function isRiskOnRegime(id,hyLevel,hyDirection){return id==='cell-ydown-ddown'&&typeof hyLevel==='number'&&isFinite(hyLevel)&&hyLevel<4.25&&hyDirection!=='up';}
+function isRiskOnRegime(id){return ['cell-ydown-ddown','cell-yflat-ddown','cell-yup-ddown'].indexOf(id)>=0;}
 function cleanGauge(v){var s=String(v||'');if(/Holy Grail/i.test(s))return'Holy Grail';if(/Reversal/i.test(s))return'Reversal';if(/Trap/i.test(s))return'Trap';if(/Avoid/i.test(s))return'Avoid';if(/Wait/i.test(s))return'Wait';if(/Buy/i.test(s))return'Buy';return s.trim()||'--';}
 function cleanStrength(v){var s=String(v||'').trim();if(/Leading/i.test(s))return'Leading';if(/Improving/i.test(s))return'Improving';if(/Weakening/i.test(s))return'Weakening';if(/Lagging/i.test(s))return'Lagging';return s||'--';}
 function addFlowWoW(curr,hist){
   var df=(curr||[]).map(function(r){return Object.assign({},r);});
-  df.forEach(function(r){r['Offense WoW']=NaN;r['Defense WoW']=NaN;r['Prior Offense Flow']=NaN;r['Prior Defense Flow']=NaN;r['Prior Sector Strength']='';r['Prior Buy Gauge']='';r['Prior Perf Quart']=NaN;r['Prior Perf Year']=NaN;r['Prior Flow Date']='';});
+  df.forEach(function(r){r['Offense WoW']=NaN;r['Defense WoW']=NaN;r['Prior Offense Flow']=NaN;r['Prior Defense Flow']=NaN;r['Prior Sector Strength']='';r['Prior Buy Gauge']='';r['Prior Flow Date']='';});
   if(!hist||!hist.length)return df;
   var dates=hist.map(function(r){return r['Archive Date'];}).filter(Boolean).sort(function(a,b){return flowDateValue(a)-flowDateValue(b);});
   var uniq=[];dates.forEach(function(d){if(uniq[uniq.length-1]!==d)uniq.push(d);});
   if(!uniq.length)return df;
-  var currentDate=curr&&curr._sourceDate||((curr||[]).find(function(r){return r['Archive Date'];})||{})['Archive Date']||uniq[uniq.length-1];
+  var currentDate=curr&&curr._sourceDate||((curr||[]).find(function(r){return r['Archive Date'];})||{})['Archive Date']||'';
   var prevDate=currentDate&&uniq[uniq.length-1]===currentDate?uniq[uniq.length-2]:uniq[uniq.length-1];
   if(!prevDate)return df;
   var prev=hist.filter(function(r){return r['Archive Date']===prevDate;});
   var prevByName={};
-  prev.forEach(function(r){if(r.Name)prevByName[r.Name]=r;});
+  prev.forEach(function(r){if(r.Name)prevByName[industryKey(r.Name)]=r;});
   df.forEach(function(r){
-    var prior=prevByName[r.Name];if(!prior)return;
-    var priorOff=parseNum(prior['Rotation Flow Monthly']),priorDef=parseNum(prior['Quality Flow Monthly']);
-    r['Prior Offense Flow']=priorOff;r['Prior Defense Flow']=priorDef;r['Prior Sector Strength']=cleanStrength(prior['Sector Strength']);r['Prior Buy Gauge']=cleanGauge(prior['Buy Gauge']);r['Prior Perf Quart']=parseNum(prior['Perf Quart']);r['Prior Perf Year']=parseNum(prior['Perf Year']);r['Prior Flow Date']=prevDate;
+    var prior=prevByName[industryKey(r.Name)];if(!prior)return;
+    var priorOff=parseNum(prior['Offense Flow Monthly']);if(isNaN(priorOff))priorOff=parseNum(prior['Offense Flow']);if(isNaN(priorOff))priorOff=parseNum(prior['Rotation Flow Monthly']);if(isNaN(priorOff))priorOff=parseNum(prior['Rotation Flow']);
+    var priorDef=parseNum(prior['Defense Flow Monthly']);if(isNaN(priorDef))priorDef=parseNum(prior['Defense Flow']);if(isNaN(priorDef))priorDef=parseNum(prior['Quality Flow Monthly']);if(isNaN(priorDef))priorDef=parseNum(prior['Quality Flow']);
+    r['Prior Offense Flow']=priorOff;r['Prior Defense Flow']=priorDef;r['Prior Sector Strength']=cleanStrength(prior['Sector Strength']);r['Prior Buy Gauge']=cleanGauge(prior['Buy Gauge']);r['Prior Flow Date']=prevDate;
     if(!isNaN(priorOff))r['Offense WoW']=parseNum(r['Offense Flow Monthly'])-priorOff;
     if(!isNaN(priorDef))r['Defense WoW']=parseNum(r['Defense Flow Monthly'])-priorDef;
   });
   return df;
 }
-function adaptiveSignal(score){return typeof score==='number'&&isFinite(score)?score-50:NaN;}
-function adaptiveStrength(perfQuart,score){
-  var q=parseNum(perfQuart),flow=adaptiveSignal(score);if(isNaN(q)||isNaN(flow))return'Flat';
-  if(q>0&&flow>0)return'Leading';
-  if(q>0&&flow<0)return'Weakening';
-  if(q<0&&flow>0)return'Improving';
-  if(q<0&&flow<0)return'Lagging';
-  return'Flat';
+function extremeSellingCutoff(rows,col){
+  var values=(rows||[]).map(function(r){return parseNum(r[col]);}).filter(function(v){return !isNaN(v);}).sort(function(a,b){return a-b;});
+  if(!values.length)return NaN;
+  return values[Math.max(0,Math.ceil(values.length*0.05)-1)];
 }
-function adaptiveGauge(perfYear,perfQuart,score){
-  var y=parseNum(perfYear),q=parseNum(perfQuart),flow=adaptiveSignal(score);if(isNaN(y)||isNaN(q)||isNaN(flow))return'Wait';
-  if(y>0&&q>0&&flow>0)return'Holy Grail';
-  if(y<0&&q>0&&flow>0)return'Reversal';
-  if(y>0&&q<0&&flow<0)return'Trap';
-  if(y<0&&q<0)return'Avoid';
-  return'Wait';
-}
-function applyAdaptiveStates(rows){
-  if(!defenseLeadershipEnabled||activeFlowColumn()!=='Adaptive Flow')return rows;
-  rows.forEach(function(r){
-    var adaptive=defenseLeadershipForIndustry(r.Name);if(!adaptive)return;
-    r['Adaptive Flow']=adaptive.score;r['Prior Adaptive Flow']=adaptive.priorScore;
-    r['Sector Strength']=adaptiveStrength(r['Perf Quart'],adaptive.score);
-    r['Prior Sector Strength']=adaptiveStrength(r['Prior Perf Quart'],adaptive.priorScore);
-    r['Buy Gauge']=adaptiveGauge(r['Perf Year'],r['Perf Quart'],adaptive.score);
-    r['Prior Buy Gauge']=adaptiveGauge(r['Prior Perf Year'],r['Prior Perf Quart'],adaptive.priorScore);
-  });
-  return rows;
-}
+function isExtremeSellingScore(score,cutoff){return !isNaN(score)&&score<0&&!isNaN(cutoff)&&score<=cutoff;}
 function rankSectors(curr,hist,activeFlow){
-  var df=applyAdaptiveStates(addFlowWoW(curr,hist)).filter(function(r){return r.Name;});
+  var df=addFlowWoW(curr,hist).filter(function(r){return r.Name;});
   df.forEach(function(r){r._active=parseNum(r[activeFlow]);r._gauge=cleanGauge(r['Buy Gauge']);r._strength=cleanStrength(r['Sector Strength']);});
-  var adaptive=activeFlow==='Adaptive Flow',strongThresh=adaptive?50:.05,improvingThresh=adaptive?50:.05;
   var buyGauges=['Buy','Holy Grail','Reversal'];
-  var strong=df.filter(function(r){return r._active>strongThresh&&buyGauges.indexOf(r._gauge)>=0;}).sort(function(a,b){return b._active-a._active;}).slice(0,10);
-  var improving=df.filter(function(r){return r._active>improvingThresh&&r._strength==='Improving';}).sort(function(a,b){return b._active-a._active;}).slice(0,8);
+  var strong=df.filter(function(r){return r._active>0.05&&buyGauges.indexOf(r._gauge)>=0;}).sort(function(a,b){return b._active-a._active;}).slice(0,10);
+  var improving=df.filter(function(r){return r._active>0.05&&r._strength==='Improving';}).sort(function(a,b){return b._active-a._active;}).slice(0,8);
   var trap=df.filter(function(r){return r._gauge==='Trap';}).sort(function(a,b){return b._active-a._active;}).slice(0,20);
-  function offenseValue(row){var v=parseNum(row['Offense Flow Monthly']);if(isNaN(v))v=parseNum(row['Offense Flow']);if(isNaN(v))v=parseNum(row['Rotation Flow Monthly']);if(isNaN(v))v=parseNum(row['Rotation Flow']);return v;}
-  var offenseValues=df.map(offenseValue).filter(function(v){return !isNaN(v);}).sort(function(a,b){return a-b;}),flowExtremeThresh=offenseValues.length?offenseValues[Math.floor((offenseValues.length-1)*.10)]:NaN;
-  var extremeThresh=adaptive?50:/Defense/i.test(activeFlow)?-0.20:-0.25;
+  var extremeThresh=-0.20;
   var extreme=df.filter(function(r){
-    if(!adaptive)return r._active<extremeThresh;
-    return offenseValue(r)<=flowExtremeThresh&&r._active<extremeThresh;
-  }).sort(function(a,b){return a._active-b._active;}).slice(0,10);
+    return parseNum(r['Offense Flow Monthly'])<extremeThresh||parseNum(r['Defense Flow Monthly'])<extremeThresh;
+  }).sort(function(a,b){
+    var av=Math.min(parseNum(a['Offense Flow Monthly']),parseNum(a['Defense Flow Monthly']));
+    var bv=Math.min(parseNum(b['Offense Flow Monthly']),parseNum(b['Defense Flow Monthly']));
+    return av-bv;
+  }).slice(0,10);
   var full=df.slice().sort(function(a,b){var av=isNaN(a._active)?-Infinity:a._active,bv=isNaN(b._active)?-Infinity:b._active;return bv-av;});
-  return{strong:strong,improving:improving,trap:trap,extreme:extreme,full:full,extremeThresh:extremeThresh,flowExtremeThresh:flowExtremeThresh,wowCol:/Defense/i.test(activeFlow)?'Defense WoW':'Offense WoW'};
+  return{strong:strong,improving:improving,trap:trap,extreme:extreme,full:full,extremeThresh:extremeThresh,wowCol:/Defense/i.test(activeFlow)?'Defense WoW':'Offense WoW'};
 }
 function esc(s){return String(s===undefined||s===null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function fmtFlow(v){var n=parseNum(v);return isNaN(n)?'--':(n>=0?'+':'')+n.toFixed(3);}
@@ -1944,7 +1836,6 @@ function flowCell(row,col){
   if(col==='Name')return '<button class="flow-name-btn" data-industry-key="'+esc(industryKey(row.Name))+'" onclick="event.stopPropagation();openSectorDrilldown('+JSON.stringify(String(row.Name||'')).replace(/"/g,'&quot;')+',this)">'+esc(row.Name||'--')+'</button>';
   if(col==='Sector Strength')return strengthTransitionMarkup(row[col],row['Prior Sector Strength']);
   if(col==='Buy Gauge')return gaugeTransitionMarkup(row[col],row['Prior Buy Gauge']);
-  if(col==='Adaptive Flow'){var adaptive=defenseLeadershipForIndustry(row.Name);return '<td class="flow-num" data-value="'+(adaptive?adaptive.score:-1)+'">'+(adaptive?'<span class="flow-pill leading">'+Math.round(adaptive.score)+'</span>':'<span class="flow-muted">--</span>')+'</td>';}
   if(/Flow|WoW|Rotation/i.test(col))return'<td class="flow-num '+flowClass(row[col])+'" data-value="'+(parseNum(row[col])||0)+'">'+fmtFlow(row[col])+'</td>';
   if(/^Perf/i.test(col))return'<td class="flow-num '+flowClass(row[col])+'" data-value="'+(parseNum(row[col])||0)+'">'+fmtPct(row[col])+'</td>';
   return esc(row[col]||'--');
@@ -1955,13 +1846,6 @@ function sectorStrengthForIndustry(industry){
   if(!row&&key){Object.keys(currentFlowRowsByName).some(function(name){if(industryKey(name)===key){row=currentFlowRowsByName[name];return true;}return false;});}
   if(!row&&cache.flowCurr){row=cache.flowCurr.find(function(r){return industryKey(r.Name)===key;});}
   return{current:cleanStrength(row&&row['Sector Strength']),prior:cleanStrength(row&&row['Prior Sector Strength'])};
-}
-function defenseSummaryMarkup(name){
-  var d=defenseLeadershipForIndustry(name);
-  if(!d)return '';
-  function row(label,score){var value=Math.max(0,Math.min(100,score||0));return '<div class="defense-summary-row"><span>'+label+'</span><span class="defense-summary-bar"><i style="width:'+value.toFixed(1)+'%"></i></span><b>'+Math.round(value)+'</b></div>';}
-  var hasChange=typeof d.weekChange==='number'&&isFinite(d.weekChange),change=hasChange?(d.weekChange>=0?'+':'')+d.weekChange.toFixed(0):'--';
-  return '<aside class="defense-summary"><div class="defense-summary-label">Adaptive Flow</div><div class="defense-summary-score"><strong>'+Math.round(d.score)+'</strong><span>percentile</span></div>'+row('Offense flow',d.offenseFlowScore)+row('Downside capture',d.captureScore)+row('Relative strength',d.relativeScore)+row('Drawdown stability',d.stability)+'<div class="defense-summary-note">Weekly change: '+change+' pts<br>As of '+esc(d.asOf)+' · '+d.members+' members<br>25% offense flow · 35% capture · 25% relative · 15% stability</div></aside>';
 }
 function setFlowSearchStatus(msg,isError){var el=document.getElementById('flow-ticker-search-status');if(el){el.textContent=msg;el.style.color=isError?'#b91c1c':'#53655e';}}
 function closeSectorDrilldown(){document.querySelectorAll('.sector-drilldown-row').forEach(function(r){r.remove();});selectedIndustryAnchor=null;selectedStockAnchor=null;sectorSearchTicker='';if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}if(sectorAggregateCharts.index){try{sectorAggregateCharts.index.remove();}catch(e){}sectorAggregateCharts.index=null;}if(sectorAggregateCharts.breadth){try{sectorAggregateCharts.breadth.remove();}catch(e){}sectorAggregateCharts.breadth=null;}sectorAggregateCharts.indexMain=null;sectorAggregateCharts.breadthMain=null;}
@@ -2170,10 +2054,9 @@ function sectorDrilldownMarkup(row,name,perfUrl,valUrl,techUrl,colspan){
   function previousMetric(value){return '<div class="sector-dd-prev"><span class="sector-dd-prev-label">Last week</span><span class="sector-dd-prev-value">'+value+'</span></div>';}
   var priorStrength=priorValue(cleanStrength(row['Prior Sector Strength']));
   var priorGauge=priorValue(cleanGauge(row['Prior Buy Gauge']));
-  var defenseSummary=defenseSummaryMarkup(name);
   return '<tr class="sector-drilldown-row"><td colspan="'+colspan+'"><div class="sector-drilldown" id="sector-drilldown">'+
     '<div class="sector-dd-head"><div><div class="sector-dd-kicker">Selected Industry</div><div class="sector-dd-title" id="sector-dd-title">'+esc(name)+'</div><div class="sector-dd-sub" id="sector-dd-sub">Fetching Finviz overview, performance, valuation, and technical data for this industry.</div></div><div class="sector-dd-actions"><a class="sector-dd-link" id="sector-dd-finviz" href="'+esc(perfUrl)+'" target="_blank" rel="noopener">Performance</a><a class="sector-dd-link" href="'+esc(valUrl)+'" target="_blank" rel="noopener">Valuation</a><a class="sector-dd-link" href="'+esc(techUrl)+'" target="_blank" rel="noopener">Technical</a><button class="sector-dd-close" id="sector-dd-refresh" onclick="refreshSelectedSector()">Refresh Sector</button><button class="sector-dd-close" onclick="closeSectorDrilldown()">Close</button></div></div>'+
-    (defenseSummary?'<div class="sector-dd-overview">':'')+'<div class="sector-dd-meta"><div class="sector-dd-metric"><div class="sector-dd-label">Active Signal</div><div class="sector-dd-val" id="sector-dd-active">'+esc(activeFlow)+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Sector Strength</div><div class="sector-dd-val" id="sector-dd-strength">'+pill(cleanStrength(row['Sector Strength']),cleanStrength(row['Sector Strength']))+'</div>'+previousMetric(priorStrength==='--'?'--':pill(priorStrength,priorStrength))+'</div><div class="sector-dd-metric"><div class="sector-dd-label">Buy Gauge</div><div class="sector-dd-val" id="sector-dd-gauge">'+pill(cleanGauge(row['Buy Gauge']),cleanGauge(row['Buy Gauge']))+'</div>'+previousMetric(priorGauge==='--'?'--':pill(priorGauge,priorGauge))+'</div><div class="sector-dd-metric"><div class="sector-dd-label">Offense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Offense Flow Monthly'])+'</div>'+previousMetric(fmtFlow(row['Prior Offense Flow']))+'</div><div class="sector-dd-metric"><div class="sector-dd-label">Defense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Defense Flow Monthly'])+'</div>'+previousMetric(fmtFlow(row['Prior Defense Flow']))+'</div></div>'+defenseSummary+(defenseSummary?'</div>':'')+
+    '<div class="sector-dd-meta"><div class="sector-dd-metric"><div class="sector-dd-label">Active Signal</div><div class="sector-dd-val" id="sector-dd-active">'+esc(activeFlow)+'</div></div><div class="sector-dd-metric"><div class="sector-dd-label">Sector Strength</div><div class="sector-dd-val" id="sector-dd-strength">'+pill(cleanStrength(row['Sector Strength']),cleanStrength(row['Sector Strength']))+'</div>'+previousMetric(priorStrength==='--'?'--':pill(priorStrength,priorStrength))+'</div><div class="sector-dd-metric"><div class="sector-dd-label">Buy Gauge</div><div class="sector-dd-val" id="sector-dd-gauge">'+pill(cleanGauge(row['Buy Gauge']),cleanGauge(row['Buy Gauge']))+'</div>'+previousMetric(priorGauge==='--'?'--':pill(priorGauge,priorGauge))+'</div><div class="sector-dd-metric"><div class="sector-dd-label">Offense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Offense Flow Monthly'])+'</div>'+previousMetric(fmtFlow(row['Prior Offense Flow']))+'</div><div class="sector-dd-metric"><div class="sector-dd-label">Defense Flow</div><div class="sector-dd-val">'+fmtFlow(row['Defense Flow Monthly'])+'</div>'+previousMetric(fmtFlow(row['Prior Defense Flow']))+'</div></div>'+
     '<div class="sector-aggregate-panel" id="sector-aggregate-panel"><div class="rrg-head"><div><div class="rrg-title" id="sector-agg-title">Aggregate Sector Chart</div><div class="rrg-sub" id="sector-agg-sub">Loading precomputed Massive flat-file aggregate for this industry.</div></div></div><div class="sector-aggregate-status" id="sector-agg-status">Checking aggregate manifest...</div><div id="sector-agg-content" style="display:none"><div class="agg-explain">Tickers: <strong id="sector-agg-tickers">--</strong></div><div class="breadth-stack" id="sector-breadth-stack"></div><button class="agg-chart-toggle" id="sector-agg-toggle" onclick="toggleSectorAggregateCharts()">Show Charts</button><div class="agg-chart-wrap" id="sector-agg-chart-wrap"><div class="agg-prototype-grid"><div><div class="rrg-sub" style="margin:0 0 6px">Index white · SMA20 yellow · SMA50 red · SMA200 light blue</div><div class="agg-chart-box" id="sector-agg-index-chart"></div></div><div><div class="rrg-sub" style="margin:0 0 6px">% above SMA20 yellow · SMA50 red · SMA200 light blue</div><div class="agg-chart-box" id="sector-agg-breadth-chart"></div></div></div></div><div class="agg-universe" id="sector-agg-universe"></div></div></div>'+
     '<div class="rotation-placeholder"><div class="rotation-placeholder-title">Rotation Inside This Sector</div><div class="rotation-placeholder-body">Volatility-adjusted rotation score: 40% monthly thrust plus 60% month/quarter momentum scaled by monthly versus weekly volatility. Table defaults to highest score first.</div></div>'+
     '<div class="stock-table-wrap" id="sector-stock-table"><div class="flow-empty">Loading Finviz stock list...</div></div>'+
@@ -2622,14 +2505,12 @@ function renderSectorFlowsFromCache(){
   document.getElementById('flow-top-improving').textContent=topName(ranked.improving);
   document.getElementById('flow-top-trap').textContent=topName(ranked.trap);
   document.getElementById('flow-top-extreme').textContent=topName(ranked.extreme);
-  var adaptiveActive=activeFlow==='Adaptive Flow';
-  document.getElementById('flow-meta-strong').textContent=adaptiveActive?'Adaptive Flow > 50 (positive flow) plus Holy Grail / Reversal gauge.':activeFlow+' > 0.05 plus Buy / Holy Grail / Reversal gauge.';
-  document.getElementById('flow-meta-improving').textContent=adaptiveActive?'Sector Strength = Improving and Adaptive Flow > 50 (positive flow).':'Sector Strength = Improving and '+activeFlow+' > 0.05.';
-  document.getElementById('flow-meta-extreme').textContent=adaptiveActive?'Bottom 10% Offense Flow ('+(isNaN(ranked.flowExtremeThresh)?'--':ranked.flowExtremeThresh.toFixed(3))+') and Adaptive Flow < '+ranked.extremeThresh.toFixed(0)+'.':activeFlow+' < '+ranked.extremeThresh.toFixed(2)+'.';
+  document.getElementById('flow-meta-strong').textContent=activeFlow+' > 0.05 plus Buy / Holy Grail / Reversal gauge.';
+  document.getElementById('flow-meta-improving').textContent='Sector Strength = Improving and '+activeFlow+' > 0.05.';
+  document.getElementById('flow-meta-extreme').textContent='Offense or Defense Flow Monthly below '+fmtFlow(ranked.extremeThresh)+', independent of active regime.';
   document.getElementById('flow-meta-full').textContent=ranked.full.length+' industries sorted by '+activeFlow+'.';
-  var adaptiveCols=defenseLeadershipEnabled?['Adaptive Flow']:[];
-  var cols=['Name','Offense Flow Monthly','Defense Flow Monthly'].concat(adaptiveCols,['Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year']);
-  var fullCols=['Name','Offense Flow Monthly','Defense Flow Monthly'].concat(adaptiveCols,['Rotation Flow Weekly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year','Perf YTD']);
+  var cols=['Name','Offense Flow Monthly','Defense Flow Monthly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year'];
+  var fullCols=['Name','Offense Flow Monthly','Defense Flow Monthly','Rotation Flow Weekly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year','Perf YTD'];
   renderFlowTable('flow-table-strong',ranked.strong,cols);
   renderFlowTable('flow-table-improving',ranked.improving,cols);
   renderFlowTable('flow-table-trap',ranked.trap,cols);
@@ -2640,7 +2521,7 @@ function renderSectorFlowsFromCache(){
 
 // ── MAIN FETCH ──
 async function fetchFromAPI(force){
-  if(!force&&cacheValid()){var age=Math.round((Date.now()-cache.ts)/60000);setStatus('live','Cached · '+age+'m ago');if(cache.dxy&&cache.y10){liveData={dxy:cache.dxy,us10y:cache.y10,hy:cache.hy,fv:cache.fv};render(liveData);}renderFinviz(cache.fv);renderBreadth(cache.breadth);renderSectorFlowsFromCache();activateAdaptiveFlowForAuto();if(rawDxyRows&&rawY10Rows)try{renderRegimeHistory();}catch(e){}scheduleRefresh(CACHE_MS-(Date.now()-cache.ts));return;}
+  if(!force&&cacheValid()){var age=Math.round((Date.now()-cache.ts)/60000);setStatus('live','Cached · '+age+'m ago');if(cache.dxy&&cache.y10){liveData={dxy:cache.dxy,us10y:cache.y10,hy:cache.hy,fv:cache.fv};render(liveData);}renderFinviz(cache.fv);renderBreadth(cache.breadth);renderSectorFlowsFromCache();if(rawDxyRows&&rawY10Rows)try{renderRegimeHistory();}catch(e){}scheduleRefresh(CACHE_MS-(Date.now()-cache.ts));return;}
 
   setStatus('loading','Fetching…');var ok=[];
   var dR=await fetchYahoo(YAHOO_DXY);if(dR)ok.push('DXY');
@@ -2661,10 +2542,9 @@ async function fetchFromAPI(force){
   var dxyObj={current:dR[dR.length-1].close,one_month_ago:dxy1m.close,three_months_ago:dxy3m.close,six_months_ago:dxy6m.close,dates:{now:dxyNow,m1:dxy1m.dateStr,m3:dxy3m.dateStr,m6:dxy6m.dateStr}};
   var y10Obj={current:yR[yR.length-1].close,one_month_ago:y101m.close,three_months_ago:y103m.close,six_months_ago:y106m.close,source:yR.source||'Treasury source',isFallback:yR.isFallback===true,dates:{now:y10Now,m1:y101m.dateStr,m3:y103m.dateStr,m6:y106m.dateStr}};
 
-  defenseLeadershipEnabled=false;defenseLeadershipScores={};defenseLeadershipLoading=null;
   cache={dxy:dxyObj,y10:y10Obj,hy:hyData,fv:fvCount,breadth:breadthRows,flowCurr:flowPack?flowPack.curr:null,flowHist:flowPack?flowPack.hist:null,flowSource:flowPack?flowPack.source:null,ts:Date.now()};
 
-  liveData={dxy:dxyObj,us10y:y10Obj,hy:hyData,fv:fvCount};render(liveData);activateAdaptiveFlowForAuto();
+  liveData={dxy:dxyObj,us10y:y10Obj,hy:hyData,fv:fvCount};render(liveData);
   try{renderRegimeHistory();}catch(e){console.error('History error:',e);}
   setStatus('live','Live · '+new Date().toLocaleTimeString()+' · '+ok.join(' · '));
   scheduleRefresh(CACHE_MS);
@@ -2839,7 +2719,7 @@ function render(data){
   if(!dDA||!yDA){banner.classList.remove('active');document.getElementById('regime-name').textContent='Insufficient data';return;}
   var id1M='cell-'+yM[yD1]+'-'+dM[dD1],id3M='cell-'+yM[yD3]+'-'+dM[dD3],aId=activeTF==='1m'?id1M:id3M;
 
-  currentRegimeId=aId;currentRiskOn=isRiskOnRegime(aId,h?h.current:null,h?classifyHY(hd1,tH):null);
+  currentRegimeId=aId;currentRiskOn=isRiskOnRegime(aId);
 
   if(conflict){
     var primaryId=activeTF==='1m'?id1M:id3M;
