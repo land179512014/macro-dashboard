@@ -125,8 +125,18 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .regime-banner{max-width:1100px;margin:0 auto 20px;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;border:1px solid #334155;background:#1e293b;transition:all .4s}
 .regime-banner.active{border-color:var(--regime-color,#3b82f6);background:var(--regime-bg,#1e293b)}
 .regime-icon{font-size:1.8rem;flex-shrink:0}
+.regime-text{min-width:0;flex:1}
 .regime-text h2{font-size:.95rem;font-weight:700;color:var(--regime-color,#94a3b8)}
 .regime-text p{font-size:.7rem;color:#94a3b8;margin-top:3px;line-height:1.5}
+.regime-meta{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.regime-chip{border:1px solid #334155;background:#0f172a;border-radius:7px;padding:6px 9px;min-width:70px}
+.regime-chip-label{font-size:.52rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:3px}
+.regime-chip-val{font-size:.68rem;font-weight:800;color:#cbd5e1;white-space:nowrap}
+.regime-chip.backdrop{border-color:#5b4420;background:#2a1f0d}.regime-chip.backdrop .regime-chip-label{color:#d6b35f}.regime-chip.backdrop .regime-chip-val{color:#fbbf24}
+.regime-chip.help{position:relative;cursor:help}
+.regime-chip.help::after{content:attr(data-tooltip);position:absolute;z-index:40;top:calc(100% + 8px);right:0;width:min(260px,calc(100vw - 32px));padding:8px 10px;border:1px solid #475569;border-radius:5px;background:#0f172a;color:#cbd5e1;font:400 11px/1.45 Arial,sans-serif;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.35);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .15s ease}
+.regime-chip.help:hover::after{opacity:1;visibility:visible}
+@media(max-width:760px){.regime-banner{align-items:flex-start;flex-wrap:wrap}.regime-meta{margin-left:0;width:100%;justify-content:flex-start}}
 .timeframe-toggle{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
 .tf-btn{padding:5px 12px;border-radius:6px;font-size:.68rem;font-weight:700;cursor:pointer;border:1px solid #334155;background:#0f172a;color:#64748b;transition:all .15s}
 .tf-btn.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
@@ -164,6 +174,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .tp-from{background:#1e293b;border-radius:8px;padding:6px 12px;font-size:.72rem;font-weight:600;color:#94a3b8;border:1px solid #334155}
 .tp-arrow{font-size:1.1rem;color:#a78bfa}
 .tp-to{background:rgba(167,139,250,.15);border-radius:8px;padding:6px 12px;font-size:.72rem;font-weight:700;color:#c4b5fd;border:1px solid #7c3aed}
+.tp-label{display:block;font-size:.52rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:2px}
 .tp-action{font-size:.72rem;color:#94a3b8;line-height:1.6}.tp-action strong{color:#e2e8f0}
 .cell.ghost{opacity:.55;filter:saturate(.6);box-shadow:0 0 0 2px rgba(167,139,250,.4);position:relative;z-index:1}
 .cell.ghost::after,.cell.highlighted::after{position:absolute;top:6px;right:8px;font-size:.55rem;font-weight:700;padding:1px 5px;border-radius:3px}
@@ -551,9 +562,9 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
   <div class="conviction-alignment"><span id="ca-icon"></span><span id="ca-label" style="font-weight:700"></span><span id="ca-detail" style="color:#64748b"></span></div>
 </div>
 
-<div class="transition-panel" id="transition-panel"><div class="tp-header">⚡ Regime Transition Detected</div><div class="tp-flow"><span class="tp-from" id="tp-from">—</span><span class="tp-arrow">→</span><span class="tp-to" id="tp-to">—</span></div><div class="tp-action" id="tp-action">—</div></div>
+<div class="transition-panel" id="transition-panel"><div class="tp-header">⚡ 1M Regime Transition Detected</div><div class="tp-flow"><span class="tp-from" id="tp-from">—</span><span class="tp-arrow">→</span><span class="tp-to" id="tp-to">—</span></div><div class="tp-action" id="tp-action">—</div></div>
 
-<div class="regime-banner" id="regime-banner"><div class="regime-icon" id="regime-icon">⏳</div><div class="regime-text"><h2 id="regime-name">Loading…</h2><p id="regime-desc">Fetching live market data.</p></div><div class="timeframe-toggle"><button class="tf-btn active" id="btn-1m" onclick="setTF('1m')">1 Month</button><button class="tf-btn" id="btn-3m" onclick="setTF('3m')">3 Month</button></div></div>
+<div class="regime-banner" id="regime-banner"><div class="regime-icon" id="regime-icon">⏳</div><div class="regime-text"><h2 id="regime-name">Loading…</h2><p id="regime-desc">Fetching live market data.</p></div><div class="regime-meta"><div class="regime-chip"><div class="regime-chip-label">Active</div><div class="regime-chip-val">1M</div></div><div class="regime-chip"><div class="regime-chip-label">Days</div><div class="regime-chip-val" id="regime-days">—</div></div><div class="regime-chip backdrop help" data-tooltip="3M is a sizing factor, not the active regime. Use it to scale exposure up or down when the longer backdrop agrees or conflicts with the 1M trading signal." title="3M is a sizing factor, not the active regime."><div class="regime-chip-label">3M Backdrop</div><div class="regime-chip-val" id="regime-backdrop">—</div></div></div></div>
 
 <!-- REGIME HISTORY -->
 <div class="section-divider"><div class="line"></div><div class="label">📜 Regime History — Reconstructed from Price Data</div><div class="line"></div></div>
@@ -566,7 +577,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
     </div>
   </div>
   <div id="regime-timeline-wrap" style="display:none;margin-top:12px">
-    <div style="font-size:.6rem;color:#64748b;margin-bottom:8px">Point-in-time replay of the live regime logic using 30/90/180-day references and each date's dynamic thresholds. Brief transitions are preserved.</div>
+    <div style="font-size:.6rem;color:#64748b;margin-bottom:8px">Point-in-time replay using completed daily closes, 30/90/180-day references, and each date's dynamic thresholds. Brief close-confirmed transitions are preserved.</div>
     <div id="regime-timeline" style="font-size:.68rem;color:#94a3b8;line-height:1.6">Computing…</div>
   </div>
 </div>
@@ -764,7 +775,7 @@ var sectorAggregateData=null;
 var sectorAggregateName='';
 
 function cacheValid(){return cache.ts>0&&(Date.now()-cache.ts)<CACHE_MS;}
-function setTF(tf){activeTF=tf;document.getElementById('btn-1m').classList.toggle('active',tf==='1m');document.getElementById('btn-3m').classList.toggle('active',tf==='3m');if(liveData)render(liveData);}
+function setTF(tf){activeTF=tf;var b1=document.getElementById('btn-1m'),b3=document.getElementById('btn-3m');if(b1)b1.classList.toggle('active',tf==='1m');if(b3)b3.classList.toggle('active',tf==='3m');if(liveData)render(liveData);}
 function setHistTF(tf){historyTF=tf;document.getElementById('hist-1m-btn').classList.toggle('active',tf==='1m');document.getElementById('hist-3m-btn').classList.toggle('active',tf==='3m');if(rawDxyRows&&rawY10Rows)renderRegimeHistory();}
 function toggleHistory(){var w=document.getElementById('regime-timeline-wrap');var ic=document.getElementById('hist-toggle-icon');if(w.style.display==='none'){w.style.display='block';ic.textContent='▼';}else{w.style.display='none';ic.textContent='▶';}}
 function setStatus(s,m){document.getElementById('status-dot').className='status-dot '+s;document.getElementById('status-text').textContent=m;}
@@ -816,21 +827,14 @@ function historicalRegimePoint(dR,yR,i,tf){
   var yM2={up:'yup',flat:'yflat',down:'ydown'},dM2={up:'dup',flat:'dflat',down:'ddown'};
   return{cellId:'cell-'+yM2[yDir]+'-'+dM2[dDir],date:new Date(dNow.ts*1000),dxyChg:dxyChg,y10Chg:y10Chg,tD:tD,tY:tY};
 }
-function renderRegimeHistory(){
-  var el=document.getElementById('regime-timeline');
-  if(!rawDxyRows||!rawY10Rows||rawDxyRows.length<140||rawY10Rows.length<140){el.innerHTML='<em>Insufficient data.</em>';return;}
-  var dR=rawDxyRows,yR=rawY10Rows;
-
-  // Replay the live regime logic using only observations available on each date.
+function buildRegimePeriods(dR,yR,tf){
+  dR=confirmedDailyRows(dR);yR=confirmedDailyRows(yR);
   var daily=[];
-  for(var i=0;i<dR.length;i++){var point=historicalRegimePoint(dR,yR,i,historyTF);if(point)daily.push(point);}
-  if(daily.length<2){el.innerHTML='<em>Not enough data.</em>';return;}
-
-  // Consolidate into periods
+  for(var i=0;i<dR.length;i++){var point=historicalRegimePoint(dR,yR,i,tf);if(point)daily.push(point);}
+  if(daily.length<2)return{daily:daily,periods:[]};
   var periods=[];
   var cur={cellId:daily[0].cellId,start:daily[0].date,end:daily[0].date,days:1,
            dxyStart:daily[0].dxyChg,dxyEnd:daily[0].dxyChg,y10Start:daily[0].y10Chg,y10End:daily[0].y10Chg,tDEnd:daily[0].tD,tYEnd:daily[0].tY};
-
   for(var k=1;k<daily.length;k++){
     if(daily[k].cellId===cur.cellId){
       cur.end=daily[k].date;
@@ -846,6 +850,34 @@ function renderRegimeHistory(){
     }
   }
   periods.push(cur);
+  return{daily:daily,periods:periods};
+}
+function isImmediateRiskRegime(cellId){
+  return cellId==='cell-yup-dup'||cellId==='cell-ydown-dup';
+}
+function confirmedAnchorBefore(periods,idx){
+  if(!periods||idx<=0)return null;
+  for(var i=idx-1;i>=0;i--){
+    if(periods[i].days>=2||isImmediateRiskRegime(periods[i].cellId))return periods[i];
+  }
+  return idx>0?periods[idx-1]:null;
+}
+function effectiveRegimeState(periods){
+  if(!periods||!periods.length)return{active:null,prior:null,testing:null,immediate:false};
+  var current=periods[periods.length-1],prior=periods.length>1?periods[periods.length-2]:null;
+  var immediate=isImmediateRiskRegime(current.cellId);
+  var anchor=confirmedAnchorBefore(periods,periods.length-1)||prior;
+  if(current.days>=2||immediate||!prior)return{active:current,prior:anchor,testing:null,immediate:immediate};
+  return{active:anchor||prior,prior:anchor||prior,testing:current,immediate:false};
+}
+function renderRegimeHistory(){
+  var el=document.getElementById('regime-timeline');
+  if(!rawDxyRows||!rawY10Rows||rawDxyRows.length<140||rawY10Rows.length<140){el.innerHTML='<em>Insufficient data.</em>';return;}
+  var dR=rawDxyRows,yR=rawY10Rows;
+
+  // Replay the live regime logic using only observations available on each date.
+  var periodInfo=buildRegimePeriods(dR,yR,historyTF),periods=periodInfo.periods;
+  if(periods.length<1){el.innerHTML='<em>Not enough data.</em>';return;}
 
   // Render chronologically (oldest first at top, newest at bottom)
   var html='';
@@ -987,7 +1019,35 @@ function sourceDateLabel(row){
   }
   return new Date((row&&row.ts||0)*1000).toLocaleDateString('en-US',{timeZone:'UTC',month:'short',day:'numeric',year:'numeric'});
 }
+function nyDateKeyFromDate(date){
+  var parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+  var out={};parts.forEach(function(p){out[p.type]=p.value;});
+  return out.year+'-'+out.month+'-'+out.day;
+}
+function rowDateKey(row){
+  if(row&&row.date)return String(row.date).slice(0,10);
+  return nyDateKeyFromDate(new Date((row&&row.ts||0)*1000));
+}
+function confirmedDailyRows(rows){
+  var today=nyDateKeyFromDate(new Date());
+  return (rows||[]).filter(function(r){return rowDateKey(r)<today;});
+}
+function closestRowFromBase(rows,baseRow,days){
+  var t=baseRow.ts-days*86400,best=historyRowAtOrBefore(rows,t)||rows[0];
+  return{close:best.close,dateStr:sourceDateLabel(best)};
+}
 function closestRow(rows,days){var base=rows[rows.length-1].ts,t=base-days*86400,best=historyRowAtOrBefore(rows,t)||rows[0];return{close:best.close,dateStr:sourceDateLabel(best)};}
+function confirmedRegimeInput(dR,yR){
+  var cd=confirmedDailyRows(dR),cy=confirmedDailyRows(yR);
+  if(cd.length<140||cy.length<140)return null;
+  var dNow=cd[cd.length-1],yNow=cy[cy.length-1];
+  var d1=closestRowFromBase(cd,dNow,30),d3=closestRowFromBase(cd,dNow,90),d6=closestRowFromBase(cd,dNow,180);
+  var y1=closestRowFromBase(cy,yNow,30),y3=closestRowFromBase(cy,yNow,90),y6=closestRowFromBase(cy,yNow,180);
+  return{
+    dxy:{current:dNow.close,one_month_ago:d1.close,three_months_ago:d3.close,six_months_ago:d6.close,dates:{now:sourceDateLabel(dNow),m1:d1.dateStr,m3:d3.dateStr,m6:d6.dateStr}},
+    us10y:{current:yNow.close,one_month_ago:y1.close,three_months_ago:y3.close,six_months_ago:y6.close,source:yR&&yR.source||'Treasury source',isFallback:yR&&yR.isFallback===true,dates:{now:sourceDateLabel(yNow),m1:y1.dateStr,m3:y3.dateStr,m6:y6.dateStr}}
+  };
+}
 function hyCacheFallback(){
   var c=window.HY_SPREAD_CACHE;
   if(!c||[c.current,c.one_month_ago,c.three_months_ago,c.six_months_ago].some(function(v){return isNaN(v);}))return null;
@@ -2739,40 +2799,63 @@ function render(data){
   renderStressVerdict(dd1,yd1,hd1,vD,vY,vH,h?h.current:null);
   try{renderConviction(dd1,yd1,hd1,tD,tY,tH,vD,vY,vH,y.current,h?h.current:null);}catch(e){console.error('Conviction render error:',e);}
 
-  // ── MATRIX with working 3M toggle ──
-  var dD1=classifyD(dd1,tD),yD1=classifyY(yd1,tY);
-  var dD3=classifyD(dd3,tD),yD3=classifyY(yd3,tY);
+  // ── MATRIX: 1M is the active trading regime; 3M is backdrop context ──
+  var regimeInput=(rawDxyRows&&rawY10Rows)?confirmedRegimeInput(rawDxyRows,rawY10Rows):null;
+  var rD=regimeInput?regimeInput.dxy:d,rY=regimeInput?regimeInput.us10y:y;
+  var rdd1=pctChg(rD.current,rD.one_month_ago),rdd3=pctChg(rD.current,rD.three_months_ago);
+  var ryd1=bpsDiff(rY.current,rY.one_month_ago),ryd3=bpsDiff(rY.current,rY.three_months_ago);
+  var rvD=calcVelocity(rD.current,rD.one_month_ago,rD.three_months_ago,rD.six_months_ago,false);
+  var rvY=calcVelocity(rY.current,rY.one_month_ago,rY.three_months_ago,rY.six_months_ago,true);
+  var rtD=rvD?Math.max(rvD.stdev,.15):tD,rtY=rvY?Math.max(rvY.stdev,2):tY;
+  var dD1=classifyD(rdd1,rtD),yD1=classifyY(ryd1,rtY);
+  var dD3=classifyD(rdd3,rtD),yD3=classifyY(ryd3,rtY);
   // Fallback: if 3M classification is null, use 1M
   if(dD3===null)dD3=dD1;
   if(yD3===null)yD3=yD1;
-  var dDA=activeTF==='1m'?dD1:dD3,yDA=activeTF==='1m'?yD1:yD3;
-  var conflict=(dD1!==dD3||yD1!==yD3);
   var sTL=function(id,t){var e=document.getElementById(id);if(e)e.textContent=t;};
-  sTL('thresh-dxy-up','$ Rising >+'+tD.toFixed(2)+'%');sTL('thresh-dxy-dn','$ Falling <−'+tD.toFixed(2)+'%');
-  sTL('thresh-y10-up','Yield Rising >+'+tY.toFixed(1)+'bps');sTL('thresh-y10-dn','Yield Falling <−'+tY.toFixed(1)+'bps');
+  sTL('thresh-dxy-up','$ Rising >+'+rtD.toFixed(2)+'%');sTL('thresh-dxy-dn','$ Falling <−'+rtD.toFixed(2)+'%');
+  sTL('thresh-y10-up','Yield Rising >+'+rtY.toFixed(1)+'bps');sTL('thresh-y10-dn','Yield Falling <−'+rtY.toFixed(1)+'bps');
   sTL('thresh-hy-up','HY Wide >+'+(tH*100).toFixed(1)+'bps');
+  if(thresholdHelp){
+    var regimeThresholdText='Regime detection uses completed daily closes only. A new non-stress regime needs 2 completed closes before it becomes active; Day 1 is shown as Testing. Max Tightening and Global Stress promote immediately for risk control. Current confirmed cutoffs: DXY '+rtD.toFixed(2)+'%, US02Y '+rtY.toFixed(1)+' bps, HY '+(tH*100).toFixed(1)+' bps.';
+    thresholdHelp.setAttribute('data-tooltip',regimeThresholdText);thresholdHelp.setAttribute('title',regimeThresholdText);thresholdHelp.setAttribute('aria-label','Threshold logic. '+regimeThresholdText);
+  }
   document.querySelectorAll('.cell').forEach(function(c){c.classList.remove('highlighted','ghost');c.removeAttribute('data-tf');});
   var yM={up:'yup',flat:'yflat',down:'ydown'},dM={up:'dup',flat:'dflat',down:'ddown'};
   var banner=document.getElementById('regime-banner');
-  if(!dDA||!yDA){banner.classList.remove('active');document.getElementById('regime-name').textContent='Insufficient data';return;}
-  var id1M='cell-'+yM[yD1]+'-'+dM[dD1],id3M='cell-'+yM[yD3]+'-'+dM[dD3],aId=activeTF==='1m'?id1M:id3M;
+  if(!dD1||!yD1){banner.classList.remove('active');document.getElementById('regime-name').textContent='Insufficient data';return;}
+  var rawId1M='cell-'+yM[yD1]+'-'+dM[dD1],id3M='cell-'+yM[yD3]+'-'+dM[dD3];
+  var periodInfo=(rawDxyRows&&rawY10Rows)?buildRegimePeriods(rawDxyRows,rawY10Rows,'1m'):{periods:[]};
+  var periods=periodInfo.periods,regimeState=effectiveRegimeState(periods);
+  var currentPeriod=periods.length?periods[periods.length-1]:null,priorPeriod=regimeState.prior||(periods.length>1?periods[periods.length-2]:null);
+  var activePeriod=regimeState.active||currentPeriod;
+  var aId=activePeriod?activePeriod.cellId:rawId1M;
 
   currentRegimeId=aId;currentRiskOn=isRiskOnRegime(aId);
 
-  if(conflict){
-    var primaryId=activeTF==='1m'?id1M:id3M;
-    var secondaryId=activeTF==='1m'?id3M:id1M;
-    var cp=document.getElementById(primaryId);if(cp){cp.classList.add('highlighted');cp.setAttribute('data-tf',activeTF==='1m'?'1M':'3M');}
-    if(primaryId!==secondaryId){var cs=document.getElementById(secondaryId);if(cs){cs.classList.add('ghost');cs.setAttribute('data-tf',activeTF==='1m'?'3M':'1M');}}
-  }else{
-    var ac2=document.getElementById(aId);if(ac2){ac2.classList.add('highlighted');ac2.setAttribute('data-tf',activeTF==='1m'?'1M':'3M');}
-  }
+  var cp=document.getElementById(aId);if(cp){cp.classList.add('highlighted');cp.setAttribute('data-tf','1M');}
+  if(regimeState.testing&&regimeState.testing.cellId!==aId){var ct=document.getElementById(regimeState.testing.cellId);if(ct){ct.classList.add('ghost');ct.setAttribute('data-tf','TEST');}}
+  if(id3M&&id3M!==aId&&(!regimeState.testing||id3M!==regimeState.testing.cellId)){var cs=document.getElementById(id3M);if(cs){cs.classList.add('ghost');cs.setAttribute('data-tf','3M');}}
   var reg=regimes[aId];
-  if(reg){banner.classList.add('active');banner.style.setProperty('--regime-color',reg.color);banner.style.setProperty('--regime-bg',reg.bg);document.getElementById('regime-icon').textContent=reg.icon;document.getElementById('regime-name').textContent=reg.name;document.getElementById('regime-desc').textContent=reg.desc;}
+  var backdrop=regimes[id3M];
+  if(reg){banner.classList.add('active');banner.style.setProperty('--regime-color',reg.color);banner.style.setProperty('--regime-bg',reg.bg);document.getElementById('regime-icon').textContent=reg.icon;document.getElementById('regime-name').textContent=reg.name;document.getElementById('regime-desc').textContent=reg.desc+(regimeState.testing?' Testing '+((regimes[regimeState.testing.cellId]||{}).name||regimeState.testing.cellId)+' Day '+regimeState.testing.days+'; active signal waits for 2 closes.':'')+(regimeState.immediate?' Stress regime promoted immediately for risk control.':'')+(rD.dates&&rY.dates?' Confirmed through DXY '+rD.dates.now+' / rate '+rY.dates.now+'.':'');}
+  var daysEl=document.getElementById('regime-days');if(daysEl)daysEl.textContent=activePeriod?'Day '+activePeriod.days:'—';
+  var backdropEl=document.getElementById('regime-backdrop');if(backdropEl)backdropEl.textContent=backdrop?backdrop.icon+' '+backdrop.name:'—';
   renderSectorFlowsFromCache();
   var tp=document.getElementById('transition-panel');
-  if(conflict){var fr=regimes[id3M],to=regimes[id1M],tx=getTx(id3M,id1M);document.getElementById('tp-from').textContent=fr?fr.icon+' '+fr.name:id3M;document.getElementById('tp-to').textContent=to?to.icon+' '+to.name:id1M;document.getElementById('tp-action').innerHTML=tx.action;tp.classList.add('visible');}
-  else{tp.classList.remove('visible');}
+  if(regimeState.testing&&priorPeriod&&currentPeriod&&priorPeriod.cellId!==currentPeriod.cellId){
+    var f0=regimes[priorPeriod.cellId],t0=regimes[currentPeriod.cellId],tx0=getTx(priorPeriod.cellId,currentPeriod.cellId);
+    document.getElementById('tp-from').innerHTML='<span class="tp-label">Active 1M</span>'+esc(f0?f0.icon+' '+f0.name:priorPeriod.cellId);
+    document.getElementById('tp-to').innerHTML='<span class="tp-label">Testing Day '+currentPeriod.days+'</span>'+esc(t0?t0.icon+' '+t0.name:currentPeriod.cellId);
+    document.getElementById('tp-action').innerHTML='Prior one-day non-stress flips are skipped. Needs a second completed close before it becomes active. '+tx0.action;
+    tp.classList.add('visible');
+  }else if(priorPeriod&&currentPeriod&&priorPeriod.cellId!==currentPeriod.cellId){
+    var fr=regimes[priorPeriod.cellId],to=regimes[currentPeriod.cellId],tx=getTx(priorPeriod.cellId,currentPeriod.cellId);
+    document.getElementById('tp-from').innerHTML='<span class="tp-label">Prior 1M</span>'+esc(fr?fr.icon+' '+fr.name:priorPeriod.cellId);
+    document.getElementById('tp-to').innerHTML='<span class="tp-label">Current 1M</span>'+esc(to?to.icon+' '+to.name:currentPeriod.cellId);
+    document.getElementById('tp-action').innerHTML='Day '+currentPeriod.days+' in current 1M regime. '+tx.action;
+    tp.classList.add('visible');
+  }else{tp.classList.remove('visible');}
 }
 
 ['custom-cap','custom-sector','custom-industry','custom-peg','custom-div','custom-volume','custom-sort'].forEach(function(id){
