@@ -2802,12 +2802,14 @@ async function fetchFromAPI(force){
   renderFinviz(fvCount);renderBreadth(breadthRows);
   if(!dR||!yR){setStatus('error','⚠ DXY/Y2 unavailable');scheduleRefresh(60000);return;}
   rawDxyRows=dR;rawY10Rows=yR;
-  var dxyNow=new Date(dR[dR.length-1].ts*1000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  var y10Now=sourceDateLabel(yR[yR.length-1]);
-  var dxy1m=closestRow(dR,30),dxy3m=closestRow(dR,90),dxy6m=closestRow(dR,180);
-  var y101m=closestRow(yR,30),y103m=closestRow(yR,90),y106m=closestRow(yR,180);
-  var dxyObj={current:dR[dR.length-1].close,one_month_ago:dxy1m.close,three_months_ago:dxy3m.close,six_months_ago:dxy6m.close,dates:{now:dxyNow,m1:dxy1m.dateStr,m3:dxy3m.dateStr,m6:dxy6m.dateStr}};
-  var y10Obj={current:yR[yR.length-1].close,one_month_ago:y101m.close,three_months_ago:y103m.close,six_months_ago:y106m.close,source:yR.source||'Treasury source',isFallback:yR.isFallback===true,dates:{now:y10Now,m1:y101m.dateStr,m3:y103m.dateStr,m6:y106m.dateStr}};
+  // Macro cards and the regime matrix must use the same completed-close snapshot.
+  var confirmed=confirmedRegimeInput(dR,yR);
+  if(!confirmed){setStatus('error','⚠ Not enough completed DXY/Y2 history');scheduleRefresh(60000);return;}
+  var dxyObj=confirmed.dxy;
+  dxyObj.source='Yahoo DXY completed close';
+  var y10Obj=confirmed.us10y;
+  y10Obj.source=yR.source||'Treasury source';
+  y10Obj.isFallback=yR.isFallback===true;
 
   cache={dxy:dxyObj,y10:y10Obj,hy:hyData,fv:fvCount,breadth:breadthRows,flowCurr:flowPack?flowPack.curr:null,flowHist:flowPack?flowPack.hist:null,flowSource:flowPack?flowPack.source:null,ts:Date.now()};
 
