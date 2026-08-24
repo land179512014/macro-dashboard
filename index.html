@@ -10,41 +10,38 @@
 <title>Macro Regime Dashboard</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;padding:28px 20px;min-height:100vh}
-h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bottom:4px}
-.subtitle{text-align:center;font-size:.72rem;color:#475569;margin-bottom:20px;text-transform:uppercase;letter-spacing:.07em}
-.source-bar{display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;padding:20px;min-height:100vh}
+h1,.subtitle,.source-bar{display:none}
+.dashboard-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;max-width:1250px;margin:0 auto 28px;padding-bottom:14px;border-bottom:1px solid #334155}
 .src-btn{padding:6px 16px;border-radius:6px;font-size:.72rem;font-weight:700;cursor:pointer;border:1px solid #334155;background:#1e293b;color:#64748b;transition:all .15s}
 .src-btn.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
-.status-bar{max-width:1100px;margin:0 auto 14px;display:flex;align-items:center;gap:10px;font-size:.72rem}
+.status-bar{margin:0;display:flex;align-items:center;gap:5px;font-size:.72rem}
 .status-dot{width:8px;height:8px;border-radius:50%;background:#475569;flex-shrink:0}
 .status-dot.live{background:#22c55e;box-shadow:0 0 6px #22c55e}
 .status-dot.error{background:#ef4444}
 .status-dot.loading{background:#f59e0b;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .status-text{color:#64748b}
-.refresh-btn{margin-left:auto;padding:4px 12px;background:#1e293b;border:1px solid #334155;border-radius:5px;color:#94a3b8;font-size:.68rem;cursor:pointer}
+.refresh-btn{justify-self:end;padding:7px 12px;background:#111827;border:1px solid #334155;border-radius:6px;color:#cbd5e1;font-size:.68rem;cursor:pointer}
 .refresh-btn:hover{border-color:#3b82f6;color:#60a5fa}
-.data-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:1100px;margin:0 auto 22px}
+.macro-input-head{max-width:1250px;margin:0 auto 12px;display:flex;justify-content:space-between;align-items:center;color:#8da9cf;font-size:.66rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}.macro-input-head span:last-child{color:#64748b;font-size:.6rem;font-weight:500;letter-spacing:0;text-transform:none}
+.data-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:1250px;margin:0 auto 10px}
 @media(max-width:900px){.data-cards{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.data-cards{grid-template-columns:1fr}}
-.data-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px 16px}
-.data-card h3{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.dxy-card h3{color:#60a5fa}.y10-card h3{color:#f97316}.hy-card h3{color:#f43f5e}.fv-card h3{color:#a78bfa}
-.metrics{display:flex;gap:8px}
+.data-card{display:flex;flex-direction:column;min-height:160px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:14px 15px}
+.data-card h3{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:0;color:#8da9cf}.dxy-card h3,.y10-card h3,.hy-card h3,.fv-card h3{color:#8da9cf}
+.macro-current{font-size:1.45rem;font-weight:800;line-height:1;color:#f1f5f9;margin-top:15px}.macro-compares{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}.macro-compare{display:flex;align-items:center;gap:6px;font-size:.7rem}.macro-compare-label{color:#64748b;font-size:.62rem;font-weight:700;text-transform:uppercase}.macro-compare-value{font-weight:700}.macro-direction{font-size:.72rem;font-weight:700}.macro-direction.sig-up{color:#f87171}.macro-direction.sig-down{color:#4ade80}.macro-direction.sig-flat{color:#cbd5e1}.macro-current[data-date],.macro-compare-value[data-date]{position:relative;cursor:help}.macro-compare-value[data-date]{display:inline-block}.macro-hidden{display:none}
+.metrics{display:none}
 .metric{flex:1;background:#0f172a;border-radius:6px;padding:7px 8px;text-align:center;position:relative}
 .metric .m-label{font-size:.58rem;color:#475569;text-transform:uppercase;letter-spacing:.04em}
 .metric .m-val{font-size:.88rem;font-weight:700;margin-top:2px;color:#f1f5f9}
 .metric .m-sig{font-size:.65rem;font-weight:700;margin-top:3px;padding:1px 6px;border-radius:3px;display:inline-block}
 .up{color:#f87171}.down{color:#4ade80}.flat-c{color:#94a3b8}
 .sig-up{background:#7f1d1d;color:#fca5a5}.sig-down{background:#14532d;color:#86efac}.sig-flat{background:#1e293b;color:#94a3b8}
-.fv-count-display{text-align:center;padding:12px 0 6px}
-.fv-big-num{font-size:2.2rem;font-weight:800;color:#a78bfa;line-height:1}
+.fv-count-display{text-align:center;padding:10px 0 0}.fv-big-num{font-size:2.1rem;font-weight:800;color:#f97316;line-height:1}
 .fv-big-num.loading{color:#475569;font-size:1rem;font-weight:400}
-.fv-sub{font-size:.62rem;color:#64748b;margin-top:6px;line-height:1.4}
-.fv-link{font-size:.58rem;color:#3b82f6;text-decoration:none;margin-top:4px;display:inline-block}
-.fv-link:hover{text-decoration:underline}
-.breadth-panel{max-width:1100px;margin:0 auto 18px;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:18px 20px;transition:all .4s}
+.fv-sub{font-size:.58rem;color:#94a3b8;margin-top:6px;line-height:1.45}.fv-link{display:inline-block;font-size:.58rem;color:#60a5fa;text-decoration:none;margin-top:5px}.fv-link:hover{text-decoration:underline}
+.breadth-panel{max-width:1250px;margin:0 auto 18px;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:18px 20px;transition:all .4s}
 .breadth-panel.phase-bull{border-color:#22c55e;background:rgba(5,46,22,.25)}
 .breadth-panel.phase-bear{border-color:#ef4444;background:rgba(127,29,29,.2)}
 .breadth-panel.phase-caution{border-color:#f59e0b;background:rgba(113,63,18,.2)}
@@ -127,7 +124,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .breadth-date{font-size:.62rem;color:#475569;text-align:right;margin-top:8px}
 .breadth-date a{color:#93c5fd;text-decoration:none;font-weight:700}
 .breadth-date a:hover{text-decoration:underline;color:#bfdbfe}
-.regime-banner{max-width:1100px;margin:0 auto 20px;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;border:1px solid #334155;background:#1e293b;transition:all .4s}
+.regime-banner{max-width:1250px;margin:0 auto 20px;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;border:1px solid #334155;background:#1e293b;transition:all .4s}
 .regime-banner.active{border-color:var(--regime-color,#3b82f6);background:var(--regime-bg,#1e293b)}
 .regime-icon{font-size:1.8rem;flex-shrink:0}
 .regime-text{min-width:0;flex:1}
@@ -145,7 +142,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .timeframe-toggle{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
 .tf-btn{padding:5px 12px;border-radius:6px;font-size:.68rem;font-weight:700;cursor:pointer;border:1px solid #334155;background:#0f172a;color:#64748b;transition:all .15s}
 .tf-btn.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
-.velocity-panel{max-width:1100px;margin:0 auto 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.velocity-panel{max-width:1250px;margin:0 auto 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .vel-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px 18px}
 .vel-card h4{font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #334155}
 .vel-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
@@ -157,7 +154,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .accel-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#475569}
 .accel-badge{font-size:.78rem;font-weight:700;padding:6px 14px;border-radius:6px;display:flex;align-items:center;gap:6px;letter-spacing:.02em;line-height:1.4}
 .accel-up{background:#7f1d1d;color:#fca5a5}.accel-down{background:#14532d;color:#86efac}.accel-flat{background:#1e293b;color:#94a3b8}.accel-warn{background:#713f12;color:#fcd34d}
-.conviction-bar-wrap{max-width:1100px;margin:0 auto 18px;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px 18px}
+.conviction-bar-wrap{max-width:1250px;margin:0 auto 18px;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:14px 18px}
 .conviction-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .conviction-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b}
 .conviction-score{font-size:1.1rem;font-weight:700}
@@ -172,7 +169,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .cb-bar{height:4px;border-radius:3px;background:rgba(255,255,255,.05);margin-top:5px;overflow:hidden}
 .cb-fill{height:100%;border-radius:3px;transition:width .5s}
 .conviction-alignment{margin-top:10px;padding-top:10px;border-top:1px solid #334155;font-size:.67rem;color:#94a3b8;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.transition-panel{max-width:1100px;margin:0 auto 18px;background:#130b1f;border:1px solid #4c1d95;border-radius:12px;padding:16px 18px;display:none}
+.transition-panel{max-width:1250px;margin:0 auto 18px;background:#130b1f;border:1px solid #4c1d95;border-radius:12px;padding:16px 18px;display:none}
 .transition-panel.visible{display:block}
 .tp-header{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#a78bfa;margin-bottom:10px}
 .tp-flow{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
@@ -185,7 +182,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .cell.ghost::after,.cell.highlighted::after{position:absolute;top:6px;right:8px;font-size:.55rem;font-weight:700;padding:1px 5px;border-radius:3px}
 .cell.ghost::after{content:attr(data-tf);background:#4c1d95;color:#c4b5fd}
 .cell.highlighted::after{content:attr(data-tf);background:rgba(255,255,255,.15);color:#f1f5f9}
-.stress-panel{max-width:1100px;margin:0 auto 18px;border-radius:12px;padding:18px 20px;border:1px solid #334155;background:#1e293b;transition:all .4s}
+.stress-panel{max-width:1250px;margin:0 auto 18px;border-radius:12px;padding:18px 20px;border:1px solid #334155;background:#1e293b;transition:all .4s}
 .stress-panel.stress-confirmed{background:rgba(127,29,29,.3);border-color:#ef4444}
 .stress-panel.stress-caution{background:rgba(113,63,18,.3);border-color:#f59e0b}
 .stress-panel.stress-pivot{background:rgba(5,46,22,.3);border-color:#22c55e}
@@ -200,10 +197,10 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .ss-note{font-size:.6rem;color:#64748b;margin-top:3px;line-height:1.4}
 .stress-action{background:rgba(0,0,0,.2);border-radius:8px;padding:12px 14px;font-size:.72rem;color:#94a3b8;line-height:1.6;border:1px solid rgba(255,255,255,.05)}
 .stress-action strong{color:#f1f5f9}
-.metric[data-date]::after{content:attr(data-date);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #3b82f6;color:#93c5fd;font-size:.62rem;font-weight:600;white-space:nowrap;padding:4px 9px;border-radius:5px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100}
-.metric[data-date]:hover::after{opacity:1}
-.x-axis-label{text-align:center;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#475569;margin-bottom:6px;padding-left:96px;max-width:1000px;margin-left:auto;margin-right:auto}
-.grid-wrapper{display:grid;grid-template-columns:96px repeat(3,1fr);gap:5px;max-width:1000px;margin:0 auto}
+.metric[data-date]::after,.macro-current[data-date]::after,.macro-compare-value[data-date]::after{content:attr(data-date);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #3b82f6;color:#93c5fd;font-size:.62rem;font-weight:600;white-space:nowrap;padding:4px 9px;border-radius:5px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100}
+.metric[data-date]:hover::after,.macro-current[data-date]:hover::after,.macro-compare-value[data-date]:hover::after{opacity:1}
+.x-axis-label{text-align:center;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#475569;margin-bottom:6px;padding-left:96px;max-width:1150px;margin-left:auto;margin-right:auto}
+.grid-wrapper{display:grid;grid-template-columns:96px repeat(3,1fr);gap:5px;max-width:1150px;margin:0 auto}
 .corner{background:transparent}
 .col-header,.row-header{background:#1e293b;border-radius:7px;padding:9px 6px;text-align:center;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid #334155}
 .header-icon{font-size:.95rem}.header-label{color:#94a3b8}.header-sub{font-size:.58rem;color:#475569;font-weight:400;text-transform:none}
@@ -223,13 +220,14 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .cell-plays{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
 .play{font-size:.57rem;padding:2px 5px;border-radius:3px;background:rgba(255,255,255,.05);color:#cbd5e1;border:1px solid rgba(255,255,255,.07)}
 .note{text-align:center;font-size:.64rem;color:#475569;margin-top:16px;max-width:700px;margin-left:auto;margin-right:auto;line-height:1.6}
-.threshold-note{text-align:center;font-size:.63rem;color:#475569;margin-bottom:14px}
-.threshold-note span{display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:4px;padding:1px 7px;margin:0 2px;color:#94a3b8}
+.macro-cutoff{margin-top:auto;padding-top:10px;border-top:1px solid #334155}.macro-cutoff-label{color:#64748b;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.macro-cutoff-value{color:#f1f5f9;font-size:.75rem;font-weight:700;margin-top:5px}
+.macro-regime-strip{display:flex;align-items:center;gap:12px;max-width:1250px;margin:0 auto 26px;padding:12px 14px;border:1px solid #16885d;border-radius:7px;background:#102019;font-size:.68rem}.macro-regime-strip strong{color:#5ee0b7}.macro-regime-copy{color:#d6dfeb}.macro-regime-backdrop{margin-left:auto;border-left:1px solid #276344;padding-left:14px;color:#9eafc5}
+.macro-decision-row{display:grid;grid-template-columns:repeat(3,1fr);max-width:1250px;margin:-16px auto 26px;border-top:1px solid #334155;border-bottom:1px solid #334155}.macro-decision{min-height:68px;padding:11px 14px;box-sizing:border-box}.macro-decision+.macro-decision{border-left:1px solid #334155}.macro-decision-label{color:#64748b;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.macro-decision-value{color:#f1f5f9;font-size:.8rem;font-weight:700;margin-top:6px}.macro-decision-value.positive{color:#5ee0b7}.macro-decision-sub{color:#94a3b8;font-size:.6rem;margin-top:3px}
 .threshold-help{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:4px;padding:0;border:1px solid #475569;border-radius:50%;background:transparent;color:#94a3b8;font:700 11px/1 Arial,sans-serif;cursor:help;vertical-align:middle}
 .threshold-help:hover,.threshold-help:focus-visible{border-color:#94a3b8;color:#e2e8f0;outline:none}
 .threshold-help::after{content:attr(data-tooltip);position:absolute;z-index:30;bottom:calc(100% + 8px);left:50%;width:min(340px,calc(100vw - 32px));padding:9px 10px;transform:translateX(-50%);border:1px solid #475569;border-radius:5px;background:#0f172a;color:#cbd5e1;font:400 11px/1.45 Arial,sans-serif;text-align:left;box-shadow:0 8px 20px rgba(0,0,0,.35);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .15s ease}
 .threshold-help:hover::after,.threshold-help:focus-visible::after{opacity:1;visibility:visible}
-.section-divider{max-width:1100px;margin:0 auto 10px;display:flex;align-items:center;gap:10px}
+.section-divider{max-width:1250px;margin:0 auto 10px;display:flex;align-items:center;gap:10px}
 .section-divider .line{flex:1;height:1px;background:#334155}
 .section-divider .label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#475569;white-space:nowrap}
 .hist-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
@@ -241,10 +239,11 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 .hist-detail{font-size:.6rem;color:#64748b;flex:1;text-align:right}
 .hist-arrow{color:#a78bfa;font-weight:700;font-size:.7rem}
 
-.page-tabs{max-width:1100px;margin:0 auto 18px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-.page-tab{padding:7px 18px;border-radius:7px;font-size:.72rem;font-weight:800;cursor:pointer;border:1px solid #334155;background:#111827;color:#64748b;transition:all .15s}
+.page-tabs{margin:0;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.page-tab{padding:8px 16px;border-radius:6px;font-size:.68rem;font-weight:800;cursor:pointer;border:1px solid #334155;background:#111827;color:#93a4bb;transition:all .15s}
 .page-tab:hover{border-color:#3b82f6;color:#93c5fd}
 .page-tab.active{background:#2563eb;border-color:#3b82f6;color:#fff}
+@media(max-width:700px){.dashboard-header{grid-template-columns:1fr auto;gap:10px}.page-tabs{grid-column:1 / -1;grid-row:2;justify-content:flex-start}.macro-regime-strip{align-items:flex-start;flex-wrap:wrap}.macro-regime-backdrop{margin-left:0;width:100%;border-left:0;border-top:1px solid #276344;padding:8px 0 0}.macro-decision-row{grid-template-columns:1fr;margin-top:-16px}.macro-decision+.macro-decision{border-left:0;border-top:1px solid #334155}}
 .board-page{display:none}
 .board-page.active{display:block}
 .flow-page{max-width:1650px;width:min(1650px,calc(100vw - 28px));margin:0 auto 22px}
@@ -526,16 +525,18 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 <h1>Macro Regime Dashboard</h1>
 <p class="subtitle">Live DXY × US02Y × HY × Momentum × Breadth → Auto-detected regime</p>
 <div class="source-bar"><button class="src-btn active" id="btn-src-api" onclick="fetchFromAPI(true)">🌐 Auto (Free API)</button></div>
-<div class="status-bar"><div class="status-dot" id="status-dot"></div><span class="status-text" id="status-text">Fetching live data…</span><button class="refresh-btn" onclick="loadData(true)">⟳ Force Refresh</button></div>
-<div class="page-tabs"><button class="page-tab active" id="tab-macro" onclick="showPage('macro')">Macro Board</button><button class="page-tab" id="tab-flows" onclick="showPage('flows')">Sector Flows</button><button class="page-tab" id="tab-custom" onclick="showPage('custom')">Custom Flow</button></div>
+<div class="dashboard-header"><div class="status-bar"><div class="status-dot" id="status-dot"></div><span class="status-text" id="status-text">Fetching live data…</span></div><div class="page-tabs"><button class="page-tab active" id="tab-macro" onclick="showPage('macro')">Macro Board</button><button class="page-tab" id="tab-flows" onclick="showPage('flows')">Sector Flows</button><button class="page-tab" id="tab-custom" onclick="showPage('custom')">Custom Flow</button></div><button class="refresh-btn" onclick="loadData(true)">⟳ Refresh</button></div>
 
 <main class="board-page active" id="page-macro">
+<div class="macro-input-head"><span>Macro Inputs</span><span>Completed daily close</span></div>
 <div class="data-cards">
-  <div class="data-card dxy-card"><h3>💵 DXY</h3><div class="metrics"><div class="metric"><div class="m-label">Current</div><div class="m-val" id="c_dxy_now">—</div></div><div class="metric"><div class="m-label">1M Chg</div><div class="m-val" id="c_dxy_d1">—</div><div class="m-sig flat-c" id="c_dxy_s1">—</div></div><div class="metric"><div class="m-label">3M Chg</div><div class="m-val" id="c_dxy_d3">—</div><div class="m-sig flat-c" id="c_dxy_s3">—</div></div></div></div>
-  <div class="data-card y10-card"><h3 id="rate-card-title">📈 US 02Y</h3><div class="metrics"><div class="metric"><div class="m-label">Current</div><div class="m-val" id="c_y10_now">—</div></div><div class="metric"><div class="m-label">1M Chg</div><div class="m-val" id="c_y10_d1">—</div><div class="m-sig flat-c" id="c_y10_s1">—</div></div><div class="metric"><div class="m-label">3M Chg</div><div class="m-val" id="c_y10_d3">—</div><div class="m-sig flat-c" id="c_y10_s3">—</div></div></div></div>
-  <div class="data-card hy-card"><h3>📉 HY Spread</h3><div class="metrics"><div class="metric"><div class="m-label">Current</div><div class="m-val" id="c_hy_now">—</div></div><div class="metric"><div class="m-label">1M Chg</div><div class="m-val" id="c_hy_d1">—</div><div class="m-sig flat-c" id="c_hy_s1">—</div></div><div class="metric"><div class="m-label">3M Chg</div><div class="m-val" id="c_hy_d3">—</div><div class="m-sig flat-c" id="c_hy_s3">—</div></div></div></div>
+  <div class="data-card dxy-card"><h3>DXY</h3><div class="macro-current" id="c_dxy_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_dxy_d1">—</span><span class="macro-direction" id="c_dxy_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_dxy_d3">—</span><span class="macro-direction" id="c_dxy_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="Dollar threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-dxy">—</div></div></div>
+  <div class="data-card y10-card"><h3 id="rate-card-title">US 02Y</h3><div class="macro-current" id="c_y10_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_y10_d1">—</span><span class="macro-direction" id="c_y10_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_y10_d3">—</span><span class="macro-direction" id="c_y10_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="2Y threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-y10">—</div></div></div>
+  <div class="data-card hy-card"><h3>HY Spread</h3><div class="macro-current" id="c_hy_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_hy_d1">—</span><span class="macro-direction" id="c_hy_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_hy_d3">—</span><span class="macro-direction" id="c_hy_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="HY threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-hy">—</div></div></div>
   <div class="data-card fv-card"><h3>🔥 Spec Momentum</h3><div class="fv-count-display"><div class="fv-big-num loading" id="fv-count">Fetching…</div><div class="fv-sub">US stocks >$3, vol >50K, +20%/wk</div><div class="fv-sub" id="fv-zone" style="font-weight:700;margin-top:4px"></div><a class="fv-link" href="https://finviz.com/screener.ashx?v=111&f=geo_usa%2Csh_avgvol_o50%2Csh_price_o3%2Cta_perf_1w20o" target="_blank" rel="noopener">View on Finviz ↗</a></div></div>
 </div>
+<div class="macro-regime-strip"><strong id="macro-regime-name">Current 1M: —</strong><span class="macro-regime-copy" id="macro-regime-copy">Loading completed daily close data.</span><span class="macro-regime-backdrop" id="macro-regime-backdrop">3M backdrop: —</span></div>
+<div class="macro-decision-row"><div class="macro-decision"><div class="macro-decision-label">Primary expression</div><div class="macro-decision-value positive" id="macro-expression">—</div><div class="macro-decision-sub">Active sector ranking</div></div><div class="macro-decision"><div class="macro-decision-label">Risk budget</div><div class="macro-decision-value" id="macro-risk-budget">—</div><div class="macro-decision-sub" id="macro-risk-sub">1M / 3M alignment</div></div><div class="macro-decision"><div class="macro-decision-label">Invalidation</div><div class="macro-decision-value" id="macro-invalidation">DXY ↑ + HY widen</div><div class="macro-decision-sub">Reassess risk exposure</div></div></div>
 
 <div class="section-divider"><div class="line"></div><div class="label">📊 Stockbee Breadth Commentary</div><div class="line"></div></div>
 <div class="breadth-panel" id="breadth-panel">
@@ -566,7 +567,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
   <div class="vel-card"><h4>📉 HY Spread</h4><div class="vel-row"><span class="vel-label">Last 1M</span><div class="vel-bar-wrap"><div class="vel-bar" id="vbar-hy-1m" style="width:0%"></div></div><span class="vel-val" id="vval-hy-1m">—</span></div><div class="vel-row"><span class="vel-label">Prior 2M avg</span><div class="vel-bar-wrap"><div class="vel-bar" id="vbar-hy-p" style="width:0%"></div></div><span class="vel-val" id="vval-hy-p">—</span></div><div class="vel-row"><span class="vel-label">Prior 3M avg</span><div class="vel-bar-wrap"><div class="vel-bar" id="vbar-hy-6m" style="width:0%"></div></div><span class="vel-val" id="vval-hy-6m">—</span></div><div class="accel-wrap"><span class="accel-label">Acceleration:</span><span class="accel-badge" id="accel-hy">—</span></div></div>
 </div>
 
-<div id="debug-row" style="max-width:1100px;margin:0 auto 14px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:10px 16px;font-size:.65rem;color:#475569;font-family:monospace;display:none"><strong style="color:#64748b">Raw:</strong> <span id="debug-text">…</span></div>
+<div id="debug-row" style="max-width:1250px;margin:0 auto 14px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:10px 16px;font-size:.65rem;color:#475569;font-family:monospace;display:none"><strong style="color:#64748b">Raw:</strong> <span id="debug-text">…</span></div>
 
 <div class="section-divider"><div class="line"></div><div class="label">🔬 Stress Verdict</div><div class="line"></div></div>
 <div class="stress-panel" id="stress-panel">
@@ -599,7 +600,7 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
 
 <!-- REGIME HISTORY -->
 <div class="section-divider"><div class="line"></div><div class="label">📜 Regime History — Reconstructed from Price Data</div><div class="line"></div></div>
-<div id="regime-history" style="max-width:1100px;margin:0 auto 18px;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px 18px">
+<div id="regime-history" style="max-width:1250px;margin:0 auto 18px;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px 18px">
   <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleHistory()">
     <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b">📜 Regime History <span id="hist-toggle-icon" style="font-size:.6rem">▶</span></span>
     <div style="display:flex;gap:5px" onclick="event.stopPropagation()">
@@ -613,7 +614,6 @@ h1{text-align:center;font-size:1.35rem;font-weight:700;color:#f1f5f9;margin-bott
   </div>
 </div>
 
-<div class="threshold-note">Thresholds: <span id="thresh-dxy-up">$ Rising</span><span id="thresh-dxy-dn">$ Falling</span><span id="thresh-y10-up">Yield Rising</span><span id="thresh-y10-dn">Yield Falling</span><span id="thresh-hy-up">HY Widening</span> <em style="color:#475569;font-size:.6rem">(data-derived)</em><button id="threshold-help" class="threshold-help" type="button" aria-label="Threshold logic" title="Threshold logic" data-tooltip="Thresholds update with live data.">?</button></div>
 <div class="x-axis-label">🌍 US Dollar Direction →</div>
 <div class="grid-wrapper">
   <div class="corner"></div>
@@ -2937,30 +2937,26 @@ function renderStressVerdict(dd1,yd1,hd1,vD,vY,vH,hyLvl){
 function render(data){
   var d=data.dxy,y=data.us10y,h=data.hy;
   var dbg=document.getElementById('debug-row');if(dbg){dbg.style.display='block';document.getElementById('debug-text').textContent='DXY:'+(d.current||0).toFixed(2)+' Y2:'+(y.current||0).toFixed(2)+' ('+(y.source||'source n/a')+')'+(h?' HY:'+h.current.toFixed(3):'');}
-  var rateTitle=document.getElementById('rate-card-title');if(rateTitle)rateTitle.textContent=y.isFallback?'📈 US 10Y Fallback':'📈 US 02Y';
+  var rateTitle=document.getElementById('rate-card-title');if(rateTitle)rateTitle.textContent=y.isFallback?'US 10Y Fallback':'US 02Y';
   var rateVelTitle=document.getElementById('rate-velocity-title');if(rateVelTitle)rateVelTitle.textContent=y.isFallback?'📈 US10Y Fallback':'📈 US02Y';
   var rateStressLabel=document.querySelector('#sv-y10')&&document.querySelector('#sv-y10').closest('.stress-signal')?document.querySelector('#sv-y10').closest('.stress-signal').querySelector('.ss-label'):null;if(rateStressLabel)rateStressLabel.textContent=y.isFallback?'📈 US10Y':'📈 US02Y';
   var rateConvLabel=document.querySelector('#cb-y10')&&document.querySelector('#cb-y10').closest('.cb-item')?document.querySelector('#cb-y10').closest('.cb-item').querySelector('.cb-label'):null;if(rateConvLabel)rateConvLabel.textContent=y.isFallback?'US10Y':'US02Y';
   var dd1=pctChg(d.current,d.one_month_ago),dd3=pctChg(d.current,d.three_months_ago);
   var yd1=bpsDiff(y.current,y.one_month_ago),yd3=bpsDiff(y.current,y.three_months_ago);
   var hd1=h?absDiff(h.current,h.one_month_ago):null,hd3=h?absDiff(h.current,h.three_months_ago):null;
-  var sD=function(id,ds){var el=document.getElementById(id);if(el&&ds){var m=el.closest('.metric');if(m)m.setAttribute('data-date','📅 '+ds);}};
+  var sD=function(id,ds){var el=document.getElementById(id);if(el&&ds)el.setAttribute('data-date','📅 '+ds);};
   document.getElementById('c_dxy_now').textContent=d.current.toFixed(2);
   document.getElementById('c_y10_now').textContent=y.current.toFixed(2)+'%';
   document.getElementById('c_hy_now').textContent=h?h.current.toFixed(2)+'%':'—';
-  if(d.dates){sD('c_dxy_now',d.dates.now);sD('c_dxy_d1',d.dates.m1);sD('c_dxy_d3',d.dates.m3);}
+  if(d.dates){sD('c_dxy_now',d.dates.now+(d.source?' · '+d.source:''));sD('c_dxy_d1',d.dates.m1);sD('c_dxy_d3',d.dates.m3);}
   if(y.dates){sD('c_y10_now',y.dates.now+(y.source?' · '+y.source:''));sD('c_y10_d1',y.dates.m1);sD('c_y10_d3',y.dates.m3);}
-  if(h&&h.dates){sD('c_hy_now',h.dates.now);sD('c_hy_d1',h.dates.m1);sD('c_hy_d3',h.dates.m3);}
+  if(h&&h.dates){sD('c_hy_now',h.dates.now+(h.source?' · '+h.source:''));sD('c_hy_d1',h.dates.m1);sD('c_hy_d3',h.dates.m3);}
   var vD=calcVelocity(d.current,d.one_month_ago,d.three_months_ago,d.six_months_ago,false);
   var vY=calcVelocity(y.current,y.one_month_ago,y.three_months_ago,y.six_months_ago,true);
   var vH=h?calcVelocity(h.current,h.one_month_ago,h.three_months_ago,h.six_months_ago,true):null;
   var tD=vD?Math.max(vD.stdev,.15):DXY_THRESH,tY=vY?Math.max(vY.stdev,2):Y10_THRESH,tH=vH?Math.max(vH.stdev/100,HY_THRESH):HY_THRESH;
-  var thresholdHelp=document.getElementById('threshold-help');
-  if(thresholdHelp){
-    var thresholdText='Dynamic cutoffs compare each 1M or 3M move with the larger of a fixed floor and the standard deviation of three normalized momentum readings: V1 (latest vs 1M), V2 (1M vs 3M, monthly normalized), and V3 (3M vs 6M, monthly normalized). DXY uses percent with a 0.15% floor; US02Y uses basis points with a 2 bps floor; HY uses basis points with a 30 bps floor. Above +cutoff is rising/widening, below -cutoff is falling/tightening, otherwise stable. Current cutoffs: DXY '+tD.toFixed(2)+'%, US02Y '+tY.toFixed(1)+' bps, HY '+(tH*100).toFixed(1)+' bps.';
-    thresholdHelp.setAttribute('data-tooltip',thresholdText);thresholdHelp.setAttribute('title',thresholdText);thresholdHelp.setAttribute('aria-label','Threshold logic. '+thresholdText);
-  }
-  function sDl(eI,sI,val,isY,isH){var el=document.getElementById(eI),sg=document.getElementById(sI);if(val===null){el.textContent='—';sg.textContent='—';return;}var dr=isH?classifyHY(val,tH):(isY?classifyY(val,tY):classifyD(val,tD));el.textContent=(val>=0?'+':'')+(isH?val.toFixed(2)+'%':isY?val.toFixed(0)+'bps':val.toFixed(2)+'%');el.className='m-val '+dirClass(dr);sg.textContent=dirLabel(dr);sg.className='m-sig '+sigClass(dr);}
+  var thresholdHelp=document.querySelectorAll('.threshold-help');
+  function sDl(eI,sI,val,isY,isH){var el=document.getElementById(eI),sg=document.getElementById(sI),isMacro=sg.classList.contains('macro-direction'),isMacroValue=el.classList.contains('macro-compare-value');if(val===null){el.textContent='—';sg.textContent='—';return;}var dr=isH?classifyHY(val,tH):(isY?classifyY(val,tY):classifyD(val,tD));el.textContent=(val>=0?'+':'')+(isH?val.toFixed(2)+'%':isY?val.toFixed(0)+'bps':val.toFixed(2)+'%');el.className=(isMacroValue?'macro-compare-value ':'m-val ')+dirClass(dr);sg.textContent=dirLabel(dr);sg.className=(isMacro?'macro-direction ':'m-sig ')+sigClass(dr);}
   sDl('c_dxy_d1','c_dxy_s1',dd1,false,false);sDl('c_dxy_d3','c_dxy_s3',dd3,false,false);
   sDl('c_y10_d1','c_y10_s1',yd1,true,false);sDl('c_y10_d3','c_y10_s3',yd3,true,false);
   if(h){sDl('c_hy_d1','c_hy_s1',hd1,false,true);sDl('c_hy_d3','c_hy_s3',hd3,false,true);}
@@ -2982,17 +2978,17 @@ function render(data){
   if(dD3===null)dD3=dD1;
   if(yD3===null)yD3=yD1;
   var sTL=function(id,t){var e=document.getElementById(id);if(e)e.textContent=t;};
-  sTL('thresh-dxy-up','$ Rising >+'+rtD.toFixed(2)+'%');sTL('thresh-dxy-dn','$ Falling <−'+rtD.toFixed(2)+'%');
-  sTL('thresh-y10-up','Yield Rising >+'+rtY.toFixed(1)+'bps');sTL('thresh-y10-dn','Yield Falling <−'+rtY.toFixed(1)+'bps');
-  sTL('thresh-hy-up','HY Wide >+'+(tH*100).toFixed(1)+'bps');
-  if(thresholdHelp){
+  sTL('thresh-dxy','+/-'+rtD.toFixed(2)+'%');
+  sTL('thresh-y10','+/-'+rtY.toFixed(1)+'bps');
+  sTL('thresh-hy','+'+(tH*100).toFixed(1)+'bps');
+  if(thresholdHelp.length){
     var regimeThresholdText='Regime detection uses completed daily closes only. A new non-stress regime needs 2 completed closes before it becomes active; Day 1 is shown as Testing. Max Tightening and Global Stress promote immediately for risk control. Current confirmed cutoffs: DXY '+rtD.toFixed(2)+'%, US02Y '+rtY.toFixed(1)+' bps, HY '+(tH*100).toFixed(1)+' bps.';
-    thresholdHelp.setAttribute('data-tooltip',regimeThresholdText);thresholdHelp.setAttribute('title',regimeThresholdText);thresholdHelp.setAttribute('aria-label','Threshold logic. '+regimeThresholdText);
+    thresholdHelp.forEach(function(help){help.setAttribute('data-tooltip',regimeThresholdText);help.removeAttribute('title');help.setAttribute('aria-label','Threshold logic. '+regimeThresholdText);});
   }
   document.querySelectorAll('.cell').forEach(function(c){c.classList.remove('highlighted','ghost');c.removeAttribute('data-tf');});
   var yM={up:'yup',flat:'yflat',down:'ydown'},dM={up:'dup',flat:'dflat',down:'ddown'};
   var banner=document.getElementById('regime-banner');
-  if(!dD1||!yD1){banner.classList.remove('active');document.getElementById('regime-name').textContent='Insufficient data';return;}
+  if(!dD1||!yD1){banner.classList.remove('active');document.getElementById('regime-name').textContent='Insufficient data';var macroNameMissing=document.getElementById('macro-regime-name'),macroCopyMissing=document.getElementById('macro-regime-copy');if(macroNameMissing)macroNameMissing.textContent='Current 1M: Insufficient data';if(macroCopyMissing)macroCopyMissing.textContent='';return;}
   var rawId1M='cell-'+yM[yD1]+'-'+dM[dD1],id3M='cell-'+yM[yD3]+'-'+dM[dD3];
   var periodInfo=(rawDxyRows&&rawY10Rows)?buildRegimePeriods(rawDxyRows,rawY10Rows,'1m'):{periods:[]};
   var periods=periodInfo.periods,regimeState=effectiveRegimeState(periods);
@@ -3007,7 +3003,7 @@ function render(data){
   if(id3M&&id3M!==aId&&(!regimeState.testing||id3M!==regimeState.testing.cellId)){var cs=document.getElementById(id3M);if(cs){cs.classList.add('ghost');cs.setAttribute('data-tf','3M');}}
   var reg=regimes[aId];
   var backdrop=regimes[id3M];
-  if(reg){banner.classList.add('active');banner.style.setProperty('--regime-color',reg.color);banner.style.setProperty('--regime-bg',reg.bg);document.getElementById('regime-icon').textContent=reg.icon;document.getElementById('regime-name').textContent=reg.name;document.getElementById('regime-desc').textContent=reg.desc+(regimeState.testing?' Testing '+((regimes[regimeState.testing.cellId]||{}).name||regimeState.testing.cellId)+' Day '+regimeState.testing.days+'; active signal waits for 2 closes.':'')+(regimeState.immediate?' Stress regime promoted immediately for risk control.':'')+(rD.dates&&rY.dates?' Confirmed through DXY '+rD.dates.now+' / rate '+rY.dates.now+'.':'');}
+  if(reg){banner.classList.add('active');banner.style.setProperty('--regime-color',reg.color);banner.style.setProperty('--regime-bg',reg.bg);document.getElementById('regime-icon').textContent=reg.icon;document.getElementById('regime-name').textContent=reg.name;document.getElementById('regime-desc').textContent=reg.desc+(regimeState.testing?' Testing '+((regimes[regimeState.testing.cellId]||{}).name||regimeState.testing.cellId)+' Day '+regimeState.testing.days+'; active signal waits for 2 closes.':'')+(regimeState.immediate?' Stress regime promoted immediately for risk control.':'')+(rD.dates&&rY.dates?' Confirmed through DXY '+rD.dates.now+' / rate '+rY.dates.now+'.':'');var macroName=document.getElementById('macro-regime-name'),macroCopy=document.getElementById('macro-regime-copy'),macroBackdrop=document.getElementById('macro-regime-backdrop'),macroExpression=document.getElementById('macro-expression'),macroRiskBudget=document.getElementById('macro-risk-budget'),macroRiskSub=document.getElementById('macro-risk-sub'),macroInvalidation=document.getElementById('macro-invalidation');if(macroName)macroName.textContent='Current 1M: '+reg.name;if(macroCopy)macroCopy.textContent=reg.desc;if(macroBackdrop)macroBackdrop.textContent='3M backdrop: '+(backdrop?backdrop.name:'—');if(macroExpression)macroExpression.textContent=activeFlowColumn().replace(' Monthly','');var aligned=id3M===aId;if(macroRiskBudget)macroRiskBudget.textContent=currentRiskOn?(aligned?'Full':'Normal'):(aId==='cell-ydown-dup'||aId==='cell-yup-dup'?'Defensive':'Reduced');if(macroRiskSub)macroRiskSub.textContent=aligned?'1M / 3M aligned':'1M / 3M mixed';if(macroInvalidation)macroInvalidation.textContent=currentRiskOn?'DXY ↑ + HY widen':'HY stress persists';}
   var daysEl=document.getElementById('regime-days');if(daysEl)daysEl.textContent=activePeriod?'Day '+activePeriod.days:'—';
   var backdropEl=document.getElementById('regime-backdrop');if(backdropEl)backdropEl.textContent=backdrop?backdrop.icon+' '+backdrop.name:'—';
   renderSectorFlowsFromCache();
