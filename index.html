@@ -528,7 +528,7 @@ h1,.subtitle,.source-bar{display:none}
 <div class="dashboard-header"><div class="status-bar"><div class="status-dot" id="status-dot"></div><span class="status-text" id="status-text">Fetching live data…</span></div><div class="page-tabs"><button class="page-tab active" id="tab-macro" onclick="showPage('macro')">Macro Board</button><button class="page-tab" id="tab-flows" onclick="showPage('flows')">Sector Flows</button><button class="page-tab" id="tab-custom" onclick="showPage('custom')">Custom Flow</button></div><button class="refresh-btn" onclick="loadData(true)">⟳ Refresh</button></div>
 
 <main class="board-page active" id="page-macro">
-<div class="macro-input-head"><span>Macro Inputs</span><span>Completed daily close</span></div>
+<div class="macro-input-head"><span>Macro Inputs</span><span>Latest available close</span></div>
 <div class="data-cards">
   <div class="data-card dxy-card"><h3>DXY</h3><div class="macro-current" id="c_dxy_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_dxy_d1">—</span><span class="macro-direction" id="c_dxy_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_dxy_d3">—</span><span class="macro-direction" id="c_dxy_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="Dollar threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-dxy">—</div></div></div>
   <div class="data-card y10-card"><h3 id="rate-card-title">US 02Y</h3><div class="macro-current" id="c_y10_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_y10_d1">—</span><span class="macro-direction" id="c_y10_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_y10_d3">—</span><span class="macro-direction" id="c_y10_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="2Y threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-y10">—</div></div></div>
@@ -1082,8 +1082,8 @@ function closestRowFromBase(rows,baseRow,days){
   return{close:best.close,dateStr:sourceDateLabel(best)};
 }
 function closestRow(rows,days){var base=rows[rows.length-1].ts,t=base-days*86400,best=historyRowAtOrBefore(rows,t)||rows[0];return{close:best.close,dateStr:sourceDateLabel(best)};}
-function confirmedRegimeInput(dR,yR){
-  var cd=confirmedDailyRows(dR),cy=confirmedDailyRows(yR);
+function confirmedRegimeInput(dR,yR,includeLatest){
+  var cd=includeLatest?(dR||[]):confirmedDailyRows(dR),cy=includeLatest?(yR||[]):confirmedDailyRows(yR);
   if(cd.length<140||cy.length<140)return null;
   var dNow=cd[cd.length-1],yNow=cy[cy.length-1];
   var d1=closestRowFromBase(cd,dNow,30),d3=closestRowFromBase(cd,dNow,90),d6=closestRowFromBase(cd,dNow,180);
@@ -2802,11 +2802,11 @@ async function fetchFromAPI(force){
   renderFinviz(fvCount);renderBreadth(breadthRows);
   if(!dR||!yR){setStatus('error','⚠ DXY/Y2 unavailable');scheduleRefresh(60000);return;}
   rawDxyRows=dR;rawY10Rows=yR;
-  // Macro cards and the regime matrix must use the same completed-close snapshot.
-  var confirmed=confirmedRegimeInput(dR,yR);
-  if(!confirmed){setStatus('error','⚠ Not enough completed DXY/Y2 history');scheduleRefresh(60000);return;}
+  // Macro cards and the regime matrix must use the same latest available snapshot.
+  var confirmed=confirmedRegimeInput(dR,yR,true);
+  if(!confirmed){setStatus('error','⚠ Not enough DXY/Y2 history');scheduleRefresh(60000);return;}
   var dxyObj=confirmed.dxy;
-  dxyObj.source='Yahoo DXY completed close';
+  dxyObj.source='Yahoo DXY latest available close';
   var y10Obj=confirmed.us10y;
   y10Obj.source=yR.source||'Treasury source';
   y10Obj.isFallback=yR.isFallback===true;
@@ -2967,7 +2967,7 @@ function render(data){
   try{renderConviction(dd1,yd1,hd1,tD,tY,tH,vD,vY,vH,y.current,h?h.current:null);}catch(e){console.error('Conviction render error:',e);}
 
   // ── MATRIX: 1M is the active trading regime; 3M is backdrop context ──
-  var regimeInput=(rawDxyRows&&rawY10Rows)?confirmedRegimeInput(rawDxyRows,rawY10Rows):null;
+  var regimeInput=(rawDxyRows&&rawY10Rows)?confirmedRegimeInput(rawDxyRows,rawY10Rows,true):null;
   var rD=regimeInput?regimeInput.dxy:d,rY=regimeInput?regimeInput.us10y:y;
   var rdd1=pctChg(rD.current,rD.one_month_ago),rdd3=pctChg(rD.current,rD.three_months_ago);
   var ryd1=bpsDiff(rY.current,rY.one_month_ago),ryd3=bpsDiff(rY.current,rY.three_months_ago);
