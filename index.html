@@ -567,6 +567,41 @@ html.mobile-view .sector-dd-actions{justify-content:flex-start;margin-top:10px}
 html.mobile-view .sector-dd-link,html.mobile-view .sector-dd-close{min-height:38px;padding:8px 10px}
 html.mobile-view .sector-dd-meta{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px 12px;gap:6px}
 html.mobile-view .rotation-placeholder{margin:10px 12px}
+html.mobile-view .stock-table{display:block;width:100%;min-width:0;table-layout:auto}
+html.mobile-view .stock-table thead{display:none}
+html.mobile-view .stock-table tbody{display:grid;gap:8px;padding:8px}
+html.mobile-view .stock-table tbody tr:not(.stock-chart-row){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 10px;padding:8px;background:#fff;border:1px solid #d7dfdb;border-radius:8px}
+html.mobile-view .stock-table tbody tr:not(.stock-chart-row) td{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:6px 0;border:0;background:transparent!important;text-align:right;white-space:normal;line-height:1.2}
+html.mobile-view .stock-table tbody tr:not(.stock-chart-row) td::before{flex:0 0 auto;color:#718078;font-size:.5rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:left}
+html.mobile-view .stock-table tbody tr:not(.stock-chart-row) td:nth-child(1),html.mobile-view .stock-table tbody tr:not(.stock-chart-row) td:nth-child(2){grid-column:1/-1}
+html.mobile-view .stock-table tbody tr:not(.stock-chart-row) td:nth-child(1)::before{content:"Ticker"}
+html.mobile-view .stock-table tbody tr:not(.stock-chart-row) td:nth-child(2)::before{content:"Industry"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(3)::before{content:"Buy Gauge"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(4)::before{content:"Rotation"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(5)::before{content:"Perf Year"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(6)::before{content:"Perf YTD"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(7)::before{content:"Vol M"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(8)::before{content:"Market Cap"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(9)::before{content:"Fwd P/E"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(10)::before{content:"PEG"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(11)::before{content:"P/S"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(12)::before{content:"P/C"}
+html.mobile-view #sector-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(13)::before{content:"SMA20"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(3)::before{content:"Sector Strength"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(4)::before{content:"Buy Gauge"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(5)::before{content:"Rotation"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(6)::before{content:"Perf Year"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(7)::before{content:"Perf YTD"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(8)::before{content:"Vol M"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(9)::before{content:"Market Cap"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(10)::before{content:"Fwd P/E"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(11)::before{content:"PEG"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(12)::before{content:"P/S"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(13)::before{content:"P/C"}
+html.mobile-view #custom-stock-table .stock-table tbody tr:not(.stock-chart-row) td:nth-child(14)::before{content:"SMA20"}
+html.mobile-view .stock-table tbody tr:not(.stock-chart-row) td.stock-industry{word-break:break-word}
+html.mobile-view .stock-table tbody tr.stock-chart-row{display:block}
+html.mobile-view .stock-table tbody tr.stock-chart-row>td{display:block;grid-column:1/-1}
 html.mobile-view .chart-panel{width:calc(100vw - 40px);max-width:calc(100vw - 40px);margin:10px auto}
 html.mobile-view .chart-head{align-items:flex-start;padding:10px;flex-wrap:wrap}
 html.mobile-view .chart-box{height:270px;min-height:220px}
