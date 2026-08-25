@@ -7,6 +7,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script>
+  (function(){
+    var mobileQuery=window.matchMedia('(max-width: 700px)');
+    document.documentElement.classList.toggle('mobile-view',mobileQuery.matches);
+  })();
+</script>
 <title>Macro Regime Dashboard</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -519,6 +525,58 @@ h1,.subtitle,.source-bar{display:none}
 #page-flows .stock-chart-row:hover>td{background:#eef5f1!important;box-shadow:none!important}
 #page-flows .chart-panel{background:#0f172a}
 
+/* Automatic mobile board mode: shared by Macro, Sector Flows, and Custom Flow. */
+html.mobile-view body{padding:10px;overflow-x:hidden}
+html.mobile-view .dashboard-header{position:sticky;top:0;z-index:40;grid-template-columns:1fr auto;gap:8px;margin-bottom:14px;padding:9px 0 10px;background:#0f1117}
+html.mobile-view .status-bar{min-width:0}
+html.mobile-view .status-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.mobile-view .refresh-btn{min-height:40px;padding:8px 11px}
+html.mobile-view .page-tabs{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:5px}
+html.mobile-view .page-tab{min-height:42px;padding:9px 5px;font-size:.66rem;line-height:1.1}
+html.mobile-view .macro-input-head,html.mobile-view .data-cards,html.mobile-view .breadth-panel,html.mobile-view .section-divider,html.mobile-view .macro-decision-row,html.mobile-view .macro-regime-strip,html.mobile-view .conviction-bar-wrap,html.mobile-view .stress-panel,html.mobile-view .velocity-panel,html.mobile-view .regime-banner,html.mobile-view .regime-history,html.mobile-view .rrg-panel{width:100%;max-width:none}
+html.mobile-view .data-cards{grid-template-columns:1fr;gap:8px}
+html.mobile-view .data-card{min-height:132px;padding:13px}
+html.mobile-view .macro-current{margin-top:10px}
+html.mobile-view .macro-decision-row{grid-template-columns:1fr;margin-top:-8px}
+html.mobile-view .breadth-panel{padding:13px}
+html.mobile-view .breadth-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+html.mobile-view .bg-cell{min-height:76px;padding:9px 8px}
+html.mobile-view .section-divider{margin-top:17px}
+html.mobile-view .section-divider .label{font-size:.59rem;text-align:center}
+html.mobile-view .flow-page{width:100%;max-width:none;margin-bottom:12px}
+html.mobile-view .flow-hero{padding:14px;margin-bottom:10px;border-radius:10px}
+html.mobile-view .flow-hero-top{display:block}
+html.mobile-view .flow-mode{min-width:0;margin-top:11px}
+html.mobile-view .flow-toggle{display:grid;grid-template-columns:repeat(3,1fr)}
+html.mobile-view .flow-toggle-btn{min-height:36px;padding:8px 4px}
+html.mobile-view .flow-font-control{display:none}
+html.mobile-view .flow-ticker-search{grid-template-columns:minmax(0,1fr) auto;gap:6px}
+html.mobile-view .flow-ticker-search input{min-height:40px;font-size:.78rem}
+html.mobile-view .flow-ticker-search button{min-height:40px}
+html.mobile-view .flow-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+html.mobile-view .flow-stat{padding:9px}
+html.mobile-view .flow-stat-val{font-size:.98rem}
+html.mobile-view .flow-details{border-radius:9px;margin-bottom:9px}
+html.mobile-view .flow-details summary{min-height:52px;padding:11px 12px}
+html.mobile-view .flow-note{padding-left:12px;padding-right:12px}
+html.mobile-view .flow-table-wrap,html.mobile-view .stock-table-wrap{max-width:100%;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+html.mobile-view .flow-table th,html.mobile-view .flow-table td{padding-left:8px;padding-right:8px}
+html.mobile-view .sector-drilldown{width:calc(100vw - 36px);max-width:calc(100vw - 36px);margin:6px auto}
+html.mobile-view .sector-dd-head{display:block;padding:13px}
+html.mobile-view .sector-dd-actions{justify-content:flex-start;margin-top:10px}
+html.mobile-view .sector-dd-link,html.mobile-view .sector-dd-close{min-height:38px;padding:8px 10px}
+html.mobile-view .sector-dd-meta{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px 12px;gap:6px}
+html.mobile-view .rotation-placeholder{margin:10px 12px}
+html.mobile-view .chart-panel{width:calc(100vw - 40px);max-width:calc(100vw - 40px);margin:10px auto}
+html.mobile-view .chart-head{align-items:flex-start;padding:10px;flex-wrap:wrap}
+html.mobile-view .chart-box{height:270px;min-height:220px}
+html.mobile-view .rrg-head{padding:10px}
+html.mobile-view .rrg-controls{width:100%;display:grid;grid-template-columns:1fr 1fr}
+html.mobile-view .rrg-field input,html.mobile-view .rrg-field select{min-height:38px;width:100%}
+html.mobile-view #rrg-canvas{height:430px}
+html.mobile-view .custom-filter-grid{grid-template-columns:1fr}
+html.mobile-view .custom-url-row{grid-template-columns:1fr}
+html.mobile-view button,html.mobile-view a{touch-action:manipulation}
 </style>
 </head>
 <body>
@@ -3031,6 +3089,9 @@ function render(data){
 });
 updateCustomPreview();
 try{setFlowFont(localStorage.getItem('flowFontSize')||'normal');}catch(e){setFlowFont('normal');}
+var mobileViewQuery=window.matchMedia('(max-width: 700px)');
+function syncMobileView(){document.documentElement.classList.toggle('mobile-view',mobileViewQuery.matches);}
+if(mobileViewQuery.addEventListener)mobileViewQuery.addEventListener('change',syncMobileView);else if(mobileViewQuery.addListener)mobileViewQuery.addListener(syncMobileView);
 window.addEventListener('resize',function(){resizeT2108Chart();resizeActiveChart();var p=document.getElementById('page-flows');if(p&&p.classList.contains('active')){renderRRGFromCache();resizeSectorAggregate();renderSectorRotationGraph((selectedIndustry&&selectedIndustry.Name)||'');}});
 fetchFromAPI(true);
 </script>
