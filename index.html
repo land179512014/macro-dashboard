@@ -789,6 +789,12 @@ html.mobile-view button,html.mobile-view a{touch-action:manipulation}
     </details>
 
     <details class="flow-details" open>
+      <summary><div><div class="flow-section-title">Relative RRG Breakouts</div><div class="flow-section-meta" id="flow-meta-rrg-breakouts">Latest weekly Relative RRG move from Improving to Leading.</div></div></summary>
+      <div class="flow-note">These groups have just crossed into the Leading quadrant on the selected Relative RRG strength input.</div>
+      <div class="flow-table-wrap" id="flow-table-rrg-breakouts"></div>
+    </details>
+
+    <details class="flow-details" open>
       <summary><div><div class="flow-section-title">Strong Buys</div><div class="flow-section-meta" id="flow-meta-strong">Active flow &gt; 0.05 plus Buy / Holy Grail / Reversal gauge.</div></div></summary>
       <div class="flow-note">Reversal is kept here, not in Improving Watch, because it is already part of the buy-gauge confirmation list.</div>
       <div class="flow-table-wrap" id="flow-table-strong"></div>
@@ -1584,7 +1590,23 @@ function buildRelativeRRGPoints(hist,metric,trailLength){
 function buildRRGPoints(hist,metric,trailLength,mode){
   return mode==='mapping'?buildMappedRRGPoints(hist,metric,trailLength):buildRelativeRRGPoints(hist,metric,trailLength);
 }
-function renderRRGFromCache(){renderRRG(cache.flowHist||[]);renderSectorRotationGraph((selectedIndustry&&selectedIndustry.Name)||'');}
+function relativeRRGBreakouts(hist,flow,metric){
+  var built=buildRelativeRRGPoints(rrgHistoryWithCurrent(hist,flow),metric,2),activeFlow=activeFlowColumn();
+  return (built.points||[]).map(function(point){
+    var trail=point.trail||[],prior=trail.length>1?trail[trail.length-2]:null,current=point.current;
+    if(!prior||!current||rrgQuadrant(prior.x,prior.y).label!=='Improving'||rrgQuadrant(current.x,current.y).label!=='Leading')return null;
+    var row=Object.assign({},current.row||{});
+    row.Name=row.Name||point.name;
+    row['RRG Transition']='Improving → Leading';
+    row['_rrgMetric']=current.raw;
+    row['_active']=parseNum(row[activeFlow]);
+    return row;
+  }).filter(Boolean).sort(function(a,b){
+    var av=isNaN(a._active)?-Infinity:a._active,bv=isNaN(b._active)?-Infinity:b._active;
+    return bv-av;
+  });
+}
+function renderRRGFromCache(){renderSectorFlowsFromCache();renderSectorRotationGraph((selectedIndustry&&selectedIndustry.Name)||'');}
 function rrgTooltipMetric(row,label,formatter){
   if(!row)return'';
   var v=row[label];
@@ -2180,6 +2202,7 @@ function gaugeTransitionMarkup(current,prior,weeks){
 }
 function flowCell(row,col){
   if(col==='Name')return '<button class="flow-name-btn" data-industry-key="'+esc(industryKey(row.Name))+'" onclick="event.stopPropagation();openSectorDrilldown('+JSON.stringify(String(row.Name||'')).replace(/"/g,'&quot;')+',this)">'+esc(row.Name||'--')+'</button>';
+  if(col==='RRG Transition')return '<span class="flow-pill leading">'+esc(row[col]||'Improving → Leading')+'</span>';
   if(col==='Sector Strength')return strengthTransitionMarkup(row[col],row['Prior Sector Strength'],row['Sector Strength Weeks']);
   if(col==='Buy Gauge')return gaugeTransitionMarkup(row[col],row['Prior Buy Gauge'],row['Buy Gauge Weeks']);
   if(/Flow|WoW|Rotation/i.test(col))return'<td class="flow-num '+flowClass(row[col])+(col==='Offense Flow Monthly'?offenseHotClass(row[col]):'')+'" data-value="'+(parseNum(row[col])||0)+'">'+fmtFlow(row[col])+'</td>';
@@ -2846,7 +2869,7 @@ function renderSectorFlowsFromCache(){
   var note=document.getElementById('flow-source-note');if(note)note.textContent=cache.flowSource||'Current sheet, history fallback enabled';
   if(!flow||!flow.length){
     document.getElementById('flow-subtitle').textContent='Sector flow data is unavailable. The macro board still works normally.';
-    ['strong','improving','trap','extreme','full'].forEach(function(k){renderFlowTable('flow-table-'+k,[],[]);});
+    ['rrg-breakouts','strong','improving','trap','extreme','full'].forEach(function(k){renderFlowTable('flow-table-'+k,[],[]);});
     renderRRG(rrgHistoryWithCurrent(hist,flow));
     return;
   }
@@ -2866,11 +2889,16 @@ function renderSectorFlowsFromCache(){
   document.getElementById('flow-top-trap').textContent=topName(ranked.trap);
   document.getElementById('flow-top-extreme').textContent=topName(ranked.extreme);
   document.getElementById('flow-meta-strong').textContent=activeFlow+' > 0.05 plus Buy / Holy Grail / Reversal gauge.';
+  var rrgMetric=((document.getElementById('rrg-metric')||{}).value)||'Rotation Flow Monthly';
+  var rrgBreakouts=relativeRRGBreakouts(hist,flow,rrgMetric);
+  document.getElementById('flow-meta-rrg-breakouts').textContent=rrgBreakouts.length+' latest weekly Improving → Leading transition'+(rrgBreakouts.length===1?'':'s')+' · '+rrgMetric+'.';
   document.getElementById('flow-meta-improving').textContent='Sector Strength = Improving and '+activeFlow+' > 0.05.';
   document.getElementById('flow-meta-extreme').textContent='Enters when Offense Flow Monthly is below '+fmtFlow(ranked.extremeOffenseThresh)+' or Defense Flow Monthly is below '+fmtFlow(ranked.extremeDefenseThresh)+'; stays until that flow recovers above '+fmtFlow(ranked.extremeExit)+'.';
   document.getElementById('flow-meta-full').textContent=ranked.full.length+' industries sorted by '+activeFlow+'.';
   var cols=['Name','Offense Flow Monthly','Defense Flow Monthly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year'];
+  var rrgCols=['Name','RRG Transition','Offense Flow Monthly','Defense Flow Monthly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year'];
   var fullCols=['Name','Offense Flow Monthly','Defense Flow Monthly','Rotation Flow Weekly','Offense WoW','Defense WoW','Sector Strength','Buy Gauge','Perf Quart','Perf Year','Perf YTD'];
+  renderFlowTable('flow-table-rrg-breakouts',rrgBreakouts,rrgCols);
   renderFlowTable('flow-table-strong',ranked.strong,cols);
   renderFlowTable('flow-table-improving',ranked.improving,cols);
   renderFlowTable('flow-table-trap',ranked.trap,cols);
