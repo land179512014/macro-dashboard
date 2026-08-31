@@ -1174,7 +1174,9 @@ function rowDateKey(row){
 }
 function confirmedDailyRows(rows){
   var today=nyDateKeyFromDate(new Date());
-  return (rows||[]).filter(function(r){return rowDateKey(r)<today;});
+  // The upstream daily feeds publish a dated end-of-day row. Count it as soon as
+  // it is available so a second completed close can confirm the regime today.
+  return (rows||[]).filter(function(r){return rowDateKey(r)<=today;});
 }
 function closestRowFromBase(rows,baseRow,days){
   var t=baseRow.ts-days*86400,best=historyRowAtOrBefore(rows,t)||rows[0];
