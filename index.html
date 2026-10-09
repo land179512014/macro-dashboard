@@ -253,6 +253,10 @@ h1,.subtitle,.source-bar{display:none}
 .board-page{display:none}
 .board-page.active{display:block}
 .flow-page{max-width:1650px;width:min(1650px,calc(100vw - 28px));margin:0 auto 22px}
+.regime-price-chart-head{display:flex;align-items:center;justify-content:space-between;margin:13px 0 6px;color:#94a3b8;font-size:.61rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}.regime-price-selector{display:flex;gap:4px}.regime-price-selector .tf-btn{padding:4px 9px;font-size:.6rem}.regime-price-chart{position:relative;height:300px;margin-bottom:14px;border:1px solid #334155;border-radius:7px;background:#0f172a;overflow:hidden;cursor:grab;user-select:none}.regime-price-chart:active{cursor:grabbing}.regime-price-chart svg{display:block;width:100%;height:100%}.regime-price-chart .chart-label{fill:#64748b;font-size:11px}.regime-price-chart .chart-return{fill:#e2e8f0;font-size:12px;font-weight:700}.regime-price-chart .chart-price{fill:#e2e8f0;font-size:11px}.regime-price-chart .chart-grid{stroke:#334155;stroke-width:1;stroke-dasharray:3 4}.regime-price-chart .chart-line{fill:none;stroke:#60a5fa;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}.regime-price-chart .chart-crosshair{stroke:#cbd5e1;stroke-width:1;stroke-dasharray:3 3;pointer-events:none}.regime-price-chart .chart-dot{fill:#60a5fa;stroke:#e2e8f0;stroke-width:1.5;pointer-events:none}.regime-chart-hover{position:absolute;z-index:2;display:none;min-width:145px;padding:7px 9px;border:1px solid #475569;border-radius:5px;background:rgba(15,23,42,.96);color:#cbd5e1;font-size:.66rem;line-height:1.45;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.28)}.regime-chart-hover strong{color:#f8fafc}.regime-chart-hover .regime-hover-name{font-weight:700}
+.regime-price-chart{cursor:default;user-select:auto}.regime-price-chart:active{cursor:default}
+.regime-band-layer{position:absolute;z-index:0;inset:0 64px 23px 0;overflow:hidden;pointer-events:none}.regime-band{position:absolute;top:0;bottom:0}.regime-price-chart .tv-lightweight-charts{position:relative;z-index:1;background:transparent!important}
+.regime-chart-tooltip{position:absolute;z-index:3;display:none;min-width:158px;padding:7px 9px;border:1px solid #475569;border-radius:5px;background:rgba(15,23,42,.96);color:#cbd5e1;font-size:.66rem;line-height:1.45;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.28)}.regime-chart-tooltip strong{color:#f8fafc}.regime-chart-tooltip .regime-hover-name{font-weight:700}
 .flow-hero{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:18px 20px;margin-bottom:14px}
 .flow-hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .flow-kicker{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:#64748b;margin-bottom:5px}
@@ -300,19 +304,19 @@ h1,.subtitle,.source-bar{display:none}
 .flow-table-wrap{overflow:auto;border-top:1px solid #334155}
 .flow-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:.68rem;table-layout:auto}
 .flow-table.full-industry-table{width:100%;min-width:1160px;table-layout:fixed}
-.flow-table.full-industry-table th,.flow-table.full-industry-table td{padding-left:7px;padding-right:7px;overflow:hidden;text-overflow:ellipsis}
-.flow-table.full-industry-table th:nth-child(1),.flow-table.full-industry-table td:nth-child(1){width:210px;text-align:center}
+.flow-table.full-industry-table>thead>tr>th,.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td{padding-left:7px;padding-right:7px;overflow:hidden;text-overflow:ellipsis}
+.flow-table.full-industry-table>thead>tr>th:nth-child(1),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(1){width:210px;text-align:center}
 .flow-table.full-industry-table .flow-name-btn{text-align:center;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.flow-table.full-industry-table th:nth-child(7),.flow-table.full-industry-table td:nth-child(7),
-.flow-table.full-industry-table th:nth-child(8),.flow-table.full-industry-table td:nth-child(8){width:132px}
-.flow-table.full-industry-table th:nth-child(2),.flow-table.full-industry-table td:nth-child(2),
-.flow-table.full-industry-table th:nth-child(3),.flow-table.full-industry-table td:nth-child(3),
-.flow-table.full-industry-table th:nth-child(4),.flow-table.full-industry-table td:nth-child(4),
-.flow-table.full-industry-table th:nth-child(5),.flow-table.full-industry-table td:nth-child(5),
-.flow-table.full-industry-table th:nth-child(6),.flow-table.full-industry-table td:nth-child(6),
-.flow-table.full-industry-table th:nth-child(9),.flow-table.full-industry-table td:nth-child(9),
-.flow-table.full-industry-table th:nth-child(10),.flow-table.full-industry-table td:nth-child(10),
-.flow-table.full-industry-table th:nth-child(11),.flow-table.full-industry-table td:nth-child(11){width:86px}
+.flow-table.full-industry-table>thead>tr>th:nth-child(7),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(7),
+.flow-table.full-industry-table>thead>tr>th:nth-child(8),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(8){width:132px}
+.flow-table.full-industry-table>thead>tr>th:nth-child(2),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(2),
+.flow-table.full-industry-table>thead>tr>th:nth-child(3),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(3),
+.flow-table.full-industry-table>thead>tr>th:nth-child(4),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(4),
+.flow-table.full-industry-table>thead>tr>th:nth-child(5),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(5),
+.flow-table.full-industry-table>thead>tr>th:nth-child(6),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(6),
+.flow-table.full-industry-table>thead>tr>th:nth-child(9),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(9),
+.flow-table.full-industry-table>thead>tr>th:nth-child(10),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(10),
+.flow-table.full-industry-table>thead>tr>th:nth-child(11),.flow-table.full-industry-table>tbody>tr:not(.sector-drilldown-row)>td:nth-child(11){width:86px}
 .flow-table th{position:sticky;top:0;background:#111827;color:#64748b;text-align:center;padding:9px 10px;font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #334155;cursor:pointer;user-select:none;white-space:nowrap}
 .flow-table th:hover{color:#93c5fd}
 .flow-table th.dragging,.stock-table th.dragging{opacity:.45}
@@ -324,6 +328,9 @@ h1,.subtitle,.source-bar{display:none}
 .flow-pill{display:inline-block;font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:4px;white-space:nowrap}
 .flow-pill.leading{background:#14532d;color:#86efac}.flow-pill.improving{background:#1e3a8a;color:#93c5fd}.flow-pill.weakening{background:#713f12;color:#fcd34d}.flow-pill.lagging{background:#7f1d1d;color:#fca5a5}
 .flow-pill.buy,.flow-pill.holy,.flow-pill.reversal{background:#064e3b;color:#6ee7b7}.flow-pill.wait{background:#1e293b;color:#94a3b8}.flow-pill.avoid{background:#7f1d1d;color:#fca5a5}.flow-pill.trap{background:#7c2d12;color:#fdba74}
+.flow-pill.help{position:relative;cursor:help}
+.flow-pill.help::after{content:attr(data-tooltip);position:absolute;z-index:60;left:50%;bottom:calc(100% + 7px);width:220px;padding:7px 8px;transform:translateX(-50%);border:1px solid #9fb9ad;border-radius:5px;background:#fff;color:#245747;font:600 .58rem/1.35 Arial,sans-serif;text-align:left;box-shadow:0 8px 20px rgba(15,23,42,.18);opacity:0;visibility:hidden;pointer-events:none}
+.flow-pill.help:hover::after,.flow-pill.help:focus-visible::after{opacity:1;visibility:visible}
 .flow-empty{padding:20px 16px;color:#64748b;font-size:.7rem;border-top:1px solid #334155}
 .flow-name-btn{appearance:none;border:0;background:transparent;color:#93c5fd;font:inherit;font-weight:800;cursor:pointer;padding:0;text-align:left}
 .flow-name-btn:hover{text-decoration:underline;color:#bfdbfe}
@@ -399,7 +406,47 @@ h1,.subtitle,.source-bar{display:none}
 .custom-result-note{font-size:.62rem;color:#53655e;margin-top:2px}
 
 #page-flows{background:#e8eee9;margin:0 -20px -28px;padding:0 20px 28px;color:#1f2937}
+#page-etfs{background:#e8eee9;margin:0 -20px -28px;padding:0 20px 28px;color:#1f2937}
 #page-custom{background:#e8eee9;margin:0 -20px -28px;padding:0 20px 28px;color:#1f2937}
+#page-etfs .flow-hero,#page-etfs .flow-details{background:#f9fbfa;border-color:#b7cbc2}
+#page-etfs .flow-hero{background:#eef6f1;border-color:#9fb9ad;box-shadow:0 10px 30px rgba(15,23,42,.12)}
+#page-etfs .flow-kicker,#page-etfs .flow-mode-label,#page-etfs .flow-stat-label{color:#64756d}
+#page-etfs .flow-title,#page-etfs .flow-section-title{color:#18392f}
+#page-etfs .flow-sub,#page-etfs .flow-mode-note,#page-etfs .flow-stat-note,#page-etfs .flow-section-meta,#page-etfs .flow-note{color:#53655e}
+#page-etfs .flow-mode,#page-etfs .flow-stat{background:#fff;border-color:#c7d8d0}
+#page-etfs .flow-mode-val,#page-etfs .flow-stat-val{color:#245747}
+#page-etfs .flow-toggle-btn{background:#f6faf8;border-color:#9fb9ad;color:#245747;margin-top:10px}
+#page-etfs .flow-details{border-radius:7px;box-shadow:0 6px 18px rgba(15,23,42,.08)}
+#page-etfs .flow-details summary{background:#eef5f1;border-bottom:1px solid #c7d8d0}
+#page-etfs .flow-table-wrap{border-top:1px solid #9fb9ad}
+#page-etfs .flow-table{background:#fff;color:#1f2937}
+#page-etfs .flow-table th{background:#2f6656;color:#fff;border-bottom:2px solid #244f43;box-shadow:inset -1px 0 0 rgba(255,255,255,.18)}
+#page-etfs .flow-table th:hover{color:#d9fff1;background:#28594b}
+#page-etfs .flow-table td{color:#1f2937;border-bottom:1px solid #e4e9e6;background:#fff}
+#page-etfs .flow-table tbody tr:nth-child(even) td{background:#f4f7f6}
+#page-etfs .flow-table tbody tr:hover td{background:#fff4bf!important;color:#111827;box-shadow:inset 0 1px 0 #e2c94f,inset 0 -1px 0 #e2c94f}
+#page-etfs .flow-pos{color:#0f766e!important;font-weight:700}
+#page-etfs .flow-neg{color:#c2410c!important;font-weight:700}
+#page-etfs .flow-muted{color:#64748b!important}
+#page-etfs .stock-symbol button{color:#2563eb}
+#page-etfs .stock-symbol button:hover{color:#1d4ed8}
+#page-etfs .flow-empty{background:#fff;color:#64748b;border-color:#d7dfdb}
+#page-etfs .flow-pill.leading,#page-etfs .flow-pill.buy,#page-etfs .flow-pill.holy{background:#b7e4cf;color:#164e3d}
+#page-etfs .flow-pill.improving{background:#20d8d4;color:#073b3a}
+#page-etfs .flow-pill.reversal{background:#3b82f6;color:#fff}
+#page-etfs .flow-pill.wait{background:#fff;color:#334155;border:1px solid #d7dfdb}
+#page-etfs .flow-pill.avoid,#page-etfs .flow-pill.trap{background:#ef4444;color:#fff}
+#page-etfs .flow-strength-prev{color:#53655e}
+#page-etfs .rrg-panel{margin:0;background:#fff;border:0;border-radius:0}
+#page-etfs .rrg-head{background:#dcebe4;border-color:#b7cbc2}
+#page-etfs .rrg-title{color:#18392f}
+#page-etfs .rrg-sub,#page-etfs .rrg-footer{color:#53655e}
+#page-etfs .rrg-canvas-wrap{background:#f9fbfa}
+#page-etfs .rrg-field label{color:#64756d}
+#page-etfs .rrg-field select{background:#fff;color:#18392f;border-color:#9fb9ad}
+#page-etfs .stock-chart-row>td{background:#eef5f1!important}
+#page-etfs .chart-panel{background:#0f172a}
+#page-etfs .flow-name-btn{color:#2563eb}
 #page-custom .flow-hero,#page-custom .flow-details{background:#f9fbfa;border-color:#b7cbc2}
 #page-custom .flow-hero{background:#eef6f1;border-color:#9fb9ad;box-shadow:0 10px 30px rgba(15,23,42,.12)}
 #page-custom .flow-kicker,#page-custom .flow-mode-label,#page-custom .flow-stat-label{color:#64756d}
@@ -531,7 +578,7 @@ html.mobile-view .dashboard-header{position:sticky;top:0;z-index:40;grid-templat
 html.mobile-view .status-bar{min-width:0}
 html.mobile-view .status-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html.mobile-view .refresh-btn{min-height:40px;padding:8px 11px}
-html.mobile-view .page-tabs{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:5px}
+html.mobile-view .page-tabs{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(2,1fr);width:100%;gap:5px}
 html.mobile-view .page-tab{min-height:42px;padding:9px 5px;font-size:.66rem;line-height:1.1}
 html.mobile-view .macro-input-head,html.mobile-view .data-cards,html.mobile-view .breadth-panel,html.mobile-view .section-divider,html.mobile-view .macro-decision-row,html.mobile-view .macro-regime-strip,html.mobile-view .conviction-bar-wrap,html.mobile-view .stress-panel,html.mobile-view .velocity-panel,html.mobile-view .regime-banner,html.mobile-view .regime-history,html.mobile-view .rrg-panel{width:100%;max-width:none}
 html.mobile-view .data-cards{grid-template-columns:1fr;gap:8px}
@@ -618,7 +665,7 @@ html.mobile-view button,html.mobile-view a{touch-action:manipulation}
 <h1>Macro Regime Dashboard</h1>
 <p class="subtitle">Live DXY × US02Y × HY × Momentum × Breadth → Auto-detected regime</p>
 <div class="source-bar"><button class="src-btn active" id="btn-src-api" onclick="fetchFromAPI(true)">🌐 Auto (Free API)</button></div>
-<div class="dashboard-header"><div class="status-bar"><div class="status-dot" id="status-dot"></div><span class="status-text" id="status-text">Fetching live data…</span></div><div class="page-tabs"><button class="page-tab active" id="tab-macro" onclick="showPage('macro')">Macro Board</button><button class="page-tab" id="tab-flows" onclick="showPage('flows')">Sector Flows</button><button class="page-tab" id="tab-custom" onclick="showPage('custom')">Custom Flow</button></div><button class="refresh-btn" onclick="loadData(true)">⟳ Refresh</button></div>
+<div class="dashboard-header"><div class="status-bar"><div class="status-dot" id="status-dot"></div><span class="status-text" id="status-text">Fetching live data…</span></div><div class="page-tabs"><button class="page-tab active" id="tab-macro" onclick="showPage('macro')">Macro Board</button><button class="page-tab" id="tab-flows" onclick="showPage('flows')">Sector Flows</button><button class="page-tab" id="tab-etfs" onclick="showPage('etfs')">ETF Flows</button><button class="page-tab" id="tab-custom" onclick="showPage('custom')">Custom Flow</button></div><button class="refresh-btn" onclick="loadData(true)">⟳ Refresh</button></div>
 
 <main class="board-page active" id="page-macro">
 <div class="macro-input-head"><span>Macro Inputs</span><span>Latest available close</span></div>
@@ -626,7 +673,7 @@ html.mobile-view button,html.mobile-view a{touch-action:manipulation}
   <div class="data-card dxy-card"><h3>DXY</h3><div class="macro-current" id="c_dxy_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_dxy_d1">—</span><span class="macro-direction" id="c_dxy_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_dxy_d3">—</span><span class="macro-direction" id="c_dxy_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="Dollar threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-dxy">—</div></div></div>
   <div class="data-card y10-card"><h3 id="rate-card-title">US 02Y</h3><div class="macro-current" id="c_y10_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_y10_d1">—</span><span class="macro-direction" id="c_y10_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_y10_d3">—</span><span class="macro-direction" id="c_y10_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="2Y threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-y10">—</div></div></div>
   <div class="data-card hy-card"><h3>HY Spread</h3><div class="macro-current" id="c_hy_now">—</div><div class="macro-compares"><div class="macro-compare"><span class="macro-compare-label">1M</span><span class="macro-compare-value" id="c_hy_d1">—</span><span class="macro-direction" id="c_hy_s1">—</span></div><div class="macro-compare"><span class="macro-compare-label">3M</span><span class="macro-compare-value" id="c_hy_d3">—</span><span class="macro-direction" id="c_hy_s3">—</span></div></div><div class="macro-cutoff"><div class="macro-cutoff-label">Threshold <button class="threshold-help" type="button" aria-label="HY threshold logic" data-tooltip="Thresholds update with live data.">?</button></div><div class="macro-cutoff-value" id="thresh-hy">—</div></div></div>
-  <div class="data-card fv-card"><h3>🔥 Spec Momentum</h3><div class="fv-count-display"><div class="fv-big-num loading" id="fv-count">Fetching…</div><div class="fv-sub">US stocks >$3, vol >50K, +20%/wk</div><div class="fv-sub" id="fv-zone" style="font-weight:700;margin-top:4px"></div><a class="fv-link" href="https://finviz.com/screener.ashx?v=111&f=geo_usa%2Csh_avgvol_o50%2Csh_price_o3%2Cta_perf_1w20o" target="_blank" rel="noopener">View on Finviz ↗</a></div></div>
+  <div class="data-card fv-card"><h3>🔥 Spec Momentum</h3><div class="fv-count-display"><div class="fv-big-num loading" id="fv-count">Fetching…</div><div class="fv-sub">US stocks >$3, vol >50K, +20%/wk</div><div class="fv-sub" id="fv-zone" style="font-weight:700;margin-top:4px"></div><a class="fv-link" href="https://finviz.com/screener?v=111&f=geo_usa%2Cind_stocksonly%2Csh_avgvol_o50%2Csh_price_o3%2Cta_perf_1w20o" target="_blank" rel="noopener">View on Finviz ↗</a></div></div>
 </div>
 <div class="macro-regime-strip"><strong id="macro-regime-name">Current 1M: —</strong><span class="macro-regime-copy" id="macro-regime-copy">Loading completed daily close data.</span><span class="macro-regime-backdrop" id="macro-regime-backdrop">3M backdrop: —</span></div>
 <div class="macro-decision-row"><div class="macro-decision"><div class="macro-decision-label">Primary expression</div><div class="macro-decision-value positive" id="macro-expression">—</div><div class="macro-decision-sub">Active sector ranking</div></div><div class="macro-decision"><div class="macro-decision-label">Risk budget</div><div class="macro-decision-value" id="macro-risk-budget">—</div><div class="macro-decision-sub" id="macro-risk-sub">1M / 3M alignment</div></div><div class="macro-decision"><div class="macro-decision-label">Invalidation</div><div class="macro-decision-value" id="macro-invalidation">DXY ↑ + HY widen</div><div class="macro-decision-sub">Reassess risk exposure</div></div></div>
@@ -648,7 +695,7 @@ html.mobile-view button,html.mobile-view a{touch-action:manipulation}
   <div class="breadth-date" id="breadth-date"></div>
   <div class="breadth-date"><a href="https://stockbee.blogspot.com/p/mm.html" target="_blank" rel="noopener noreferrer">Stockbee Market Monitor ↗</a></div>
   <div class="t2108-chart-panel" id="t2108-chart-panel">
-    <div class="t2108-chart-head"><div><div class="t2108-chart-title">T2108 Historical Trend</div><div class="t2108-chart-note" id="t2108-chart-note">Loading historical readings...</div></div><div class="t2108-chart-actions"><button class="tf-btn active" id="t2108-range-1y" onclick="setT2108Range('1y',event)">1Y</button><button class="tf-btn" id="t2108-range-3y" onclick="setT2108Range('3y',event)">3Y</button><button class="tf-btn" id="t2108-range-all" onclick="setT2108Range('all',event)">All</button><button class="tf-btn" onclick="toggleT2108Chart(event)">Close</button></div></div>
+    <div class="t2108-chart-head"><div><div class="t2108-chart-title">T2108 Historical Trend</div><div class="t2108-chart-note" id="t2108-chart-note">Loading historical readings...</div></div><div class="t2108-chart-actions"><button class="tf-btn" id="t2108-range-1y" onclick="setT2108Range('1y',event)">1Y</button><button class="tf-btn" id="t2108-range-3y" onclick="setT2108Range('3y',event)">3Y</button><button class="tf-btn active" id="t2108-range-all" onclick="setT2108Range('all',event)">All</button><button class="tf-btn" onclick="toggleT2108Chart(event)">Close</button></div></div>
     <div id="t2108-chart-box"></div>
   </div>
 </div>
@@ -703,6 +750,8 @@ html.mobile-view button,html.mobile-view a{touch-action:manipulation}
   </div>
   <div id="regime-timeline-wrap" style="display:none;margin-top:12px">
     <div style="font-size:.6rem;color:#64748b;margin-bottom:8px">Point-in-time replay using completed daily closes, 30/90/180-day references, and each date's dynamic thresholds. Brief close-confirmed transitions are preserved.</div>
+    <div class="regime-price-chart-head"><span>Market Overlay <span title="Scroll to zoom around your cursor. Drag with the left mouse button to pan. Double-click to reset.">?</span></span><div class="regime-price-selector"><button class="tf-btn active" id="hist-index-spx-btn" onclick="setHistETF('SPX')">SPX</button><button class="tf-btn" id="hist-index-qqq-btn" onclick="setHistETF('QQQ')">QQQ</button></div></div>
+    <div id="regime-price-chart" class="regime-price-chart"></div>
     <div id="regime-timeline" style="font-size:.68rem;color:#94a3b8;line-height:1.6">Computing…</div>
   </div>
 </div>
@@ -819,6 +868,91 @@ html.mobile-view button,html.mobile-view a{touch-action:manipulation}
   </div>
 </main>
 
+<main class="board-page" id="page-etfs">
+  <div class="flow-page">
+    <div class="flow-hero">
+      <div class="flow-hero-top">
+        <div>
+          <div class="flow-kicker">ETF Rotation</div>
+          <div class="flow-title">ETF Flows</div>
+          <div class="flow-sub" id="etf-flow-subtitle">Loading the approved 93-ETF rotation universe. Finviz supplies current performance; Yahoo supplies daily history for ADR, duration and charts.</div>
+        </div>
+        <div class="flow-mode">
+          <div class="flow-mode-label">Active Signal</div>
+          <div class="flow-mode-val">Offense Flow Monthly</div>
+          <div class="flow-mode-note" id="etf-flow-asof">Awaiting ETF data</div>
+          <div class="flow-toggle"><button class="flow-toggle-btn active" type="button" onclick="loadEtfFlows(true)">Refresh ETFs</button></div>
+          <div class="flow-font-control">
+            <div class="flow-mode-label">Table Font</div>
+            <div class="flow-toggle">
+              <button class="flow-toggle-btn active" id="etf-font-normal" onclick="setEtfFlowFont('normal')">Normal</button>
+              <button class="flow-toggle-btn" id="etf-font-large" onclick="setEtfFlowFont('large')">Large</button>
+              <button class="flow-toggle-btn" id="etf-font-xl" onclick="setEtfFlowFont('xl')">XL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-ticker-search">
+        <input id="etf-flow-search" placeholder="Filter ticker, exposure or category" maxlength="40" oninput="renderEtfFlowTables()"/>
+        <button class="sector-dd-close" onclick="clearEtfFlowSearch()">Clear</button>
+        <div class="flow-search-status" id="etf-flow-status">Loading Finviz performance and daily histories.</div>
+      </div>
+      <div class="flow-stats">
+        <div class="flow-stat"><div class="flow-stat-label">Strong Buys</div><div class="flow-stat-val" id="etf-stat-strong">--</div><div class="flow-stat-note" id="etf-top-strong">--</div></div>
+        <div class="flow-stat"><div class="flow-stat-label">Improving</div><div class="flow-stat-val" id="etf-stat-improving">--</div><div class="flow-stat-note" id="etf-top-improving">--</div></div>
+        <div class="flow-stat"><div class="flow-stat-label">Traps</div><div class="flow-stat-val" id="etf-stat-trap">--</div><div class="flow-stat-note" id="etf-top-trap">--</div></div>
+        <div class="flow-stat"><div class="flow-stat-label">Extreme Selling</div><div class="flow-stat-val" id="etf-stat-extreme">--</div><div class="flow-stat-note" id="etf-top-extreme">--</div></div>
+      </div>
+    </div>
+
+    <details class="flow-details" ontoggle="if(this.open)renderEtfRotationGraph()">
+      <summary><div><div class="flow-section-title">ETF Rotation Graph</div><div class="flow-section-meta">Switch between the absolute flow cycle and relative rotation versus SPY.</div></div></summary>
+      <div class="rrg-panel">
+        <div class="rrg-head">
+          <div><div class="rrg-title">ETF Rotation Map</div><div class="rrg-sub" id="etf-rrg-subtitle">Absolute mode maps 3M return against Offense Flow. Hover a point for its date and calculations.</div></div>
+          <div class="rrg-controls">
+            <div class="rrg-field"><label for="etf-rrg-mode">Mode</label><select id="etf-rrg-mode" onchange="renderEtfRotationGraph()"><option value="absolute" selected>Absolute Flow Map</option><option value="spy">RRG vs SPY</option></select></div>
+            <div class="rrg-field"><label for="etf-rrg-trail">Trail</label><select id="etf-rrg-trail" onchange="renderEtfRotationGraph()"><option value="4">4 Weeks</option><option value="6" selected>6 Weeks</option><option value="8">8 Weeks</option><option value="12">12 Weeks</option></select></div>
+            <div class="rrg-field"><label for="etf-rrg-count">Show</label><select id="etf-rrg-count" onchange="renderEtfRotationGraph()"><option value="25" selected>25 Movers</option><option value="50">50 Movers</option><option value="all">All ETFs</option></select></div>
+            <div class="rrg-field"><label for="etf-rrg-search">Find ETF</label><input id="etf-rrg-search" placeholder="SMH, Energy..." oninput="renderEtfRotationGraph()"/></div>
+          </div>
+        </div>
+        <div class="rrg-canvas-wrap"><canvas id="etf-rrg-canvas"></canvas><div class="rrg-tooltip" id="etf-rrg-tooltip"></div></div>
+        <div class="rrg-footer"><div class="rrg-legend"><span style="--q:#22c55e">Leading</span><span style="--q:#f59e0b">Weakening</span><span style="--q:#ef4444">Lagging</span><span style="--q:#38bdf8">Improving</span></div><div id="etf-rrg-status">Waiting for ETF history</div></div>
+      </div>
+    </details>
+
+    <details class="flow-details" open>
+      <summary><div><div class="flow-section-title">Strong Buys</div><div class="flow-section-meta" id="etf-meta-strong">Offense Flow &gt; 0.05 plus Holy Grail / Reversal gauge.</div></div></summary>
+      <div class="flow-note">Highest-confirmation ETF rotation candidates. ADR is shown as trading context but does not exclude an ETF from the lists.</div>
+      <div class="flow-table-wrap" id="etf-table-strong"><div class="flow-empty">Loading ETF data…</div></div>
+    </details>
+
+    <details class="flow-details" open>
+      <summary><div><div class="flow-section-title">Improving Watch</div><div class="flow-section-meta" id="etf-meta-improving">Sector Strength = Improving and Offense Flow &gt; 0.05.</div></div></summary>
+      <div class="flow-note">Momentum has turned positive even though the 3M trend has not yet crossed into Leading.</div>
+      <div class="flow-table-wrap" id="etf-table-improving"><div class="flow-empty">Loading ETF data…</div></div>
+    </details>
+
+    <details class="flow-details">
+      <summary><div><div class="flow-section-title">Trap Warning</div><div class="flow-section-meta" id="etf-meta-trap">Buy Gauge = Trap.</div></div></summary>
+      <div class="flow-note">The one-year trend remains positive, but quarterly performance and Offense Flow have both turned negative.</div>
+      <div class="flow-table-wrap" id="etf-table-trap"><div class="flow-empty">Loading ETF data…</div></div>
+    </details>
+
+    <details class="flow-details">
+      <summary><div><div class="flow-section-title">Extreme Selling</div><div class="flow-section-meta" id="etf-meta-extreme">Bottom 5% of negative Offense Flow readings.</div></div></summary>
+      <div class="flow-note">Watchlist only. A deeply negative flow reading can persist; price must confirm any reversal.</div>
+      <div class="flow-table-wrap" id="etf-table-extreme"><div class="flow-empty">Loading ETF data…</div></div>
+    </details>
+
+    <details class="flow-details" id="etf-full-details">
+      <summary><div><div class="flow-section-title">Full ETF Table</div><div class="flow-section-meta" id="etf-meta-full">All 93 ETFs sorted by Offense Flow Monthly.</div></div></summary>
+      <div class="flow-table-wrap" id="etf-table-full"><div class="flow-empty">Loading ETF data…</div></div>
+    </details>
+  </div>
+</main>
+
 <main class="board-page" id="page-custom">
   <div class="flow-page">
     <div class="flow-hero">
@@ -858,18 +992,21 @@ html.mobile-view button,html.mobile-view a{touch-action:manipulation}
 <script src="t2108_history.js"></script>
 <script src="sector_aggregate_manifest.js"></script>
 <script src="hy_spread_cache.js"></script>
+<script src="treasury_2y_history_1990.js"></script>
+<script src="etf_flow_universe.js"></script>
 <script>
 var DXY_THRESH=1.0,Y10_THRESH=15,HY_THRESH=0.30;
 var FRED_HY_URL='https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2';
 var FRED_10Y_URL='https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS2';
-var FINVIZ_URL='https://finviz.com/screener.ashx?v=111&f=geo_usa%2Csh_avgvol_o50%2Csh_price_o3%2Cta_perf_1w20o';
+var FINVIZ_URL='https://finviz.com/screener?v=111&f=geo_usa%2Cind_stocksonly%2Csh_avgvol_o50%2Csh_price_o3%2Cta_perf_1w20o';
 var BREADTH_CSV='https://docs.google.com/spreadsheets/d/1O6OhS7ciA8zwfycBfGPbP2fWJnR0pn2UUvFZVDP9jpE/gviz/tq?tqx=out:csv';
+var T2108_ARCHIVE_BASE='https://docs.google.com/spreadsheets/d/1O6OhS7ciA8zwfycBfGPbP2fWJnR0pn2UUvFZVDP9jpE/gviz/tq?tqx=out:csv&sheet=';
 var FLOW_CURRENT='https://docs.google.com/spreadsheets/d/1u-4AVn514KIjRVmObQQ9BtxGZzgJwgu2fcs04hESWyE/export?format=csv&gid=337433437';
 var FLOW_HISTORY='https://docs.google.com/spreadsheets/d/1u-4AVn514KIjRVmObQQ9BtxGZzgJwgu2fcs04hESWyE/export?format=csv&gid=625099371';
-var YAHOO_DXY='https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=2y';
+var YAHOO_DXY='https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&period1=631152000';
 var YAHOO_10Y_FALLBACK='https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=2y';
 var CF_PROXY='https://macro-dashboard.george982014.workers.dev/?url=';
-var MACRO_TREASURY_API='https://macro-dashboard.george982014.workers.dev/macro-treasury?days=730&maturity=2y';
+var MACRO_TREASURY_API='https://macro-dashboard.george982014.workers.dev/macro-treasury?days=3700&maturity=2y';
 var MACRO_HY_API='https://macro-dashboard.george982014.workers.dev/macro-hy-spread?days=210';
 var FINVIZ_INDUSTRY_API='https://macro-dashboard.george982014.workers.dev/finviz-industry?name=';
 var FINVIZ_CUSTOM_API='https://macro-dashboard.george982014.workers.dev/finviz-custom?';
@@ -880,9 +1017,9 @@ var CACHE_MS=4*60*60*1000;
 
 var cache={dxy:null,y10:null,hy:null,fv:null,breadth:null,flowCurr:null,flowHist:null,flowSource:null,ts:0};
 var lastBreadthPhase=null,lastSpecCount=null,lastBreadthRows=[];
-var t2108Chart=null,t2108ChartPoints=[],t2108Range='1y',t2108MainSeries=null,t2108ThresholdLines={};
+var t2108Chart=null,t2108ChartPoints=[],t2108Range='all',t2108MainSeries=null,t2108ThresholdLines={},t2108ArchiveHistory=[],t2108ArchivePromise=null;
 var t2108Thresholds={bottom:20,top:63};
-var rawDxyRows=null,rawY10Rows=null,historyTF='1m';
+var rawDxyRows=null,rawY10Rows=null,rawMarketCandles={SPX:null,QQQ:null},historyTF='1m',historyETF='SPX',regimeHistoryChart=null,regimeHistoryResizeObserver=null;
 var currentRegimeId=null,currentRiskOn=false;
 var selectedIndustry=null,selectedIndustryRows=[],selectedIndustryUrl=null,currentFlowRowsByName={},sectorRRGVisiblePoints=[];
 var EXCLUDED_SECTOR_KEYS={pharmaceuticalretailers:true};
@@ -890,9 +1027,10 @@ var selectedIndustryPage=1,selectedIndustryHasMore=false;
 var activeStockTableId='sector-stock-table',activeStockMode='sector',customRows=[],customPage=1,customHasMore=false,customFilters='',customOrder='-perf52w';
 var CUSTOM_INITIAL_PAGE_COUNT=5;
 var sectorSearchTicker='';
-var selectedIndustryAnchor=null,selectedStockAnchor=null,activeStockChart=null,activeStockSeries=null,activeSmaSeries=[],activeChartCandles=[],activeStockChartRequest=0,activeStockChartResizeObserver=null;
+var selectedIndustryAnchor=null,selectedStockAnchor=null,activeStockChart=null,activeStockSeries=null,activeSmaSeries=[],activeChartCandles=[],activeStockDailyCandles=[],activeStockChartInterval='1d',activeStockChartRequest=0,activeStockChartResizeObserver=null;
 var flowModeOverride='auto';
 var flowFontSize='normal';
+var etfFlowLoaded=false,etfFlowLoading=false,etfFlowSeries=[],etfFlowResults=[],etfRRGVisiblePoints=[],etfTickerRRGVisiblePoints=[],activeEtfTickerRRG='',etfRRGBenchmarkCandles=[],etfRRGBenchmarkByDate={};
 var rrgVisiblePoints=[];
 var sectorAggregateCharts={index:null,breadth:null,indexMain:null,breadthMain:null};
 var sectorAggregateScriptPromises={};
@@ -902,9 +1040,10 @@ var sectorAggregateName='';
 function cacheValid(){return cache.ts>0&&(Date.now()-cache.ts)<CACHE_MS;}
 function setTF(tf){activeTF=tf;var b1=document.getElementById('btn-1m'),b3=document.getElementById('btn-3m');if(b1)b1.classList.toggle('active',tf==='1m');if(b3)b3.classList.toggle('active',tf==='3m');if(liveData)render(liveData);}
 function setHistTF(tf){historyTF=tf;document.getElementById('hist-1m-btn').classList.toggle('active',tf==='1m');document.getElementById('hist-3m-btn').classList.toggle('active',tf==='3m');if(rawDxyRows&&rawY10Rows)renderRegimeHistory();}
-function toggleHistory(){var w=document.getElementById('regime-timeline-wrap');var ic=document.getElementById('hist-toggle-icon');if(w.style.display==='none'){w.style.display='block';ic.textContent='▼';}else{w.style.display='none';ic.textContent='▶';}}
+function setHistETF(etf){historyETF=etf==='QQQ'?'QQQ':'SPX';document.getElementById('hist-index-spx-btn').classList.toggle('active',historyETF==='SPX');document.getElementById('hist-index-qqq-btn').classList.toggle('active',historyETF==='QQQ');if(rawDxyRows&&rawY10Rows)renderRegimeHistory();}
+function toggleHistory(){var w=document.getElementById('regime-timeline-wrap');var ic=document.getElementById('hist-toggle-icon');if(w.style.display==='none'){w.style.display='block';ic.textContent='▼';requestAnimationFrame(renderRegimeHistory);}else{w.style.display='none';ic.textContent='▶';}}
 function setStatus(s,m){document.getElementById('status-dot').className='status-dot '+s;document.getElementById('status-text').textContent=m;}
-function showPage(page){document.getElementById('page-macro').classList.toggle('active',page==='macro');document.getElementById('page-flows').classList.toggle('active',page==='flows');document.getElementById('page-custom').classList.toggle('active',page==='custom');document.getElementById('tab-macro').classList.toggle('active',page==='macro');document.getElementById('tab-flows').classList.toggle('active',page==='flows');document.getElementById('tab-custom').classList.toggle('active',page==='custom');if(page==='flows')renderSectorFlowsFromCache();if(page==='custom')updateCustomPreview();}
+function showPage(page){document.getElementById('page-macro').classList.toggle('active',page==='macro');document.getElementById('page-flows').classList.toggle('active',page==='flows');document.getElementById('page-etfs').classList.toggle('active',page==='etfs');document.getElementById('page-custom').classList.toggle('active',page==='custom');document.getElementById('tab-macro').classList.toggle('active',page==='macro');document.getElementById('tab-flows').classList.toggle('active',page==='flows');document.getElementById('tab-etfs').classList.toggle('active',page==='etfs');document.getElementById('tab-custom').classList.toggle('active',page==='custom');if(page==='flows')renderSectorFlowsFromCache();if(page==='etfs')loadEtfFlows(false);if(page==='custom')updateCustomPreview();}
 function activeFlowColumn(){return flowModeOverride==='offense'?'Offense Flow Monthly':flowModeOverride==='defense'?'Defense Flow Monthly':currentRiskOn?'Offense Flow Monthly':'Defense Flow Monthly';}
 function flowModeLabel(){if(flowModeOverride==='offense')return'Manual: Offense Flow';if(flowModeOverride==='defense')return'Manual: Defense Flow';return currentRiskOn?'Auto: Offense Flow':'Auto: Defense Flow';}
 function setFlowMode(mode){flowModeOverride=mode;['auto','offense','defense'].forEach(function(m){var el=document.getElementById('flow-mode-'+m);if(el)el.classList.toggle('active',mode===m);});closeSectorDrilldown();renderSectorFlowsFromCache();}
@@ -1008,6 +1147,64 @@ function effectiveRegimeState(periods){
   if(current.days>=2||immediate||!prior)return{active:current,prior:anchor,testing:null,immediate:immediate};
   return{active:anchor||prior,prior:anchor||prior,testing:current,immediate:false};
 }
+function regimeChartTime(ts){return new Date(ts*1000).toISOString().slice(0,10);}
+function regimeChartTimeKey(time){if(typeof time==='string')return time;if(typeof time==='number')return regimeChartTime(time);if(time&&time.year)return time.year+'-'+String(time.month).padStart(2,'0')+'-'+String(time.day).padStart(2,'0');return'';}
+function confirmedRegimeOverlayByDate(periodInfo){
+  var out={},index=0,active=null;
+  (periodInfo.periods||[]).forEach(function(period){
+    var confirmed=period.days>=2||isImmediateRiskRegime(period.cellId),shown=confirmed?period.cellId:(active||period.cellId);
+    for(var i=0;i<period.days&&index<periodInfo.daily.length;i++,index++)out[regimeChartTime(Math.floor(periodInfo.daily[index].date.getTime()/1000))]=shown;
+    if(confirmed)active=period.cellId;
+  });
+  return out;
+}
+function regimeOverlayColor(color){var hex=String(color||'#64748b').replace('#','');if(hex.length!==6)return'rgba(100,116,139,.13)';return'rgba('+parseInt(hex.slice(0,2),16)+','+parseInt(hex.slice(2,4),16)+','+parseInt(hex.slice(4,6),16)+',.13)';}
+function renderRegimeBands(chart,host,points){
+  var layer=host.querySelector('.regime-band-layer'),range=chart.timeScale().getVisibleLogicalRange();
+  if(!layer||!range)return;
+  layer.innerHTML='';
+  for(var start=0;start<points.length;){
+    var end=start,cellId=points[start].cellId;
+    while(end+1<points.length&&points[end+1].cellId===cellId)end++;
+    if(!regimes[cellId]){start=end+1;continue;}
+    var from=Math.max(start,range.from),to=Math.min(end+1,range.to),x1=chart.timeScale().logicalToCoordinate(from),x2=chart.timeScale().logicalToCoordinate(to);
+    if(x1!==null&&x2!==null&&x2>x1){var reg=regimes[cellId]||{},band=document.createElement('div');band.className='regime-band';band.style.left=x1+'px';band.style.width=(x2-x1)+'px';band.style.background=regimeOverlayColor(reg.color);layer.appendChild(band);}
+    start=end+1;
+  }
+}
+function renderRegimePriceChart(periodInfo){
+  var host=document.getElementById('regime-price-chart'),rows=rawMarketCandles[historyETF];
+  if(!host)return;
+  if(regimeHistoryResizeObserver){regimeHistoryResizeObserver.disconnect();regimeHistoryResizeObserver=null;}
+  if(regimeHistoryChart){regimeHistoryChart.remove();regimeHistoryChart=null;}
+  if(host.offsetWidth<100||host.offsetHeight<100){host.innerHTML='';return;}
+  if(!window.LightweightCharts){host.innerHTML='<div style="padding:22px;color:#64748b;font-size:.68rem">Chart library is unavailable.</div>';return;}
+  if(!rows||rows.length<2||!periodInfo||!periodInfo.daily||!periodInfo.daily.length){host.innerHTML='<div style="padding:22px;color:#64748b;font-size:.68rem">'+historyETF+' price history is unavailable.</div>';return;}
+  var regimeByTime=confirmedRegimeOverlayByDate(periodInfo);
+  var points=rows.filter(function(row){return [row.open,row.high,row.low,row.close].every(function(v){return v!=null&&isFinite(v);});}).map(function(row){return{time:row.time,open:Number(row.open),high:Number(row.high),low:Number(row.low),close:Number(row.close),cellId:regimeByTime[row.time]||null};});
+  if(points.length<2){host.innerHTML='<div style="padding:22px;color:#64748b;font-size:.68rem">Not enough overlapping '+historyETF+' history.</div>';return;}
+  host.innerHTML='<div class="regime-band-layer"></div><div class="regime-chart-tooltip"></div>';
+  var chart=LightweightCharts.createChart(host,{width:Math.max(320,host.clientWidth),height:300,layout:{background:{color:'rgba(15,23,42,0)'},textColor:'#94a3b8'},grid:{vertLines:{color:'rgba(148,163,184,.08)'},horzLines:{color:'rgba(148,163,184,.08)'}},leftPriceScale:{visible:false},rightPriceScale:{borderColor:'#334155',mode:(LightweightCharts.PriceScaleMode||{}).Logarithmic||1,scaleMargins:{top:.08,bottom:.08}},timeScale:{borderColor:'#334155',barSpacing:4,fixRightEdge:false,timeVisible:true},handleScroll:{mouseWheel:true,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},handleScale:{mouseWheel:true,pinch:true,axisPressedMouseMove:true}});
+  if(chart.priceScale)chart.priceScale('left').applyOptions({visible:false});
+  var candles=ensureChartSeries(chart);candles.applyOptions({title:historyETF,lastValueVisible:true});candles.setData(points);
+  [{len:20,color:'#facc15'},{len:50,color:'#ef4444'},{len:200,color:'#38bdf8'}].forEach(function(cfg){var sma=ensureLineSeries(chart,cfg.color,2);sma.setData(smaData(points,cfg.len));});
+  var pointByTime={},tooltip=host.querySelector('.regime-chart-tooltip');points.forEach(function(point){pointByTime[point.time]=point;});
+  chart.subscribeCrosshairMove(function(param){
+    var key=regimeChartTimeKey(param&&param.time),point=pointByTime[key];
+    if(!point||!param.point){tooltip.style.display='none';return;}
+    var reg=regimes[point.cellId]||{},move=(point.close/point.open-1)*100;
+    tooltip.innerHTML='<strong>'+key+'</strong><br>'+historyETF+' O '+point.open.toFixed(2)+' · H '+point.high.toFixed(2)+'<br>L '+point.low.toFixed(2)+' · C '+point.close.toFixed(2)+' · '+(move>=0?'+':'')+move.toFixed(2)+'%<br><span class="regime-hover-name" style="color:'+(reg.color||'#cbd5e1')+'">'+esc(reg.name||point.cellId||'Regime unavailable')+'</span>';
+    tooltip.style.display='block';tooltip.style.left=Math.max(8,Math.min(host.clientWidth-tooltip.offsetWidth-72,param.point.x+16))+'px';tooltip.style.top=Math.max(8,Math.min(host.clientHeight-tooltip.offsetHeight-28,param.point.y+14))+'px';
+  });
+  var visibleSessions=Math.min(504,points.length);
+  if(chart.timeScale().setVisibleLogicalRange&&visibleSessions>1){chart.timeScale().setVisibleLogicalRange({from:Math.max(0,points.length-visibleSessions),to:points.length-1});}
+  else chart.timeScale().fitContent();
+  chart.timeScale().subscribeVisibleLogicalRangeChange(function(){renderRegimeBands(chart,host,points);});
+  requestAnimationFrame(function(){renderRegimeBands(chart,host,points);});
+  regimeHistoryChart=chart;
+  regimeHistoryResizeObserver=new ResizeObserver(function(entries){var width=entries[0]&&entries[0].contentRect.width;if(width&&regimeHistoryChart)regimeHistoryChart.applyOptions({width:Math.round(width)});});
+  regimeHistoryResizeObserver.observe(host);
+}
 function renderRegimeHistory(){
   var el=document.getElementById('regime-timeline');
   if(!rawDxyRows||!rawY10Rows||rawDxyRows.length<140||rawY10Rows.length<140){el.innerHTML='<em>Insufficient data.</em>';return;}
@@ -1016,6 +1213,7 @@ function renderRegimeHistory(){
   // Replay the live regime logic using only observations available on each date.
   var periodInfo=buildRegimePeriods(dR,yR,historyTF),periods=periodInfo.periods;
   if(periods.length<1){el.innerHTML='<em>Not enough data.</em>';return;}
+  renderRegimePriceChart(periodInfo);
 
   // Render chronologically (oldest first at top, newest at bottom)
   var html='';
@@ -1092,7 +1290,7 @@ async function fetchFredCsv(url,seriesId,timeout){
   }
   return null;
 }
-async function fetchYahoo(url){var txt=await proxyFetch(url,10000);if(!txt)return null;try{var raw=JSON.parse(txt);var json=raw.contents?JSON.parse(raw.contents):raw;if(!json||!json.chart||!json.chart.result||!json.chart.result[0])return null;var r=json.chart.result[0];return r.timestamp.map(function(t,i){return{ts:t,close:r.indicators.quote[0].close[i]};}).filter(function(r){return r.close!=null&&!isNaN(r.close);});}catch(e){return null;}}
+async function fetchYahoo(url){if(url===YAHOO_DXY)url+='&period2='+(Math.floor(Date.now()/1000)+86400);var txt=null;try{var direct=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(15000)});if(direct.ok)txt=await direct.text();}catch(e){}if(!txt)txt=await proxyFetch(url,15000);if(!txt)return null;try{var raw=JSON.parse(txt);var json=raw.contents?JSON.parse(raw.contents):raw;if(!json||!json.chart||!json.chart.result||!json.chart.result[0])return null;var r=json.chart.result[0];return r.timestamp.map(function(t,i){return{ts:t,close:r.indicators.quote[0].close[i]};}).filter(function(r){return r.close!=null&&!isNaN(r.close);});}catch(e){return null;}}
 async function fetchMassiveTreasury10Y(){
   try{
     var r=await fetch(MACRO_TREASURY_API+'&_='+Date.now(),{cache:'no-store',signal:AbortSignal.timeout(15000)});
@@ -1105,8 +1303,8 @@ async function fetchMassiveTreasury10Y(){
   return null;
 }
 async function fetchFred10Y(){
-  var now=new Date(),d730=new Date(now.getTime()-730*864e5);
-  var url=FRED_10Y_URL+'&cosd='+d730.toISOString().split('T')[0]+'&coed='+now.toISOString().split('T')[0];
+  var now=new Date();
+  var url=FRED_10Y_URL+'&cosd=1990-01-01&coed='+now.toISOString().split('T')[0];
   var txt=await fetchFredCsv(url,'DGS2',15000);if(!txt)return null;
   try{
     var rows=txt.trim().split('\n').slice(1).map(function(l){
@@ -1139,15 +1337,31 @@ async function fetchYahoo10YFallback(){
   }
   return null;
 }
+function mergeTreasuryRows(history,latest){
+  var byDate={};
+  (history||[]).forEach(function(row){byDate[row.date||new Date(row.ts*1000).toISOString().slice(0,10)]=row;});
+  (latest||[]).forEach(function(row){byDate[row.date||new Date(row.ts*1000).toISOString().slice(0,10)]=row;});
+  return Object.keys(byDate).sort().map(function(date){return byDate[date];});
+}
+function embeddedTreasuryHistory(){
+  if(!Array.isArray(window.TREASURY_2Y_HISTORY)||window.TREASURY_2Y_HISTORY.length<1500)return null;
+  return window.TREASURY_2Y_HISTORY.map(function(row){return{ts:Number(row.ts),close:Number(row.close),date:row.date};}).filter(function(row){return row.ts&&!isNaN(row.close);});
+}
 async function fetchTreasury10Y(){
   var massive=await fetchMassiveTreasury10Y();
-  if(massive&&massive.length){
-    return massive;
-  }
   var fred=await fetchFred10Y();
   if(fred&&fred.length){
-    fred.source='FRED DGS2';return fred;
+    var complete=mergeTreasuryRows(fred,massive);
+    complete.source='FRED DGS2 history + latest Treasury Worker data';
+    return complete;
   }
+  var embedded=embeddedTreasuryHistory();
+  if(embedded&&embedded.length){
+    embedded=mergeTreasuryRows(embedded,massive);
+    embedded.source='FRED DGS2 bundled history + latest Treasury Worker data';
+    return embedded;
+  }
+  if(massive&&massive.length)return massive;
   return await fetchYahoo10YFallback();
 }
 function sourceDateLabel(row){
@@ -1306,11 +1520,49 @@ function renderBreadth(rows){
 function t2108DateKey(value){
   var raw=String(value||'').trim();
   if(/^\d{4}-\d{2}-\d{2}$/.test(raw))return raw;
+  var m=raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m){
+    var month=parseInt(m[1],10),day=parseInt(m[2],10),year=parseInt(m[3],10);
+    if(year>=200&&year<1000)year+=1800;
+    if(year<1900)return'';
+    var parsed=new Date(year,month-1,day);
+    if(parsed.getFullYear()!==year||parsed.getMonth()!==month-1||parsed.getDate()!==day)return'';
+    return String(year).padStart(4,'0')+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+  }
   var d=new Date(raw);
   return isNaN(d.getTime())?'':d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+function parseT2108ArchiveCsv(txt){
+  if(!txt)return[];
+  var rows=[],lines=txt.trim().split(/\r?\n/);
+  var headers=[],headerLine=lines[0],headerQuoted=false,headerCur='';
+  for(var h=0;h<headerLine.length;h++){var hc=headerLine[h];if(hc==='"')headerQuoted=!headerQuoted;else if(hc===','&&!headerQuoted){headers.push(headerCur.trim().replace(/^"|"$/g,''));headerCur='';}else headerCur+=hc;}
+  headers.push(headerCur.trim().replace(/^"|"$/g,''));
+  var t2108Col=headers.findIndex(function(name){return name.toUpperCase().indexOf('T2108')>=0;});
+  if(t2108Col<0)return rows;
+  for(var i=1;i<lines.length;i++){
+    var cols=[],cur='',quoted=false;
+    for(var j=0;j<lines[i].length;j++){var ch=lines[i][j];if(ch==='"')quoted=!quoted;else if(ch===','&&!quoted){cols.push(cur.trim());cur='';}else cur+=ch;}
+    cols.push(cur.trim());
+    var time=t2108DateKey(String(cols[0]||'').replace(/^"|"$/g,'')),value=parseFloat(String(cols[t2108Col]||'').replace(/[",\s]/g,''));
+    if(time&&!isNaN(value))rows.push({time:time,value:value});
+  }
+  return rows;
+}
+async function loadT2108Archive(){
+  if(t2108ArchiveHistory.length)return t2108ArchiveHistory;
+  if(t2108ArchivePromise)return t2108ArchivePromise;
+  t2108ArchivePromise=Promise.all(['2012','2013','2014','2015','2016','2017','2018','2019'].map(function(sheet){return proxyFetch(T2108_ARCHIVE_BASE+sheet,15000);})).then(function(payloads){
+    var byDate={};
+    payloads.forEach(function(txt){parseT2108ArchiveCsv(txt).forEach(function(row){byDate[row.time]=row;});});
+    t2108ArchiveHistory=Object.keys(byDate).sort().map(function(k){return byDate[k];});
+    return t2108ArchiveHistory;
+  }).catch(function(){t2108ArchiveHistory=[];return t2108ArchiveHistory;});
+  return t2108ArchivePromise;
+}
 function t2108MergedHistory(){
   var byDate={};
+  (t2108ArchiveHistory||[]).forEach(function(r){byDate[r.time]=r;});
   (window.T2108_HISTORY||[]).forEach(function(r){
     var time=t2108DateKey(r.time),value=parseFloat(r.value);
     if(time&&!isNaN(value))byDate[time]={time:time,value:value};
@@ -1411,7 +1663,13 @@ function toggleT2108Chart(ev){
   panel.classList.toggle('visible',opening);
   if(trigger)trigger.classList.toggle('active',opening);
   if(opening){
-    setTimeout(function(){renderT2108Chart();if(panel.scrollIntoView)panel.scrollIntoView({behavior:'smooth',block:'nearest'});},0);
+    setTimeout(async function(){
+      var note=document.getElementById('t2108-chart-note');
+      if(note&&!t2108ArchiveHistory.length)note.textContent='Loading 2012–2019 archive…';
+      await loadT2108Archive();
+      renderT2108Chart();
+      if(panel.scrollIntoView)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },0);
   }
 }
 function setT2108Range(range,ev){
@@ -2143,7 +2401,23 @@ function fmtFlow(v){var n=parseNum(v);return isNaN(n)?'--':(n>=0?'+':'')+n.toFix
 function fmtPct(v){var n=parseNum(v);return isNaN(n)?'--':(n>=0?'+':'')+n.toFixed(1)+'%';}
 function offenseHotClass(v){var n=parseNum(v);return !isNaN(n)&&n>0.20?' flow-hot':'';}
 function flowClass(v){var n=parseNum(v);return isNaN(n)?'flow-muted':n>0?'flow-pos':n<0?'flow-neg':'flow-muted';}
-function pill(label,type){var cls=String(type||label||'').toLowerCase().replace(/\s+/g,'-');if(cls==='holy-grail')cls='holy';return'<span class="flow-pill '+cls+'">'+esc(label)+'</span>';}
+function flowLabelTooltip(label){
+  var key=String(label||'').replace(/[^a-z]/gi,'').toLowerCase();
+  var tips={
+    leading:'Sector Strength: positive quarterly performance and positive Offense Flow.',
+    weakening:'Sector Strength: positive quarterly performance, but Offense Flow has turned negative.',
+    improving:'Sector Strength: negative quarterly performance, but Offense Flow has turned positive.',
+    lagging:'Sector Strength: negative quarterly performance and negative Offense Flow.',
+    holygrail:'Buy Gauge: positive yearly and quarterly performance with positive Offense Flow.',
+    buy:'Buy Gauge: positive confirmation across the dashboard inputs.',
+    reversal:'Buy Gauge: yearly performance is negative, but quarterly performance and Offense Flow are positive.',
+    trap:'Buy Gauge: yearly performance is positive, but quarterly performance and Offense Flow are negative.',
+    avoid:'Buy Gauge: both quarterly and yearly performance are negative. A trend warning, not an automatic short.',
+    wait:'Buy Gauge: inputs are mixed; there is no confirmed long or short trend signal.'
+  };
+  return tips[key]||'';
+}
+function pill(label,type){var cls=String(type||label||'').toLowerCase().replace(/\s+/g,'-');if(cls==='holy-grail')cls='holy';var tip=flowLabelTooltip(label),attrs=tip?' help data-tooltip="'+esc(tip)+'" title="'+esc(tip)+'" tabindex="0" aria-label="'+esc(label+'. '+tip)+'"':'';return'<span class="flow-pill '+cls+'"'+attrs+'>'+esc(label)+'</span>';}
 var FINVIZ_INDUSTRY_OVERRIDES={};
 function finvizIndustrySlug(name){
   if(FINVIZ_INDUSTRY_OVERRIDES[name])return FINVIZ_INDUSTRY_OVERRIDES[name];
@@ -2182,7 +2456,6 @@ function gaugeTransitionMarkup(current,prior,weeks){
 }
 function flowCell(row,col){
   if(col==='Name')return '<button class="flow-name-btn" data-industry-key="'+esc(industryKey(row.Name))+'" onclick="event.stopPropagation();openSectorDrilldown('+JSON.stringify(String(row.Name||'')).replace(/"/g,'&quot;')+',this)">'+esc(row.Name||'--')+'</button>';
-  if(col==='RRG Transition')return '<span class="flow-pill leading">'+esc(row[col]||'Improving → Leading')+'</span>';
   if(col==='Sector Strength')return strengthTransitionMarkup(row[col],row['Prior Sector Strength'],row['Sector Strength Weeks']);
   if(col==='Buy Gauge')return gaugeTransitionMarkup(row[col],row['Prior Buy Gauge'],row['Buy Gauge Weeks']);
   if(/Flow|WoW|Rotation/i.test(col))return'<td class="flow-num '+flowClass(row[col])+(col==='Offense Flow Monthly'?offenseHotClass(row[col]):'')+'" data-value="'+(parseNum(row[col])||0)+'">'+fmtFlow(row[col])+'</td>';
@@ -2207,7 +2480,7 @@ function parseFinvizStocks(html,view){
     if(cells.length<8)return;
     if(!/^\d+$/.test(cells[0]))return;
     var links=Array.prototype.slice.call(tr.querySelectorAll('a')).map(function(a){return{txt:a.textContent.trim(),href:a.href||a.getAttribute('href')||''};});
-    var ticker=cells[1],quote=links.find(function(a){return a.txt===ticker;}),industryCell=tr.querySelector('[data-boxover-industry]'),industry=industryCell?industryCell.getAttribute('data-boxover-industry')||'':'';
+    var quote=links.find(function(a){return /(?:quote\.ashx|stock)\?[^#]*\bt=/i.test(a.href);}),tickerMatch=quote&&quote.href.match(/[?&]t=([^&#]+)/i),ticker=tickerMatch?decodeURIComponent(tickerMatch[1]).toUpperCase():cells[1],industryCell=tr.querySelector('[data-boxover-industry]'),industry=industryCell?industryCell.getAttribute('data-boxover-industry')||'':'';
     if(view===111)out.push({ticker:ticker,company:cells[2],sector:cells[3],industry:cells[4]||industry,country:cells[5],marketCap:cells[6],pe:cells[7],price:cells[8],change:cells[9],volume:cells[10],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
     else if(view===121)out.push({ticker:ticker,industry:industry,marketCap:cells[2],pe:cells[3],fwdPe:cells[4],peg:cells[5],ps:cells[6],pb:cells[7],pc:cells[8],pfcf:cells[9],price:cells[15],change:cells[16],volume:cells[17],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
     else if(view===171)out.push({ticker:ticker,industry:industry,sma20:cells[4],sma50:cells[5],sma200:cells[6],quoteUrl:quote&&quote.href?quote.href:'https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)});
@@ -2703,8 +2976,12 @@ function sortStockTable(th){
   });
   rows.forEach(function(r){tbody.appendChild(r);});
 }
-async function fetchYahooCandles(ticker){
-  var url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&range=1y&_='+Date.now();
+async function fetchYahooCandles(ticker,range){
+  var end=Math.floor(Date.now()/1000)+86400;
+  var years=range==='10y'?10:range==='5y'?5:range==='3y'?3:1;
+  var start=range==='max'?Date.UTC(1990,0,1)/1000:end-(years*370*86400);
+  // Explicit bounds prevent Yahoo's range endpoint from serving a stale rolling window.
+  var url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(ticker)+'?interval=1d&period1='+start+'&period2='+end+'&_='+Date.now();
   var txt=null;
   try{var direct=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(12000)});if(direct.ok)txt=await direct.text();}catch(e){}
   if(!txt)txt=await proxyFetch(url,12000);
@@ -2712,8 +2989,297 @@ async function fetchYahooCandles(ticker){
   var raw=JSON.parse(txt),json=raw.contents?JSON.parse(raw.contents):raw;
   var res=json&&json.chart&&json.chart.result&&json.chart.result[0];if(!res||!res.timestamp)return[];
   var q=res.indicators&&res.indicators.quote&&res.indicators.quote[0];if(!q)return[];
-  var seen={};
-  return res.timestamp.map(function(t,i){return{time:new Date(t*1000).toISOString().slice(0,10),open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i]};}).filter(function(r){return [r.open,r.high,r.low,r.close].every(function(v){return v!=null&&!isNaN(v);});}).sort(function(a,b){return a.time.localeCompare(b.time);}).filter(function(r){if(seen[r.time])return false;seen[r.time]=true;return true;});
+  var seen={},rows=res.timestamp.map(function(t,i){return{time:new Date(t*1000).toISOString().slice(0,10),open:q.open[i],high:q.high[i],low:q.low[i],close:q.close[i]};}).filter(function(r){return [r.open,r.high,r.low,r.close].every(function(v){return v!=null&&!isNaN(v);});}).sort(function(a,b){return a.time.localeCompare(b.time);}).filter(function(r){if(seen[r.time])return false;seen[r.time]=true;return true;});
+  // Yahoo occasionally publishes a session close in metadata before its daily OHLC row.
+  // Keep that completed session visible without waiting for Yahoo's backfill.
+  var meta=res.meta||{},price=Number(meta.regularMarketPrice),lastIndex=res.timestamp.length-1;
+  if(isFinite(price)&&lastIndex>=0&&q.close[lastIndex]==null){
+    var time=new Date(res.timestamp[lastIndex]*1000).toISOString().slice(0,10),last=rows[rows.length-1];
+    if(!last||time>last.time){
+      var open=last&&isFinite(last.close)?last.close:price,high=Number(meta.regularMarketDayHigh),low=Number(meta.regularMarketDayLow);
+      rows.push({time:time,open:open,high:isFinite(high)?Math.max(high,open,price):Math.max(open,price),low:isFinite(low)?Math.min(low,open,price):Math.min(open,price),close:price,sessionProxy:true});
+    }
+  }
+  return rows;
+}
+function finvizSnapshotValue(doc,label){
+  var labels=Array.prototype.slice.call(doc.querySelectorAll('.snapshot-td-label')),cell=labels.find(function(el){return el.textContent.trim()===label;});
+  if(!cell)return NaN;
+  var valueCell=cell.closest('td');valueCell=valueCell&&valueCell.nextElementSibling;
+  return valueCell?Number(valueCell.textContent.replace(/[%,$,+]/g,'').replace(/,/g,'').trim()):NaN;
+}
+async function fetchFinvizEtfSnapshot(ticker){
+  var url='https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker)+'&_='+Date.now(),html=await proxyFetch(url,18000);
+  if(!html)throw new Error('Finviz quote request failed for '+ticker+'.');
+  var doc=new DOMParser().parseFromString(html,'text/html'),price=finvizSnapshotValue(doc,'Price'),month=finvizSnapshotValue(doc,'Perf Month'),quarter=finvizSnapshotValue(doc,'Perf Quarter'),year=finvizSnapshotValue(doc,'Perf Year');
+  if([price,month,quarter,year].some(function(v){return !isFinite(v);})){throw new Error('Finviz performance fields were incomplete for '+ticker+'.');}
+  return{ticker:ticker,price:price,month:month/100,quarter:quarter/100,year:year/100};
+}
+function finvizEtfUniverseUrl(tickers){
+  return'https://finviz.com/screener.ashx?v=141&o=ticker&t='+encodeURIComponent((tickers||[]).join(','));
+}
+async function mapWithConcurrency(items,limit,worker,onProgress){
+  var results=new Array(items.length),next=0,done=0;
+  async function run(){
+    while(next<items.length){
+      var index=next++,item=items[index];
+      try{results[index]=await worker(item,index);}catch(e){results[index]={error:e,item:item};}
+      done++;if(onProgress)onProgress(done,items.length,results[index]);
+    }
+  }
+  await Promise.all(Array.from({length:Math.min(limit,items.length)},run));
+  return results;
+}
+async function fetchFinvizEtfUniverse(){
+  var tickers=(window.ETF_FLOW_UNIVERSE||[]).map(function(r){return r.ticker;}),groups=[];
+  for(var i=0;i<tickers.length;i+=20)groups.push(tickers.slice(i,i+20));
+  var batches=await mapWithConcurrency(groups,2,async function(group){var html=await proxyFetch(addUrlParam(finvizEtfUniverseUrl(group),'_',Date.now()),18000);return parseFinvizStocks(html,141);}),rows=[],byTicker={};
+  batches.forEach(function(batch){if(batch&&!batch.error)rows=rows.concat(batch);});
+  rows.forEach(function(r){
+    var ticker=String(r.ticker||'').toUpperCase(),price=parseNum(r.price),month=parseNum(r.perfMonth),quarter=parseNum(r.perfQuart),year=parseNum(r.perfYear);
+    if(ticker&&[price,month,quarter,year].every(isFinite))byTicker[ticker]={ticker:ticker,price:price,month:month/100,quarter:quarter/100,year:year/100};
+  });
+  var missing=(window.ETF_FLOW_UNIVERSE||[]).map(function(r){return r.ticker;}).filter(function(t){return !byTicker[t];});
+  if(missing.length){
+    var fallback=await mapWithConcurrency(missing,4,function(t){return fetchFinvizEtfSnapshot(t);});
+    fallback.forEach(function(q){if(q&&!q.error)byTicker[q.ticker]=q;});
+  }
+  return byTicker;
+}
+function easternSessionDate(){
+  var parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()),map={};parts.forEach(function(p){map[p.type]=p.value;});return map.year+'-'+map.month+'-'+map.day;
+}
+function candlesWithFinvizPrice(candles,quote){
+  var rows=(candles||[]).map(function(r){return Object.assign({},r);}),date=easternSessionDate(),latest=rows[rows.length-1],price=Number(quote&&quote.price);
+  if(!isFinite(price)||price<=0)return rows;
+  if(!latest||date>latest.time)rows.push({time:date,open:price,high:price,low:price,close:price,sessionProxy:true,priceSource:'Finviz'});
+  else if(date===latest.time){latest.close=price;latest.liveClose=true;latest.sessionProxy=true;latest.priceSource='Finviz';}
+  return rows;
+}
+function etfFlowReturn(candles,bars){
+  if(!candles||candles.length<=bars)return NaN;
+  var latest=Number(candles[candles.length-1].close),prior=Number(candles[candles.length-1-bars].close);
+  return isFinite(latest)&&isFinite(prior)&&prior!==0?(latest/prior)-1:NaN;
+}
+function etfFlowYearDetail(candles){
+  if(!candles||!candles.length)return{value:NaN,anchor:null};
+  var latest=candles[candles.length-1],parts=latest.time.split('-').map(Number),targetYear=parts[0]-1,targetMonth=parts[1],targetDay=parts[2];
+  if(targetMonth===2&&targetDay===29){targetMonth=2;targetDay=28;}
+  var target=String(targetYear).padStart(4,'0')+'-'+String(targetMonth).padStart(2,'0')+'-'+String(targetDay).padStart(2,'0');
+  var anchor=null;
+  for(var i=0;i<candles.length-1;i++){if(candles[i].time<=target)anchor=candles[i];else break;}
+  if(!anchor){for(var j=0;j<candles.length-1;j++){if(candles[j].time>=target){anchor=candles[j];break;}}}
+  var current=Number(latest.close),prior=anchor?Number(anchor.close):NaN;
+  return{value:isFinite(current)&&isFinite(prior)&&prior!==0?(current/prior)-1:NaN,anchor:anchor};
+}
+function etfFlowAdr(candles,bars){
+  var rows=(candles||[]).filter(function(r){return !r.sessionProxy;}).slice(-bars).filter(function(r){return isFinite(r.high)&&isFinite(r.low)&&isFinite(r.close)&&r.close!==0;});
+  if(rows.length<bars)return NaN;
+  return rows.reduce(function(sum,r){return sum+((r.high-r.low)/r.close);},0)/rows.length;
+}
+function etfSectorStrength(quarter,offense){
+  if(quarter>=0&&offense>=0)return'Leading';
+  if(quarter>=0&&offense<0)return'Weakening';
+  if(quarter<0&&offense>=0)return'Improving';
+  return'Lagging';
+}
+function etfBuyGauge(year,quarter,offense){
+  if(year>0&&quarter>0&&offense>0)return'Holy Grail';
+  if(year<0&&quarter>0&&offense>0)return'Reversal';
+  if(year>0&&quarter<0&&offense<0)return'Trap';
+  if(year<0&&quarter<0)return'Avoid';
+  return'Wait';
+}
+function etfFlowPct(v){return isFinite(v)?(v>=0?'+':'')+(v*100).toFixed(2)+'%':'--';}
+function etfFlowScore(v){return isFinite(v)?(v>=0?'+':'')+v.toFixed(3):'--';}
+function etfFlowState(candles){
+  var month=etfFlowReturn(candles,21),quarter=etfFlowReturn(candles,63),yearDetail=etfFlowYearDetail(candles),year=yearDetail.value,adr=etfFlowAdr(candles,20);
+  if([month,quarter,year,adr].some(function(v){return !isFinite(v);}))return null;
+  var offense=month-(quarter/3),strength=etfSectorStrength(quarter,offense),gauge=etfBuyGauge(year,quarter,offense);
+  return{month:month,quarter:quarter,year:year,yearDetail:yearDetail,adr:adr,offense:offense,strength:strength,gauge:gauge};
+}
+function etfFlowStateWeeks(candles,currentState,field){
+  var count=1;
+  for(var end=candles.length-1-5;end>=0;end-=5){
+    var prior=etfFlowState(candles.slice(0,end+1));
+    if(!prior||prior[field]!==currentState[field])break;
+    count++;
+  }
+  return count;
+}
+function etfFlowStateMarkup(label,weeks){
+  return'<div class="flow-strength-wrap"><div class="flow-strength-main">'+pill(label,label)+'</div>'+stateDurationMarkup(weeks,label)+'</div>';
+}
+function etfFlowResult(config,candles){
+  var state=etfFlowState(candles);
+  if(!state)throw new Error(config.ticker+' needs at least one year of complete daily candles.');
+  if(config.finviz){state.month=config.finviz.month;state.quarter=config.finviz.quarter;state.year=config.finviz.year;state.offense=state.month-(state.quarter/3);state.strength=etfSectorStrength(state.quarter,state.offense);state.gauge=etfBuyGauge(state.year,state.quarter,state.offense);}
+  state.config=config;state.candles=candles;state.latest=candles[candles.length-1];
+  state.strengthWeeks=etfFlowStateWeeks(candles,state,'strength');
+  state.gaugeWeeks=etfFlowStateWeeks(candles,state,'gauge');
+  var prior=candles.length>5?etfFlowState(candles.slice(0,candles.length-5)):null;
+  state.priorStrength=prior?prior.strength:'';state.priorGauge=prior?prior.gauge:'';
+  return state;
+}
+function etfRRGColor(label){return label==='Leading'?'#22c55e':label==='Weakening'?'#f59e0b':label==='Lagging'?'#ef4444':'#38bdf8';}
+function etfRRGPoint(item,end,mode){
+  if(mode!=='spy'){
+    var state=etfFlowState(item.candles.slice(0,end+1));if(!state)return null;
+    return{ticker:item.ticker,date:item.candles[end].time,quarter:state.quarter*100,offense:state.offense*100,strength:state.strength};
+  }
+  var ratios=[];
+  for(var i=0;i<=end;i++){var row=item.candles[i],spy=etfRRGBenchmarkByDate[row.time];if(spy&&isFinite(row.close)&&isFinite(spy.close)&&spy.close!==0)ratios.push({date:row.time,value:row.close/spy.close});}
+  if(ratios.length<84)return null;
+  function ratioScore(at){if(at<62)return NaN;var sum=0;for(var j=at-62;j<=at;j++)sum+=ratios[j].value;var avg=sum/63;return avg?ratios[at].value/avg-1:NaN;}
+  var last=ratios.length-1,current=ratioScore(last),prior=ratioScore(last-21);if(!isFinite(current)||!isFinite(prior))return null;
+  var momentum=current-prior,strength=etfSectorStrength(current,momentum);
+  return{ticker:item.ticker,date:ratios[last].date,quarter:current*100,offense:momentum*100,strength:strength};
+}
+function renderEtfRotationGraph(){
+  var canvas=document.getElementById('etf-rrg-canvas'),status=document.getElementById('etf-rrg-status'),tip=document.getElementById('etf-rrg-tooltip'),subtitle=document.getElementById('etf-rrg-subtitle');
+  if(!canvas||!status)return;
+  if(!etfFlowSeries.length){status.textContent='Waiting for ETF history';return;}
+  var mode=((document.getElementById('etf-rrg-mode')||{}).value)||'absolute',trail=parseInt(((document.getElementById('etf-rrg-trail')||{}).value),10)||6,raw=[];
+  if(subtitle)subtitle.textContent=mode==='spy'?'RRG-style view: relative-strength ratio and relative momentum versus SPY.':'Absolute view: 3M return versus Offense Flow.';
+  if(mode==='spy'&&!etfRRGBenchmarkCandles.length){status.textContent='SPY benchmark history is unavailable.';return;}
+  var countValue=((document.getElementById('etf-rrg-count')||{}).value)||'25',search=String(((document.getElementById('etf-rrg-search')||{}).value)||'').trim().toLowerCase();
+  var resultByTicker={};etfFlowResults.forEach(function(r){resultByTicker[r.config.ticker]=r;});
+  var candidates=etfFlowSeries.filter(function(item){var c=item,hay=[c.ticker,c.exposure,c.level,c.theme].join(' ').toLowerCase();return !search||hay.indexOf(search)>=0;}).sort(function(a,b){var ar=resultByTicker[a.ticker],br=resultByTicker[b.ticker],av=ar?Math.abs(ar.offense)+Math.abs(ar.quarter):0,bv=br?Math.abs(br.offense)+Math.abs(br.quarter):0;return bv-av;});
+  candidates.forEach(function(item){
+    var points=[];
+    for(var step=trail-1;step>=0;step--){
+      var end=item.candles.length-1-(step*5);if(end<0)continue;
+      var point=etfRRGPoint(item,end,mode);if(!point)continue;points.push(point);
+    }
+    if(points.length)raw.push({ticker:item.ticker,points:points});
+  });
+  if(!raw.length){status.textContent='Not enough weekly ETF history to draw the graph.';return;}
+  if(mode==='spy')raw.sort(function(a,b){var ap=a.points[a.points.length-1],bp=b.points[b.points.length-1];return Math.hypot(bp.quarter,bp.offense)-Math.hypot(ap.quarter,ap.offense);});
+  if(countValue!=='all')raw=raw.slice(0,parseInt(countValue,10)||25);
+  var all=[];raw.forEach(function(s){all=all.concat(s.points);});
+  var maxX=Math.max(1,Math.max.apply(null,all.map(function(p){return Math.abs(p.quarter);}))),maxY=Math.max(1,Math.max.apply(null,all.map(function(p){return Math.abs(p.offense);}))),rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1,w=Math.max(520,Math.round(rect.width)),h=380;
+  canvas.width=w*dpr;canvas.height=h*dpr;var ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  var pad={l:50,r:24,t:24,b:38},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,min=92,max=108;
+  function normX(v){return 100+(v/maxX)*8;}function normY(v){return 100+(v/maxY)*8;}function px(v){return pad.l+((v-min)/(max-min))*pw;}function py(v){return pad.t+((max-v)/(max-min))*ph;}
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='rgba(34,197,94,.09)';ctx.fillRect(px(100),pad.t,pw/2,ph/2);ctx.fillStyle='rgba(56,189,248,.08)';ctx.fillRect(pad.l,pad.t,pw/2,ph/2);ctx.fillStyle='rgba(239,68,68,.08)';ctx.fillRect(pad.l,py(100),pw/2,ph/2);ctx.fillStyle='rgba(245,158,11,.09)';ctx.fillRect(px(100),py(100),pw/2,ph/2);
+  ctx.strokeStyle='rgba(100,116,139,.22)';ctx.lineWidth=1;[94,96,98,100,102,104,106].forEach(function(v){ctx.beginPath();ctx.moveTo(px(v),pad.t);ctx.lineTo(px(v),pad.t+ph);ctx.stroke();ctx.beginPath();ctx.moveTo(pad.l,py(v));ctx.lineTo(pad.l+pw,py(v));ctx.stroke();});
+  ctx.strokeStyle='#64748b';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(px(100),pad.t);ctx.lineTo(px(100),pad.t+ph);ctx.stroke();ctx.beginPath();ctx.moveTo(pad.l,py(100));ctx.lineTo(pad.l+pw,py(100));ctx.stroke();
+  ctx.font='700 11px Arial';ctx.fillStyle='rgba(56,189,248,.82)';ctx.fillText('IMPROVING',pad.l+8,pad.t+16);ctx.fillStyle='rgba(34,197,94,.82)';ctx.fillText('LEADING',px(100)+8,pad.t+16);ctx.fillStyle='rgba(239,68,68,.82)';ctx.fillText('LAGGING',pad.l+8,pad.t+ph-8);ctx.fillStyle='rgba(245,158,11,.86)';ctx.fillText('WEAKENING',px(100)+8,pad.t+ph-8);
+  ctx.font='10px Arial';ctx.fillStyle='#64748b';ctx.textAlign='center';ctx.fillText(mode==='spy'?'Relative Strength vs SPY →':'3M Return →',pad.l+pw/2,h-10);ctx.save();ctx.translate(13,pad.t+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText(mode==='spy'?'Relative Momentum →':'Offense Flow →',0,0);ctx.restore();ctx.textAlign='left';
+  var visible=[];raw.forEach(function(series){var pts=series.points.map(function(p){return Object.assign({},p,{x:px(normX(p.quarter)),y:py(normY(p.offense))});});ctx.strokeStyle=etfRRGColor(pts[pts.length-1].strength);ctx.globalAlpha=.7;ctx.lineWidth=2;ctx.beginPath();pts.forEach(function(p,i){if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);});ctx.stroke();pts.forEach(function(p,i){var current=i===pts.length-1;ctx.globalAlpha=current?1:.5;ctx.fillStyle=etfRRGColor(p.strength);ctx.beginPath();ctx.arc(p.x,p.y,current?5.5:3.2,0,Math.PI*2);ctx.fill();if(current){ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.stroke();ctx.font='700 11px Arial';ctx.fillStyle='#18392f';ctx.fillText(p.ticker,p.x+8,p.y-6);}visible.push(p);});});ctx.globalAlpha=1;
+  etfRRGVisiblePoints=visible;canvas.dataset.etfRrgMode=mode;status.textContent=(mode==='spy'?'RRG-style vs SPY · 63-day relative ratio · 21-day relative momentum · ':'Absolute flow map · ')+raw.length+' ETFs · '+trail+' week trail · axes normalized to the visible ETFs';
+  if(!canvas.dataset.etfRrgBound){canvas.dataset.etfRrgBound='1';canvas.addEventListener('mousemove',function(ev){var r=canvas.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top,best=null,dist=Infinity;etfRRGVisiblePoints.forEach(function(p){var d=Math.hypot(p.x-mx,p.y-my);if(d<dist){dist=d;best=p;}});if(best&&dist<16){var relative=canvas.dataset.etfRrgMode==='spy';tip.style.display='block';tip.style.left=Math.min(r.width-210,mx+14)+'px';tip.style.top=Math.max(8,my-10)+'px';tip.innerHTML='<strong>'+esc(best.ticker)+' · '+esc(best.date)+'</strong><br>'+(relative?'RS Ratio vs SPY: ':'3M: ')+(best.quarter>=0?'+':'')+best.quarter.toFixed(2)+'%<br>'+(relative?'RS Momentum: ':'Offense: ')+(best.offense>=0?'+':'')+best.offense.toFixed(2)+'%<br>'+esc(best.strength);canvas.style.cursor='pointer';}else{tip.style.display='none';canvas.style.cursor='default';}});canvas.addEventListener('mouseleave',function(){tip.style.display='none';});}
+}
+function renderEtfTickerRotationGraph(ticker){
+  var canvas=document.getElementById('etf-ticker-rrg-canvas'),status=document.getElementById('etf-ticker-rrg-status'),tip=document.getElementById('etf-ticker-rrg-tooltip');
+  if(!canvas||!status)return;
+  var selected=etfFlowSeries.find(function(item){return item.ticker===ticker;}),mode=((document.getElementById('etf-ticker-rrg-mode')||{}).value)||'absolute',trail=parseInt(((document.getElementById('etf-ticker-rrg-trail')||{}).value),10)||6;
+  if(!selected){status.textContent='ETF history is not available for '+ticker+'.';return;}
+  if(mode==='spy'&&!etfRRGBenchmarkCandles.length){status.textContent='SPY benchmark history is unavailable.';return;}
+  var raw=[],scalePoints=[];
+  etfFlowSeries.forEach(function(item){
+    for(var step=trail-1;step>=0;step--){
+      var end=item.candles.length-1-(step*5);if(end<0)continue;
+      var point=etfRRGPoint(item,end,mode);if(!point)continue;
+      scalePoints.push(point);if(item.ticker===ticker)raw.push(point);
+    }
+  });
+  if(!raw.length||!scalePoints.length){status.textContent='Not enough weekly history to draw '+ticker+'.';return;}
+  var maxX=Math.max(1,Math.max.apply(null,scalePoints.map(function(p){return Math.abs(p.quarter);}))),maxY=Math.max(1,Math.max.apply(null,scalePoints.map(function(p){return Math.abs(p.offense);}))),rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1,w=Math.max(520,Math.round(rect.width)),h=360;
+  canvas.width=w*dpr;canvas.height=h*dpr;var ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  var pad={l:50,r:24,t:24,b:38},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,min=92,max=108;
+  function normX(v){return 100+(v/maxX)*8;}function normY(v){return 100+(v/maxY)*8;}function px(v){return pad.l+((v-min)/(max-min))*pw;}function py(v){return pad.t+((max-v)/(max-min))*ph;}
+  ctx.clearRect(0,0,w,h);ctx.fillStyle='rgba(34,197,94,.09)';ctx.fillRect(px(100),pad.t,pw/2,ph/2);ctx.fillStyle='rgba(56,189,248,.08)';ctx.fillRect(pad.l,pad.t,pw/2,ph/2);ctx.fillStyle='rgba(239,68,68,.08)';ctx.fillRect(pad.l,py(100),pw/2,ph/2);ctx.fillStyle='rgba(245,158,11,.09)';ctx.fillRect(px(100),py(100),pw/2,ph/2);
+  ctx.strokeStyle='rgba(100,116,139,.22)';ctx.lineWidth=1;[94,96,98,100,102,104,106].forEach(function(v){ctx.beginPath();ctx.moveTo(px(v),pad.t);ctx.lineTo(px(v),pad.t+ph);ctx.stroke();ctx.beginPath();ctx.moveTo(pad.l,py(v));ctx.lineTo(pad.l+pw,py(v));ctx.stroke();});
+  ctx.strokeStyle='#64748b';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(px(100),pad.t);ctx.lineTo(px(100),pad.t+ph);ctx.stroke();ctx.beginPath();ctx.moveTo(pad.l,py(100));ctx.lineTo(pad.l+pw,py(100));ctx.stroke();
+  ctx.font='700 11px Arial';ctx.fillStyle='rgba(56,189,248,.82)';ctx.fillText('IMPROVING',pad.l+8,pad.t+16);ctx.fillStyle='rgba(34,197,94,.82)';ctx.fillText('LEADING',px(100)+8,pad.t+16);ctx.fillStyle='rgba(239,68,68,.82)';ctx.fillText('LAGGING',pad.l+8,pad.t+ph-8);ctx.fillStyle='rgba(245,158,11,.86)';ctx.fillText('WEAKENING',px(100)+8,pad.t+ph-8);
+  ctx.font='10px Arial';ctx.fillStyle='#64748b';ctx.textAlign='center';ctx.fillText(mode==='spy'?'Relative Strength vs SPY →':'3M Return →',pad.l+pw/2,h-10);ctx.save();ctx.translate(13,pad.t+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText(mode==='spy'?'Relative Momentum →':'Offense Flow →',0,0);ctx.restore();ctx.textAlign='left';
+  var points=raw.map(function(p){return Object.assign({},p,{x:px(normX(p.quarter)),y:py(normY(p.offense))});}),current=points[points.length-1];ctx.strokeStyle=etfRRGColor(current.strength);ctx.lineWidth=3;ctx.beginPath();points.forEach(function(p,i){if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);});ctx.stroke();
+  points.forEach(function(p,i){var isCurrent=i===points.length-1;ctx.globalAlpha=isCurrent?1:.55;ctx.fillStyle=etfRRGColor(p.strength);ctx.beginPath();ctx.arc(p.x,p.y,isCurrent?7:4,0,Math.PI*2);ctx.fill();if(isCurrent){ctx.strokeStyle='#0f172a';ctx.lineWidth=1.5;ctx.stroke();ctx.font='700 12px Arial';ctx.fillStyle='#18392f';ctx.fillText(p.ticker,p.x+10,p.y-7);}});ctx.globalAlpha=1;
+  etfTickerRRGVisiblePoints=points;canvas.dataset.etfTickerRrgMode=mode;status.textContent=ticker+' · '+(mode==='spy'?'RRG-style vs SPY':'absolute flow map')+' · '+trail+'-week trail · '+current.strength+' now · axes normalized to the full ETF universe';
+  if(!canvas.dataset.etfTickerRrgBound){canvas.dataset.etfTickerRrgBound='1';canvas.addEventListener('mousemove',function(ev){var r=canvas.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top,best=null,dist=Infinity;etfTickerRRGVisiblePoints.forEach(function(p){var d=Math.hypot(p.x-mx,p.y-my);if(d<dist){dist=d;best=p;}});if(best&&dist<18){var relative=canvas.dataset.etfTickerRrgMode==='spy';tip.style.display='block';tip.style.left=Math.min(r.width-210,mx+14)+'px';tip.style.top=Math.max(8,my-10)+'px';tip.innerHTML='<strong>'+esc(best.ticker)+' · '+esc(best.date)+'</strong><br>'+(relative?'RS Ratio vs SPY: ':'3M: ')+(best.quarter>=0?'+':'')+best.quarter.toFixed(2)+'%<br>'+(relative?'RS Momentum: ':'Offense: ')+(best.offense>=0?'+':'')+best.offense.toFixed(2)+'%<br>'+esc(best.strength);canvas.style.cursor='pointer';}else{tip.style.display='none';canvas.style.cursor='default';}});canvas.addEventListener('mouseleave',function(){tip.style.display='none';});}
+}
+function etfFlowSearchText(r){var c=r.config||{};return[c.ticker,c.level,c.theme,c.exposure,c.signal,c.levered].join(' ').toLowerCase();}
+function rankEtfFlowResults(results){
+  var full=(results||[]).slice().sort(function(a,b){return b.offense-a.offense;});
+  var strong=full.filter(function(r){return r.offense>0.05&&(r.gauge==='Holy Grail'||r.gauge==='Reversal');}).slice(0,10);
+  var improving=full.filter(function(r){return r.offense>0.05&&r.strength==='Improving';}).slice(0,10);
+  var trap=full.filter(function(r){return r.gauge==='Trap';}).slice(0,20);
+  var negatives=full.filter(function(r){return r.offense<0;}).sort(function(a,b){return a.offense-b.offense;}),extreme=negatives.slice(0,Math.max(1,Math.ceil(full.length*.05)));
+  return{strong:strong,improving:improving,trap:trap,extreme:extreme,full:full};
+}
+function etfFlowTickerCell(r){
+  var ticker=r.config.ticker,arg=JSON.stringify(ticker).replace(/"/g,'&quot;'),quote='https://finviz.com/quote.ashx?t='+encodeURIComponent(ticker);
+  return'<td class="stock-symbol" data-value="'+esc(ticker)+'"><button title="Open rotation map and chart inside dashboard" onclick="event.stopPropagation();loadStockChart('+arg+',this,\'etf\')">'+esc(ticker)+'</button><a class="stock-finviz-link" href="'+quote+'" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Finviz</a></td>';
+}
+function etfFlowTableCell(r,key){
+  var c=r.config;
+  if(key==='Ticker')return etfFlowTickerCell(r);
+  if(key==='Exposure')return'<td class="stock-industry" data-value="'+esc(c.exposure)+'">'+esc(c.exposure)+'</td>';
+  if(key==='Rotation Signal')return'<td class="stock-industry" data-value="'+esc(c.signal)+'" title="'+esc(c.signal)+'">'+esc(c.signal)+'</td>';
+  if(key==='Offense Flow Monthly')return'<td class="flow-num '+flowClass(r.offense)+offenseHotClass(r.offense)+'" data-value="'+r.offense+'">'+etfFlowScore(r.offense)+'</td>';
+  if(key==='Sector Strength')return'<td data-value="'+esc(r.strength)+'">'+strengthTransitionMarkup(r.strength,r.priorStrength,r.strengthWeeks)+'</td>';
+  if(key==='Buy Gauge')return'<td data-value="'+esc(r.gauge)+'">'+gaugeTransitionMarkup(r.gauge,r.priorGauge,r.gaugeWeeks)+'</td>';
+  if(key==='Perf Month')return'<td class="flow-num '+flowClass(r.month)+'" data-value="'+r.month+'">'+etfFlowPct(r.month)+'</td>';
+  if(key==='Perf Quart')return'<td class="flow-num '+flowClass(r.quarter)+'" data-value="'+r.quarter+'">'+etfFlowPct(r.quarter)+'</td>';
+  if(key==='Perf Year')return'<td class="flow-num '+flowClass(r.year)+'" data-value="'+r.year+'">'+etfFlowPct(r.year)+'</td>';
+  if(key==='20D ADR')return'<td class="flow-num" data-value="'+r.adr+'">'+(r.adr*100).toFixed(2)+'%</td>';
+  if(key==='Liquid Leveraged ETF'){var label=c.levered?c.levered+' · '+c.leverage:'--';return'<td data-value="'+esc(label)+'"><strong>'+esc(label)+'</strong></td>';}
+  return'<td>--</td>';
+}
+function renderEtfFlowTable(id,rows,full){
+  var host=document.getElementById(id);if(!host)return;
+  if(!rows||!rows.length){host.innerHTML='<div class="flow-empty">No matching ETFs right now.</div>';return;}
+  var cols=full?['Ticker','Exposure','Offense Flow Monthly','Sector Strength','Buy Gauge','Perf Month','Perf Quart','Perf Year','20D ADR','Liquid Leveraged ETF','Rotation Signal']:['Ticker','Exposure','Offense Flow Monthly','Sector Strength','Buy Gauge','Perf Quart','Perf Year','20D ADR','Liquid Leveraged ETF'];
+  var html='<table class="flow-table'+(full?' full-industry-table':'')+'"><thead><tr>'+cols.map(function(col){var label=full&&col==='Sector Strength'?'Sector Strength + Duration':full&&col==='Buy Gauge'?'Buy Gauge + Duration':col;return'<th draggable="true" onclick="sortFlowTable(this)" ondragstart="columnDragStart(event,this)" ondragover="columnDragOver(event,this)" ondragleave="columnDragLeave(this)" ondrop="columnDrop(event,this)" ondragend="columnDragEnd()">'+esc(label)+'</th>';}).join('')+'</tr></thead><tbody>';
+  rows.forEach(function(r){var arg=JSON.stringify(r.config.ticker).replace(/"/g,'&quot;');html+='<tr onclick="loadStockChart('+arg+',this,\'etf\')">'+cols.map(function(col){return etfFlowTableCell(r,col);}).join('')+'</tr>';});
+  host.innerHTML=html+'</tbody></table>';
+}
+function etfTopTicker(rows){return rows&&rows.length?rows[0].config.ticker:'--';}
+function renderEtfFlowTables(){
+  if(!etfFlowResults.length)return;
+  var ranked=rankEtfFlowResults(etfFlowResults),query=String(((document.getElementById('etf-flow-search')||{}).value)||'').trim().toLowerCase();
+  function filtered(rows){return query?rows.filter(function(r){return etfFlowSearchText(r).indexOf(query)>=0;}):rows;}
+  renderEtfFlowTable('etf-table-strong',filtered(ranked.strong),false);renderEtfFlowTable('etf-table-improving',filtered(ranked.improving),false);renderEtfFlowTable('etf-table-trap',filtered(ranked.trap),false);renderEtfFlowTable('etf-table-extreme',filtered(ranked.extreme),false);renderEtfFlowTable('etf-table-full',filtered(ranked.full),true);
+  document.getElementById('etf-stat-strong').textContent=ranked.strong.length;document.getElementById('etf-stat-improving').textContent=ranked.improving.length;document.getElementById('etf-stat-trap').textContent=ranked.trap.length;document.getElementById('etf-stat-extreme').textContent=ranked.extreme.length;
+  document.getElementById('etf-top-strong').textContent=etfTopTicker(ranked.strong);document.getElementById('etf-top-improving').textContent=etfTopTicker(ranked.improving);document.getElementById('etf-top-trap').textContent=etfTopTicker(ranked.trap);document.getElementById('etf-top-extreme').textContent=etfTopTicker(ranked.extreme);
+  document.getElementById('etf-meta-strong').textContent=ranked.strong.length+' ETFs: Offense Flow > 0.05 with a Holy Grail / Reversal gauge.';
+  document.getElementById('etf-meta-improving').textContent=ranked.improving.length+' ETFs: Improving with Offense Flow > 0.05.';
+  document.getElementById('etf-meta-trap').textContent=ranked.trap.length+' ETFs currently classified as Trap.';
+  document.getElementById('etf-meta-extreme').textContent=ranked.extreme.length+' ETFs in the bottom 5% of negative Offense Flow readings.';
+  document.getElementById('etf-meta-full').textContent=ranked.full.length+' ETFs sorted by Offense Flow Monthly · ADR is informational and does not filter the universe.';
+}
+function clearEtfFlowSearch(){var input=document.getElementById('etf-flow-search');if(input)input.value='';renderEtfFlowTables();}
+function setEtfFlowFont(size){setFlowFont(size);['normal','large','xl'].forEach(function(s){var el=document.getElementById('etf-font-'+s);if(el)el.classList.toggle('active',s===size);});}
+async function loadEtfFlows(force){
+  if(etfFlowLoading)return;if(etfFlowLoaded&&!force){renderEtfFlowTables();return;}
+  var universe=window.ETF_FLOW_UNIVERSE||[],status=document.getElementById('etf-flow-status'),asof=document.getElementById('etf-flow-asof');
+  if(!universe.length){if(status)status.textContent='ETF universe file did not load.';return;}
+  etfFlowLoading=true;etfFlowLoaded=false;closeStockChart();
+  ['strong','improving','trap','extreme','full'].forEach(function(k){var el=document.getElementById('etf-table-'+k);if(el)el.innerHTML='<div class="flow-empty">Loading '+universe.length+' ETFs…</div>';});
+  try{
+    if(status)status.textContent='Loading Finviz performance for '+universe.length+' ETFs…';if(asof)asof.textContent='Finviz performance request in progress';
+    var quoteMap=await fetchFinvizEtfUniverse(),missingQuotes=universe.filter(function(c){return !quoteMap[c.ticker];}).map(function(c){return c.ticker;});
+    if(status)status.textContent='Finviz loaded '+(universe.length-missingQuotes.length)+' ETFs. Loading daily histories…';
+    var packs=await mapWithConcurrency(universe,8,async function(config){
+      var quote=quoteMap[config.ticker];if(!quote)throw new Error('Finviz performance unavailable for '+config.ticker);
+      var history=await fetchYahooCandles(config.ticker,'3y');if(history.length<260)throw new Error('Insufficient daily history for '+config.ticker);
+      return Object.assign({},config,{finviz:quote,historyThrough:history[history.length-1].time,candles:candlesWithFinvizPrice(history,quote)});
+    },function(done,total){if(status)status.textContent='Loading ETF histories '+done+' / '+total+'…';});
+    try{etfRRGBenchmarkCandles=await fetchYahooCandles('SPY','3y');etfRRGBenchmarkByDate={};etfRRGBenchmarkCandles.forEach(function(row){etfRRGBenchmarkByDate[row.time]=row;});}catch(benchmarkError){etfRRGBenchmarkCandles=[];etfRRGBenchmarkByDate={};}
+    etfFlowSeries=packs.filter(function(p){return p&&!p.error&&p.candles;});etfFlowResults=[];
+    etfFlowSeries.forEach(function(item){try{etfFlowResults.push(etfFlowResult(item,item.candles));}catch(e){}});
+    if(!etfFlowResults.length)throw new Error('No complete ETF rows could be calculated.');
+    etfFlowResults.sort(function(a,b){return b.offense-a.offense;});etfFlowLoaded=true;
+    var failed=universe.length-etfFlowResults.length,latest=etfFlowSeries.reduce(function(v,r){return !v||r.historyThrough>v?r.historyThrough:v;},'');
+    if(asof)asof.textContent='Finviz current performance · Yahoo history through '+latest+' · '+etfFlowResults.length+' / '+universe.length+' ETFs loaded';
+    if(status)status.textContent=failed?etfFlowResults.length+' ETFs loaded; '+failed+' unavailable rows were skipped.':universe.length+' ETFs loaded. Click any ticker for its rotation map and daily chart.';
+    document.getElementById('etf-flow-subtitle').textContent='Ranked by Offense Flow Monthly across the approved '+universe.length+'-ETF universe. Finviz supplies current performance; Yahoo supplies daily history.';
+    renderEtfFlowTables();renderEtfRotationGraph();
+  }catch(e){
+    if(status)status.textContent='ETF Flow unavailable: '+(e&&e.message?e.message:e);if(asof)asof.textContent='ETF data request failed';
+    ['strong','improving','trap','extreme','full'].forEach(function(k){var el=document.getElementById('etf-table-'+k);if(el)el.innerHTML='<div class="flow-empty">ETF data could not be loaded.</div>';});
+  }finally{etfFlowLoading=false;}
 }
 function ensureChartSeries(chart){
   var opts={upColor:'#22c55e',downColor:'#ef4444',borderVisible:false,wickUpColor:'#22c55e',wickDownColor:'#ef4444',priceScaleId:'right'};
@@ -2737,50 +3303,82 @@ function smaData(candles,len){
 function lastTwelveMonthCandles(candles){
   return candles.slice(Math.max(0,candles.length-252));
 }
+function aggregateStockCandles(candles,interval){
+  if(interval==='1d')return candles.slice();
+  var buckets=[],byKey={};
+  candles.forEach(function(c){
+    var date=new Date(c.time+'T00:00:00Z'),key;
+    if(interval==='1w'){
+      var day=(date.getUTCDay()+6)%7;
+      date.setUTCDate(date.getUTCDate()-day);
+      key=date.toISOString().slice(0,10);
+    }else key=c.time.slice(0,7);
+    var bucket=byKey[key];
+    if(!bucket){bucket={time:interval==='1w'?key:key+'-01',open:c.open,high:c.high,low:c.low,close:c.close,sessionProxy:!!c.sessionProxy};byKey[key]=bucket;buckets.push(bucket);}
+    else{bucket.high=Math.max(bucket.high,c.high);bucket.low=Math.min(bucket.low,c.low);bucket.close=c.close;bucket.sessionProxy=bucket.sessionProxy||!!c.sessionProxy;}
+  });
+  return buckets;
+}
+function visibleStockCandles(candles,interval){
+  var count=interval==='1d'?504:interval==='1w'?520:120;
+  return candles.slice(Math.max(0,candles.length-count));
+}
+function setStockChartInterval(interval){
+  if(['1d','1w','1mo'].indexOf(interval)<0)return;
+  activeStockChartInterval=interval;
+  ['1d','1w','1mo'].forEach(function(tf){var button=document.getElementById('stock-chart-tf-'+tf);if(button)button.classList.toggle('active',tf===interval);});
+  renderActiveStockChart();
+}
+function renderActiveStockChart(){
+  var box=document.getElementById('stock-chart-box'),note=document.getElementById('stock-chart-note');
+  if(!box||!activeStockDailyCandles.length||!window.LightweightCharts)return;
+  var intervalCandles=aggregateStockCandles(activeStockDailyCandles,activeStockChartInterval),visibleCandles=visibleStockCandles(intervalCandles,activeStockChartInterval);
+  activeChartCandles=visibleCandles;
+  if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}
+  activeSmaSeries=[];
+  activeStockChart=LightweightCharts.createChart(box,{width:box.clientWidth,height:320,layout:{background:{color:'#0f172a'},textColor:'#94a3b8'},grid:{vertLines:{color:'rgba(148,163,184,.08)'},horzLines:{color:'rgba(148,163,184,.08)'}},leftPriceScale:{visible:false},rightPriceScale:{borderColor:'#334155'},timeScale:{borderColor:'#334155',barSpacing:4,fixRightEdge:false}});
+  if(activeStockChart.priceScale)activeStockChart.priceScale('left').applyOptions({visible:false});
+  activeStockSeries=ensureChartSeries(activeStockChart);activeStockSeries.setData(visibleCandles);
+  [{len:20,color:'#facc15'},{len:50,color:'#ef4444'},{len:200,color:'#38bdf8'}].forEach(function(cfg){
+    var data=visibleLineData(smaData(intervalCandles,cfg.len),visibleCandles);
+    if(data.length){var line=ensureLineSeries(activeStockChart,cfg.color,2);line.setData(data);activeSmaSeries.push(line);}
+  });
+  observeActiveStockChart(box);setChartTwelveMonthRange();scheduleActiveChartResize();
+  var label=activeStockChartInterval==='1d'?'daily':activeStockChartInterval==='1w'?'weekly':'monthly',sessionProxy=visibleCandles.some(function(c){return c.sessionProxy;});
+  if(note)note.textContent='Yahoo daily candles aggregated to '+label+' bars. Showing '+visibleCandles[0].time+' to '+visibleCandles[visibleCandles.length-1].time+'.'+(sessionProxy?' Latest session uses Yahoo market metadata while its complete EOD OHLC bar is pending.':'')+' SMA 20 yellow, SMA 50 red, SMA 200 light blue.';
+}
 function visibleLineData(data,visibleCandles){
   if(!visibleCandles.length)return[];
   var first=visibleCandles[0].time,last=visibleCandles[visibleCandles.length-1].time;
   return data.filter(function(r){return r.time>=first&&r.time<=last;});
 }
-function closeStockChart(){activeStockChartRequest++;document.querySelectorAll('.stock-chart-row').forEach(function(r){r.remove();});selectedStockAnchor=null;activeSmaSeries=[];activeChartCandles=[];if(activeStockChartResizeObserver){activeStockChartResizeObserver.disconnect();activeStockChartResizeObserver=null;}if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}}
-function stockChartMarkup(ticker,colspan){
-  return '<tr class="stock-chart-row"><td colspan="'+colspan+'"><div class="chart-panel visible" id="stock-chart-panel"><div class="chart-head"><div><div class="chart-title" id="stock-chart-title">'+esc(ticker)+' Daily Chart</div><div class="chart-note" id="stock-chart-note">Loading 1 year of daily candles...</div></div><div class="chart-head-right"><button class="sector-dd-close" onclick="closeStockChart()">Close Chart</button></div></div><div class="chart-box" id="stock-chart-box"></div></div></td></tr>';
+function closeStockChart(){activeStockChartRequest++;document.querySelectorAll('.stock-chart-row').forEach(function(r){r.remove();});selectedStockAnchor=null;activeEtfTickerRRG='';etfTickerRRGVisiblePoints=[];activeSmaSeries=[];activeChartCandles=[];activeStockDailyCandles=[];if(activeStockChartResizeObserver){activeStockChartResizeObserver.disconnect();activeStockChartResizeObserver=null;}if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}}
+function stockChartMarkup(ticker,colspan,context){
+  var rotation=context==='etf'?'<div class="rrg-panel"><div class="rrg-head"><div><div class="rrg-title">'+esc(ticker)+' Rotation Trail</div><div class="rrg-sub">Choose the absolute flow cycle or an RRG-style comparison against SPY. Hover any point for its reading.</div></div><div class="rrg-controls"><div class="rrg-field"><label for="etf-ticker-rrg-mode">Mode</label><select id="etf-ticker-rrg-mode" onchange="renderEtfTickerRotationGraph(activeEtfTickerRRG)"><option value="absolute" selected>Absolute Flow Map</option><option value="spy">RRG vs SPY</option></select></div><div class="rrg-field"><label for="etf-ticker-rrg-trail">Trail</label><select id="etf-ticker-rrg-trail" onchange="renderEtfTickerRotationGraph(activeEtfTickerRRG)"><option value="4">4 Weeks</option><option value="6" selected>6 Weeks</option><option value="8">8 Weeks</option><option value="12">12 Weeks</option></select></div></div></div><div class="rrg-canvas-wrap"><canvas id="etf-ticker-rrg-canvas"></canvas><div class="rrg-tooltip" id="etf-ticker-rrg-tooltip"></div></div><div class="rrg-footer"><div class="rrg-legend"><span style="--q:#22c55e">Leading</span><span style="--q:#f59e0b">Weakening</span><span style="--q:#ef4444">Lagging</span><span style="--q:#38bdf8">Improving</span></div><div id="etf-ticker-rrg-status">Rendering '+esc(ticker)+' rotation trail…</div></div></div>':'';
+  var title=context==='etf'?esc(ticker)+' Rotation &amp; Price Chart':esc(ticker)+' Price Chart';
+  return '<tr class="stock-chart-row"><td colspan="'+colspan+'">'+rotation+'<div class="chart-panel visible" id="stock-chart-panel"><div class="chart-head"><div><div class="chart-title" id="stock-chart-title">'+title+'</div><div class="chart-note" id="stock-chart-note">Loading 5 years of daily candles...</div></div><div class="chart-head-right"><button class="sector-dd-close tf-btn active" id="stock-chart-tf-1d" onclick="setStockChartInterval(\'1d\')">Daily</button><button class="sector-dd-close tf-btn" id="stock-chart-tf-1w" onclick="setStockChartInterval(\'1w\')">Weekly</button><button class="sector-dd-close tf-btn" id="stock-chart-tf-1mo" onclick="setStockChartInterval(\'1mo\')">Monthly</button><button class="sector-dd-close" onclick="closeStockChart()">Close</button></div></div><div class="chart-box" id="stock-chart-box"></div></div></td></tr>';
 }
-async function loadStockChart(ticker,btn){
+async function loadStockChart(ticker,btn,context){
   var hostRow=btn&&btn.closest?btn.closest('tr'):null;
   if(selectedStockAnchor===hostRow){closeStockChart();return;}
   closeStockChart();selectedStockAnchor=hostRow;
   var requestId=++activeStockChartRequest;
   var table=btn&&btn.closest?btn.closest('table'):null;
   var colspan=table&&table.tHead&&table.tHead.rows[0]?table.tHead.rows[0].cells.length:18;
-  if(hostRow)hostRow.insertAdjacentHTML('afterend',stockChartMarkup(ticker,colspan));
+  if(hostRow)hostRow.insertAdjacentHTML('afterend',stockChartMarkup(ticker,colspan,context));
   var chartRow=hostRow&&hostRow.nextElementSibling;
   var panel=document.getElementById('stock-chart-panel'),box=document.getElementById('stock-chart-box'),title=document.getElementById('stock-chart-title'),note=document.getElementById('stock-chart-note');
   if(!panel||!box)return;
+  if(context==='etf'){activeEtfTickerRRG=ticker;requestAnimationFrame(function(){renderEtfTickerRotationGraph(ticker);});}
   if(panel.scrollIntoView)setTimeout(function(){panel.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});},0);
   if(!window.LightweightCharts){note.textContent='Lightweight Charts library did not load. Check your internet connection.';return;}
   try{
-    var candles=await fetchYahooCandles(ticker);
+    var candles=await fetchYahooCandles(ticker,'5y');
     if(requestId!==activeStockChartRequest||selectedStockAnchor!==hostRow)return;
     if(!candles.length){note.textContent='No candle data loaded for '+ticker+'.';return;}
-    var visibleCandles=lastTwelveMonthCandles(candles);
-    activeChartCandles=visibleCandles;
-    if(activeStockChart){try{activeStockChart.remove();}catch(e){}activeStockChart=null;activeStockSeries=null;}
-    activeStockChart=LightweightCharts.createChart(box,{width:box.clientWidth,height:320,layout:{background:{color:'#0f172a'},textColor:'#94a3b8'},grid:{vertLines:{color:'rgba(148,163,184,.08)'},horzLines:{color:'rgba(148,163,184,.08)'}},leftPriceScale:{visible:false},rightPriceScale:{borderColor:'#334155'},timeScale:{borderColor:'#334155',barSpacing:4,fixRightEdge:false}});
-    if(activeStockChart.priceScale)activeStockChart.priceScale('left').applyOptions({visible:false});
-    activeStockSeries=ensureChartSeries(activeStockChart);activeStockSeries.setData(visibleCandles);
-    [
-      {len:20,color:'#facc15'},
-      {len:50,color:'#ef4444'},
-      {len:200,color:'#38bdf8'}
-    ].forEach(function(cfg){
-      var data=visibleLineData(smaData(candles,cfg.len),visibleCandles);
-      if(data.length){var line=ensureLineSeries(activeStockChart,cfg.color,2);line.setData(data);activeSmaSeries.push(line);}
-    });
-    observeActiveStockChart(box);
-    setChartTwelveMonthRange();
-    scheduleActiveChartResize();
-    note.textContent='Yahoo daily candles via proxy. Showing '+visibleCandles[0].time+' to '+visibleCandles[visibleCandles.length-1].time+'. SMA 20 yellow, SMA 50 red, SMA 200 light blue.';
+    activeStockDailyCandles=candles;activeStockChartInterval='1d';
+    ['1d','1w','1mo'].forEach(function(tf){var button=document.getElementById('stock-chart-tf-'+tf);if(button)button.classList.toggle('active',tf==='1d');});
+    renderActiveStockChart();
   }catch(e){note.textContent='Chart load failed for '+ticker+'.';}
 }
 async function openSectorDrilldown(name,btn,targetTicker){
@@ -2826,12 +3424,12 @@ function renderFlowTable(id,rows,cols){
 }
 function sortFlowTable(th){
   if(th.closest('table').getAttribute('data-skip-sort'))return;
-  closeSectorDrilldown();
+  closeSectorDrilldown();closeStockChart();
   var table=th.closest('table'),tbody=table.querySelector('tbody'),idx=Array.prototype.indexOf.call(th.parentNode.children,th);
   var dir=th.getAttribute('data-sort')==='asc'?'desc':'asc';
   Array.prototype.forEach.call(th.parentNode.children,function(h){h.removeAttribute('data-sort');});
   th.setAttribute('data-sort',dir);
-  var rows=Array.prototype.slice.call(tbody.querySelectorAll('tr:not(.sector-drilldown-row)'));
+  var rows=Array.prototype.slice.call(tbody.querySelectorAll('tr:not(.sector-drilldown-row):not(.stock-chart-row)'));
   rows.sort(function(a,b){
     var av=a.children[idx].getAttribute('data-value')||a.children[idx].textContent,bv=b.children[idx].getAttribute('data-value')||b.children[idx].textContent;
     var an=parseFloat(av),bn=parseFloat(bv),cmp;
@@ -2849,7 +3447,7 @@ function renderSectorFlowsFromCache(){
   var note=document.getElementById('flow-source-note');if(note)note.textContent=cache.flowSource||'Current sheet, history fallback enabled';
   if(!flow||!flow.length){
     document.getElementById('flow-subtitle').textContent='Sector flow data is unavailable. The macro board still works normally.';
-    ['rrg-breakouts','strong','improving','trap','extreme','full'].forEach(function(k){renderFlowTable('flow-table-'+k,[],[]);});
+    ['strong','improving','trap','extreme','full'].forEach(function(k){renderFlowTable('flow-table-'+k,[],[]);});
     renderRRG(rrgHistoryWithCurrent(hist,flow));
     return;
   }
@@ -2887,6 +3485,7 @@ async function fetchFromAPI(force){
   if(!force&&cacheValid()){var age=Math.round((Date.now()-cache.ts)/60000);setStatus('live','Cached · '+age+'m ago');if(cache.dxy&&cache.y10){liveData={dxy:cache.dxy,us10y:cache.y10,hy:cache.hy,fv:cache.fv};render(liveData);}renderFinviz(cache.fv);renderBreadth(cache.breadth);renderSectorFlowsFromCache();if(rawDxyRows&&rawY10Rows)try{renderRegimeHistory();}catch(e){}scheduleRefresh(CACHE_MS-(Date.now()-cache.ts));return;}
 
   setStatus('loading','Fetching…');var ok=[];
+  var marketPromise=Promise.all([fetchYahooCandles('^GSPC','max'),fetchYahooCandles('QQQ','10y')]);
   var dR=await fetchYahoo(YAHOO_DXY);if(dR)ok.push('DXY');
   var yR=await fetchTreasury10Y();if(yR)ok.push('Y2');
   var hyData=await fetchHYSpread();if(hyData)ok.push('HY');
@@ -2894,6 +3493,8 @@ async function fetchFromAPI(force){
   var breadthRows=await fetchBreadth();if(breadthRows)ok.push('Breadth');
 
   var flowPack=await fetchFlowData();if(flowPack)ok.push('Flows');
+  var marketRows=await marketPromise;
+  rawMarketCandles={SPX:marketRows[0]||null,QQQ:marketRows[1]||null};
 
   renderFinviz(fvCount);renderBreadth(breadthRows);
   if(!dR||!yR){setStatus('error','⚠ DXY/Y2 unavailable');scheduleRefresh(60000);return;}
@@ -3130,7 +3731,7 @@ try{setFlowFont(localStorage.getItem('flowFontSize')||'normal');}catch(e){setFlo
 var mobileViewQuery=window.matchMedia('(max-width: 700px)');
 function syncMobileView(){document.documentElement.classList.toggle('mobile-view',mobileViewQuery.matches);}
 if(mobileViewQuery.addEventListener)mobileViewQuery.addEventListener('change',syncMobileView);else if(mobileViewQuery.addListener)mobileViewQuery.addListener(syncMobileView);
-window.addEventListener('resize',function(){resizeT2108Chart();resizeActiveChart();var p=document.getElementById('page-flows');if(p&&p.classList.contains('active')){renderRRGFromCache();resizeSectorAggregate();renderSectorRotationGraph((selectedIndustry&&selectedIndustry.Name)||'');}});
+window.addEventListener('resize',function(){resizeT2108Chart();resizeActiveChart();var p=document.getElementById('page-flows');if(p&&p.classList.contains('active')){renderRRGFromCache();resizeSectorAggregate();renderSectorRotationGraph((selectedIndustry&&selectedIndustry.Name)||'');}var e=document.getElementById('page-etfs');if(e&&e.classList.contains('active')){renderEtfRotationGraph();if(activeEtfTickerRRG)renderEtfTickerRotationGraph(activeEtfTickerRRG);}});
 fetchFromAPI(true);
 </script>
 </body>
